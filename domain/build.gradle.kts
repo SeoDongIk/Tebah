@@ -2,6 +2,7 @@ plugins {
     id("java-library")
     alias(libs.plugins.org.jetbrains.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
+    id("kotlin-kapt")
 }
 
 java {
@@ -14,4 +15,8 @@ dependencies {
 
     // paging3 - common(안드로이드 의존성 x)
     implementation(libs.paging.common)
+
+    // Hilt
+    implementation(libs.dagger)
+    kapt(libs.dagger.compiler)
 }

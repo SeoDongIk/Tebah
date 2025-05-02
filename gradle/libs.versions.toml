@@ -36,7 +36,6 @@ ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.5.3"}
 
-
 datastore = { module = "androidx.datastore:datastore-preferences", version = "1.0.0" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-converter-serialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version = "1.0.0"}
@@ -47,6 +46,8 @@ material = { group = "com.google.android.material", name = "material", version.r
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { group = "androidx.hilt" , name = "hilt-navigation-compose", version = "1.0.0"}
+dagger = { group = "com.google.dagger", name = "dagger", version.ref = "hilt" }
+dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "hilt" }
 orbit-core = { group = "org.orbit-mvi", name = "orbit-core", version.ref = "orbit"}
 orbit-viewmodel = { group = "org.orbit-mvi", name = "orbit-viewmodel", version.ref = "orbit"}
 orbit-compose = { group = "org.orbit-mvi", name = "orbit-compose", version.ref = "orbit"}

@@ -58,9 +58,12 @@ fun HomeScreenTest(
 ) {
     val refreshing = remember { mutableStateOf(false) }
     val overScrollOffset = remember { mutableFloatStateOf(0f) }
+    var lastScrollOffset by remember { mutableStateOf(0) } // 마지막 스크롤 오프셋
 
     val density = LocalDensity.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var scrollDirection by remember { mutableStateOf(0) } // 스크롤 방향 (1: 아래로, -1: 위로, 0: 없음)
+    val previousScrollOffset = remember { mutableStateOf(0) }
 
     val listState = rememberLazyListState()
     val isScrolling = listState.isScrollInProgress
@@ -71,6 +74,28 @@ fun HomeScreenTest(
             val scrollOffset = listState.firstVisibleItemScrollOffset.coerceIn(0, 300)
             1f - (scrollOffset / 300f)
         }
+    }
+
+    LaunchedEffect(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset) {
+        val currentOffset = listState.firstVisibleItemScrollOffset
+
+        // 스크롤이 아래로 가는지 위로 가는지 판단
+        scrollDirection = when {
+            currentOffset > lastScrollOffset -> 1 // 아래로 스크롤
+            currentOffset < lastScrollOffset -> -1 // 위로 스크롤
+            else -> scrollDirection
+        }
+
+        // 스크롤 방향에 따라 BottomNavigationBar 상태 변경
+        if (scrollDirection == 1) {
+            showBottomBar(false) // 아래로 스크롤 시 BottomNavigationBar 숨김
+        } else if (scrollDirection == -1) {
+            showBottomBar(true) // 위로 스크롤 시 BottomNavigationBar 보임
+        }
+
+        lastScrollOffset = currentOffset
+        previousScrollOffset.value = currentOffset
+
     }
 
     // 새로고침 조건 처리

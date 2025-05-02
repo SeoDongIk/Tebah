@@ -1,6 +1,8 @@
 package com.example.presentation.main
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -24,13 +26,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.presentation.main.write.WriteActivity
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen() {
     var bottomBarState by remember { mutableStateOf(true) }
     var currentRoute by remember { mutableStateOf(MainRoute.HOME) }
+    val context = LocalContext.current // remember 안하는게 맞음 ㅇㅇ.
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -54,7 +59,8 @@ fun MainScreen() {
         ) {
             MainScreenPager(
                 onFabClick = {
-                    // TODO: Write Activity로 넘어가야 한다
+                    val intent = Intent(context, WriteActivity::class.java)
+                    context.startActivity(intent)
                 },
                 showBottomBar = { visible ->
                     bottomBarState = visible
@@ -73,7 +79,8 @@ fun MainScreen() {
         ) {
             FloatingActionButton(
                 onClick = {
-                    // TODO: Write Activity로 이동
+                    val intent = Intent(context, WriteActivity::class.java)
+                    context.startActivity(intent)
                 },
             ) {
                 Icon(
