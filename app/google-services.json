@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "203610451445",
+    "project_id": "tebah-3b5c2",
+    "storage_bucket": "tebah-3b5c2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203610451445:android:5e837d38ca5a81856344bc",
+        "android_client_info": {
+          "package_name": "com.example.tebah"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyAEDuGMEwbCtYHUrhwulJ7Ixr-kr_y9w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

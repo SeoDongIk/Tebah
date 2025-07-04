@@ -7,5 +7,6 @@ plugins {
     alias(libs.plugins.com.android.library) apply false
     alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.kotlin.parcelize) apply false
+    id("com.google.gms.google-services") version "4.4.2" apply false
 }
 true // Needed to make the Suppress annotation work for

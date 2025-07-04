@@ -16,7 +16,7 @@ import androidx.core.view.WindowCompat
 private val LightColorScheme = lightColorScheme(
     primary = primary,
     onPrimary = Color.White,
-    primaryContainer = primaryContainer,
+    primaryContainer = secondary,
     onPrimaryContainer = Color.White,
     surface = Color.Black,
     onSurface = Color.White,
@@ -27,7 +27,7 @@ private val LightColorScheme = lightColorScheme(
 private val DarkColorScheme = darkColorScheme(
     primary = primary,
     onPrimary = Color.Black,
-    primaryContainer = primaryContainer,
+    primaryContainer = secondary,
     onPrimaryContainer = Color.Black,
     surface = Color.White,
     onSurface = Color.Black,
@@ -47,8 +47,8 @@ fun TebahTheme(
     if(!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window. statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = Color.White.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
         }
     }
 

@@ -38,7 +38,7 @@ android {
     }
 
     composeOptions{
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
 }
 
@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
+    implementation(libs.compose.foundation)
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
@@ -83,9 +84,10 @@ dependencies {
     // paging3
     implementation(libs.paging.compose)
 
-    //
-    implementation("com.airbnb.android:lottie-compose:6.3.0")
+    // refresh
+    implementation(libs.androidx.material3)
 
-    //
-    implementation ("com.google.accompanist:accompanist-swiperefresh:0.28.0")
+    // 미정
+    implementation("com.airbnb.android:lottie-compose:6.3.0")
+    implementation("com.google.accompanist:accompanist-flowlayout:0.34.0") // 최신 버전 확인 필요
 }

@@ -7,11 +7,8 @@ import com.example.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-//    private val userDataStore: UserDataStore
+
 ) :AuthRepository {
-//    override suspend fun invoke() :Result<Unit> = kotlin.runCatching{
-//        userDataStore.clear()
-//    }
 
     override suspend fun autoSignIn(): Result<User> {
         TODO("Not yet implemented")
