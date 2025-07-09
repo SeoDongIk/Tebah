@@ -7,6 +7,7 @@ import com.example.domain.model.User
 import com.example.domain.model.UserRole
 import com.example.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -19,7 +20,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun getCurrentUserRole(): UserRole {
         val currentUser = firebaseAuth.currentUser ?: return UserRole.GUEST
-        val roleString = userDataSource.getUserRoleByUserId(currentUser.uid)
+        val roleString = userDataSource.userRole.firstOrNull() ?: return UserRole.GUEST
 
         return when(roleString) {
             "ADMIN" -> UserRole.ADMIN

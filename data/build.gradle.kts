@@ -1,11 +1,11 @@
 plugins {
+    alias(libs.plugins.protobuf)
     alias(libs.plugins.com.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.protobuf)
 }
 
 android {
@@ -39,7 +39,7 @@ android {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.21.12"
+        artifact = "com.google.protobuf:protoc:${libs.versions.protobuf.lite.get()}"
     }
 
     generateProtoTasks {
@@ -98,9 +98,7 @@ dependencies {
     implementation(libs.firebase.storage.ktx)
     implementation(libs.firebase.analytics)
 
-    //
-// protobuf dependencies 추가
+    // protobuf dependencies 추가
     implementation(libs.protobuf.java.lite)
     implementation(libs.protobuf.kotlin.lite)
-
 }

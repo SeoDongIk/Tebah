@@ -19,6 +19,8 @@ paging = "3.2.1"
 coroutines-core = "1.7.3"
 room = "2.6.1"
 firebase-bom = "32.7.0"
+protobuf-lite = "3.23.4"
+protobuf-plugin = "0.9.1"
 
 [libraries]
 androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycle-runtime-ktx"}
@@ -73,8 +75,8 @@ firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-fires
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 
-protobuf-java-lite = { group = "com.google.protobuf", name = "protobuf-javalite", version = "3.21.12" }
-protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version = "3.21.12" }
+protobuf-java-lite = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "protobuf-lite" }
+protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf-lite" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
@@ -85,6 +87,7 @@ com-android-library = { id = "com.android.library", version.ref = "agp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt"}
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "org-jetbrains-kotlin-android"}
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "org-jetbrains-kotlin-android"}
-protobuf = { id = "com.google.protobuf", version = "0.9.1" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
+
 [bundles]
 

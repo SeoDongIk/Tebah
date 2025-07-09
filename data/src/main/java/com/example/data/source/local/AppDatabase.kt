@@ -7,7 +7,7 @@ import com.example.data.dao.PostDao
 
 @Database(
     entities = [PostEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

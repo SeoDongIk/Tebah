@@ -1,9 +1,10 @@
 package com.example.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.UserRole
-import com.example.domain.usecase.auth.CheckAutoLoginUseCase
+import com.example.domain.usecase.auth.GetAuthStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -21,6 +22,7 @@ class SplashViewModel @Inject constructor(
             runCatching {
                 getAuthStatusUseCase()
             }.onSuccess { status ->
+                Log.d("cursive", status.toString())
                 uiState.value = when {
                     !status.isLoggedIn -> SplashUiState.GoToLogin
                     status.role == UserRole.ADMIN -> SplashUiState.GoToAdmin

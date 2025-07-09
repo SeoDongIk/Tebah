@@ -4,8 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.preferencesDataStoreFile
+import com.example.data.UserPreferences
 import com.example.data.source.preference.UserPreferencesDataStore
 import com.example.data.source.preference.UserPreferencesSerializer
 import dagger.Module
@@ -13,8 +12,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -34,6 +31,6 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun provideUserPreferencesDataStore(dataStore: androidx.datastore.core.DataStore<androidx.datastore.preferences.core.Preferences>): UserPreferencesDataStore =
+    fun provideUserPreferencesDataStore(dataStore: DataStore<UserPreferences>): UserPreferencesDataStore =
         UserPreferencesDataStore(dataStore)
 }

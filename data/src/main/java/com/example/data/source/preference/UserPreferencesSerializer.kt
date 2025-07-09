@@ -1,6 +1,7 @@
 package com.example.data.source.preference
 
 import androidx.datastore.core.Serializer
+import com.example.data.UserPreferences
 import java.io.InputStream
 import java.io.OutputStream
 
