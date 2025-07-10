@@ -1,7 +1,9 @@
 package com.example.presentation.login
 
 import androidx.lifecycle.ViewModel
-import com.example.domain.model.LoginResult
+import com.example.domain.model.UserRole
+import com.example.domain.usecase.auth.SignInUseCase
+import com.example.presentation.model.LoginSideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.Container
@@ -11,13 +13,11 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
-import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-//    private val loginUseCase: LoginUseCase,
-//    private val setTokenUseCase:SetTokenUseCase,
+    private val signInUseCase: SignInUseCase,
 ) : ViewModel(), ContainerHost<LoginState, LoginSideEffect> {
 
     override val container: Container<LoginState, LoginSideEffect> = container(
@@ -25,45 +25,37 @@ class LoginViewModel @Inject constructor(
         buildSettings = {
             this.exceptionHandler = CoroutineExceptionHandler { _, throwable ->
                 intent {
-                    postSideEffect(LoginSideEffect.Toast(message = throwable.message.orEmpty()))
+                    postSideEffect(LoginSideEffect.Toast(throwable.message.orEmpty()))
                 }
             }
         }
     )
 
     fun onLoginClick() = intent {
-        val id = state.id
-        val password = state.password
-        val loginResult = LoginResult(token = "dfdf", isAdmin = false)
-        val isAdmin = loginResult.isAdmin
-//        setTokenUseCase(loginResult.token)
-        reduce {
-            state.copy(isAdmin = isAdmin)
+        val (id, password) = state.id to state.password
+
+        val signInResult = signInUseCase(id, password)
+        signInResult.onSuccess { result ->
+            val role = result.role
+
+            reduce { state.copy(role = role) }
+            postSideEffect(LoginSideEffect.NavigateToMainActivity(role))
+        }.onFailure { e ->
+            postSideEffect(LoginSideEffect.Toast(e.message ?: "로그인에 실패했습니다."))
         }
-        postSideEffect(LoginSideEffect.NavigateToMainActivity(isAdmin))
     }
 
     fun onIdChange(id: String) = blockingIntent {
-        reduce {
-            state.copy(id = id)
-        }
+        reduce { state.copy(id = id) }
     }
 
     fun onPasswordChange(password: String) = blockingIntent {
-        reduce {
-            state.copy(password = password)
-        }
+        reduce { state.copy(password = password) }
     }
 }
 
-@Immutable
 data class LoginState(
     val id: String = "",
     val password: String = "",
-    val isAdmin: Boolean? = null
+    val role: UserRole? = null
 )
-
-sealed interface LoginSideEffect {
-    class Toast(val message: String) : LoginSideEffect
-    data class NavigateToMainActivity(val isAdmin: Boolean) : LoginSideEffect
-}

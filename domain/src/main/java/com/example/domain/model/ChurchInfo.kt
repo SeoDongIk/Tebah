@@ -1,7 +1,6 @@
 package com.example.domain.model
 
-data class Church(
-    val id: String,
+data class ChurchInfo(
     val name: String,
     val region: Region,
     val phone: String,

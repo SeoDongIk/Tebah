@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,16 +17,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.presentation.R
 import com.example.presentation.component.LargeButton
 import com.example.presentation.component.LargeDialog
 import com.example.presentation.component.MediumButton
 import com.example.presentation.component.MediumDialog
 import com.example.presentation.login.MemberSignUpViewModel
+import com.example.presentation.model.SignUpSideEffect
 import com.example.presentation.theme.Paddings
 import com.example.presentation.theme.TebahTheme
 import com.example.presentation.theme.TebahTypography
@@ -36,12 +41,17 @@ fun MemberInfoScreen(
     viewModel: MemberSignUpViewModel,
     onNavigateToChurchSelect: () -> Unit
 ) {
-    val state = viewModel.collectAsState().value
+    val state by viewModel.container.stateFlow.collectAsState()
+    val sideEffect = viewModel.container.sideEffectFlow.collectAsState(initial = null).value
 
-    var showPasswordMismatchDialog by remember { mutableStateOf(false) }
-    var showIdDuplicateDialog by remember { mutableStateOf(false) }
+    LaunchedEffect(sideEffect) {
+        when (sideEffect) {
+            is SignUpSideEffect.NavigateToChurchSelect -> onNavigateToChurchSelect()
+            else -> {}
+        }
+    }
 
-    val isNextEnabled = state.name.isNotBlank() && state.id.isNotBlank() && state.password.isNotBlank() && state.repeatPassword.isNotBlank()
+    val isNextEnabled = viewModel.isNextEnabled
     val nextButtonColor = if (isNextEnabled) primary else Color.LightGray
 
     Column(
@@ -57,12 +67,12 @@ fun MemberInfoScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "정보를",
+                text = stringResource(id = R.string.member_info_title_line1),
                 style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "입력해주세요",
+                text = stringResource(id = R.string.member_info_title_line2),
                 style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
@@ -75,30 +85,30 @@ fun MemberInfoScreen(
         ) {
             OutlinedTextField(
                 value = state.name,
-                onValueChange = { viewModel.onNameChange(it) },
-                label = { Text("이름") },
+                onValueChange = viewModel::onNameChange,
+                label = { Text(stringResource(R.string.label_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(color = Color.Black)
             )
             OutlinedTextField(
                 value = state.id,
-                onValueChange = { viewModel.onIdChange(it) },
-                label = { Text("아이디") },
+                onValueChange = viewModel::onIdChange,
+                label = { Text(stringResource(R.string.label_id)) },
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(color = Color.Black)
             )
             OutlinedTextField(
                 value = state.password,
-                onValueChange = { viewModel.onPasswordChange(it) },
-                label = { Text("비밀번호") },
+                onValueChange = viewModel::onPasswordChange,
+                label = { Text(stringResource(R.string.label_password)) },
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(color = Color.Black),
                 visualTransformation = PasswordVisualTransformation()
             )
             OutlinedTextField(
                 value = state.repeatPassword,
-                onValueChange = { viewModel.onRepeatPasswordChange(it) },
-                label = { Text("비밀번호 확인") },
+                onValueChange = viewModel::onRepeatPasswordChange,
+                label = { Text(stringResource(R.string.label_password_confirm)) },
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(color = Color.Black),
                 visualTransformation = PasswordVisualTransformation()
@@ -113,49 +123,32 @@ fun MemberInfoScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LargeButton(
-                onClick = {
-                    if (state.password != state.repeatPassword) {
-                        showPasswordMismatchDialog = true
-                    } else {
-                        // 아이디 중복 체크는 ViewModel에서 처리하는 게 좋음
-                        onNavigateToChurchSelect()
-                    }
-                },
-                text = "다음",
+                onClick = { viewModel.onNextClicked() },
+                text = stringResource(id = R.string.button_next),
                 backgroundColor = nextButtonColor
             )
         }
+    }
 
-        if (showPasswordMismatchDialog) {
-            MediumDialog(
-                showDialog = showPasswordMismatchDialog,
-                title = "비밀번호 일치 오류",
-                content = "비밀번호를 다시 확인해주세요",
-                buttonContent = "확인",
-                onDismissRequest = { showPasswordMismatchDialog = false },
-                onConfirm = { showPasswordMismatchDialog = false }
-            )
-        }
+    if (state.isPasswordMismatchDialogShown) {
+        MediumDialog(
+            showDialog = true,
+            title = stringResource(id = R.string.dialog_password_mismatch_title),
+            content = stringResource(id = R.string.dialog_password_mismatch_content),
+            buttonContent = stringResource(id = R.string.button_confirm),
+            onDismissRequest = { viewModel.dismissPasswordMismatchDialog() },
+            onConfirm = { viewModel.dismissPasswordMismatchDialog() }
+        )
+    }
 
-        if (showIdDuplicateDialog) {
-            MediumDialog(
-                showDialog = showIdDuplicateDialog,
-                title = "아이디 중복",
-                content = "이미 사용중인 아이디입니다\n다른 아이디를 입력해주세요",
-                buttonContent = "확인",
-                onDismissRequest = { showIdDuplicateDialog = false },
-                onConfirm = { showIdDuplicateDialog = false }
-            )
-        }
+    if (state.isIdDuplicateDialogShown) {
+        MediumDialog(
+            showDialog = true,
+            title = stringResource(id = R.string.dialog_id_duplicate_title),
+            content = stringResource(id = R.string.dialog_id_duplicate_content),
+            buttonContent = stringResource(id = R.string.button_confirm),
+            onDismissRequest = { viewModel.dismissIdDuplicateDialog() },
+            onConfirm = { viewModel.dismissIdDuplicateDialog() }
+        )
     }
 }
-//@Preview(showBackground = true)
-//@Composable
-//fun MemberInfoScreenPreview() {
-//    TebahTheme {
-//        MemberInfoScreen()
-//    }
-//}
-
-
-

@@ -6,5 +6,5 @@ data class User(
     val name: String,
     val role: UserRole,
     val churchId: String,
-    val profile: UserProfile
+    val profile: UserProfile?
 )

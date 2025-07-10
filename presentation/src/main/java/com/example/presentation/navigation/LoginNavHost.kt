@@ -9,14 +9,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.presentation.login.AdminSignUpState
 import com.example.presentation.login.AdminSignUpViewModel
 import com.example.presentation.login.CompleteScreen
 import com.example.presentation.login.LoginScreen
 import com.example.presentation.login.MemberSignUpViewModel
 import com.example.presentation.login.RoleScreen
-import com.example.presentation.login.StartScreen
-import com.example.presentation.login.UserSignUpState
 import com.example.presentation.login.admin.AdminInfoScreen
 import com.example.presentation.login.admin.ChurchInfoScreen
 import com.example.presentation.login.member.ChurchSelectScreen
@@ -26,15 +23,7 @@ import com.example.presentation.login.member.MemberInfoScreen
 fun LoginNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
-    NavHost(navController = navController, startDestination = "start") {
-        composable("start") {
-            StartScreen(onNavigateToLogin = {
-                navController.navigate("login") {
-                    popUpTo("start") { inclusive = true }
-                    launchSingleTop = true
-                }
-            })
-        }
+    NavHost(navController = navController, startDestination = "login") {
         composable("login") {
             LoginScreen(
                 onNavigateToRole = {
@@ -109,11 +98,10 @@ fun LoginNavHost(
 
             viewModel?.let {
                 when (it) {
-                    is MemberSignUpViewModel -> CompleteScreen<UserSignUpState>(viewModel = it)
-                    is AdminSignUpViewModel -> CompleteScreen<AdminSignUpState>(viewModel = it)
+                    is MemberSignUpViewModel -> CompleteScreen(viewModel = it)
+                    is AdminSignUpViewModel -> CompleteScreen(viewModel = it)
                 }
             } ?: run {
-                // fallback UI
                 Text("화면 전환 오류: ViewModel을 찾을 수 없습니다.")
             }
         }

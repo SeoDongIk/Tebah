@@ -101,4 +101,6 @@ dependencies {
     // protobuf dependencies 추가
     implementation(libs.protobuf.java.lite)
     implementation(libs.protobuf.kotlin.lite)
+    implementation(libs.timber)
+
 }

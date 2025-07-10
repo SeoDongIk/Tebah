@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- SplashActivity -->
+    <string name="start_title">교회의 모든 소통</string>
+    <string name="start_subtitle">테바에서 시작해요!</string>
+    <string name="start_button">시작하기</string>
+    <string name="browse_service_button">서비스 둘러보기</string>
+
+    <!-- LoginActivity -->
+    <string name="admin_info_title_1">관리자 정보를</string>
+    <string name="admin_info_title_2">입력해주세요</string>
+    <string name="admin_info_section_title">관리자 정보</string>
+    <string name="admin_name_label">이름</string>
+    <string name="admin_id_label">아이디</string>
+    <string name="admin_password_label">비밀번호</string>
+    <string name="admin_password_confirm_label">비밀번호 확인</string>
+    <string name="admin_role_selection_title">직책 선택</string>
+    <string name="admin_custom_role_label">직접 입력</string>
+    <string name="next_button_text">다음</string>
+
+    <string name="church_info_title_1">교회 정보를</string>
+    <string name="church_info_title_2">입력해주세요</string>
+    <string name="church_name_label">교회 이름</string>
+    <string name="region_select_hint">지역 선택</string>
+    <string name="church_phone_label">교회 전화번호</string>
+    <string name="church_intro_label">교회 소개</string>
+
+    <string name="region_selector_title">지역 선택</string>
+    <string name="close_button_desc">닫기</string>
+    <string name="selected_text">선택됨</string>
+    <string name="confirm_button_text">확인</string>
+    <string name="church_select_title_1">교회를</string>
+    <string name="church_select_title_2">선택해주세요</string>
+    <string name="selected_church_region_default">지역 정보 없음</string>
+
+    <string name="member_info_title_line1">정보를</string>
+    <string name="member_info_title_line2">입력해주세요</string>
+    <string name="label_name">이름</string>
+    <string name="label_id">아이디</string>
+    <string name="label_password">비밀번호</string>
+    <string name="label_password_confirm">비밀번호 확인</string>
+    <string name="button_next">다음</string>
+    <string name="button_confirm">확인</string>
+    <string name="dialog_password_mismatch_title">비밀번호 일치 오류</string>
+    <string name="dialog_password_mismatch_content">비밀번호를 다시 확인해주세요</string>
+    <string name="dialog_id_duplicate_title">아이디 중복</string>
+    <string name="dialog_id_duplicate_content">이미 사용중인 아이디입니다\n다른 아이디를 입력해주세요</string>
+
+    <string name="role_title_line1">역할을</string>
+    <string name="role_title_line2">골라주세요</string>
+    <string name="role_button_church_channel">교회 채널 만들기</string>
+    <string name="role_button_personal_signup">개인 가입</string>
+
+    <string name="cd_logo">로고 이미지</string>
+    <string name="label_save_login">간편로그인 저장</string>
+    <string name="button_signup">회원가입 하기</string>
+    <string name="button_login">로그인</string>
+
+    <string name="complete_title_line1">테바 가입이</string>
+    <string name="complete_title_line2">완료되었어요</string>
+    <string name="button_go_to_main">메인으로 가기</string>
+
+    <!-- AdminMainActivity -->
+
+
+
+    <!-- MemberMainActivity -->
+
+</resources>

@@ -11,5 +11,6 @@ plugins {
     alias(libs.plugins.kotlin.parcelize) apply false
     id("com.google.gms.google-services") version "4.4.2" apply false
     alias(libs.plugins.protobuf) apply false
+    alias(libs.plugins.com.google.firebase.crashlytics) apply false
 }
 true // Needed to make the Suppress annotation work for

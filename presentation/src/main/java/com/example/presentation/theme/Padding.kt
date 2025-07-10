@@ -11,6 +11,10 @@ object Paddings {
     val xlarge = 16.dp
     val extra = 24.dp
     val xextra = 32.dp
-    val layout_horizontal = 24.dp
+    val layout_horizontal = extra
     val layout_vertical = 36.dp
+
+    //
+
+    val startImageSize = 200.dp
 }

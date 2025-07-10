@@ -1,9 +1,10 @@
 plugins {
+    alias(libs.plugins.com.google.firebase.crashlytics)
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
-    id("kotlin-kapt")
     alias(libs.plugins.hilt)
+    id("kotlin-kapt")
     id("com.google.gms.google-services")
 }
 
@@ -22,11 +23,16 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("Boolean", "IS_DEBUG", "true")
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            isShrinkResources = false
+//            firebaseCrashlytics {
+//                nativeSymbolUploadEnabled = true
+//            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -42,6 +48,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.10"
@@ -84,11 +91,11 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
-
-    // firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.storage.ktx)
     implementation(libs.firebase.analytics)
+    implementation(libs.timber)
+    implementation(libs.firebase.crashlytics.ktx)
 }

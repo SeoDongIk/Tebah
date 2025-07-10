@@ -32,11 +32,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.domain.model.Region
+import com.example.presentation.R
 import com.example.presentation.component.LargeButton
 import com.example.presentation.login.AdminSignUpViewModel
 import com.example.presentation.theme.Paddings
@@ -52,14 +55,8 @@ fun ChurchInfoScreen(
     onNavigateToAdminInfo: () -> Unit
 ) {
     val state by viewModel.container.stateFlow.collectAsState()
-
     var showBottomSheet by remember { mutableStateOf(false) }
-
-    val isNextEnabled = state.churchName.isNotBlank() &&
-            state.phoneNumber.isNotBlank() &&
-            state.churchIntro.isNotBlank() &&
-            state.region.isNotBlank()
-
+    val isNextEnabled = state.isChurchInfoValid
     val nextButtonColor = if (isNextEnabled) primary else Color.LightGray
 
     Column(
@@ -70,6 +67,7 @@ fun ChurchInfoScreen(
                 vertical = Paddings.layout_vertical
             )
     ) {
+        // 타이틀 영역
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -78,32 +76,31 @@ fun ChurchInfoScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "교회 정보를",
+                text = stringResource(id = R.string.church_info_title_1),
                 style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "입력해주세요",
+                text = stringResource(id = R.string.church_info_title_2),
                 style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
         }
 
+        // 입력폼 영역
         Column(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(Paddings.xlarge),
             horizontalAlignment = Alignment.Start
         ) {
             OutlinedTextField(
                 value = state.churchName,
                 onValueChange = viewModel::onChurchNameChange,
-                label = { Text("교회 이름") },
+                label = { Text(stringResource(id = R.string.church_name_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(color = Color.Black)
             )
 
-            // 지역 선택
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -112,15 +109,15 @@ fun ChurchInfoScreen(
                     .padding(Paddings.xlarge)
             ) {
                 Text(
-                    text = if (state.region.isNotBlank()) state.region else "지역 선택",
-                    color = if (state.region.isNotBlank()) Color.Black else Color.Gray
+                    text = state.region?.displayName ?: stringResource(id = R.string.region_select_hint),
+                    color = if (state.region != null) Color.Black else Color.Gray
                 )
             }
 
             OutlinedTextField(
                 value = state.phoneNumber,
                 onValueChange = viewModel::onPhoneNumberChange,
-                label = { Text("교회 전화번호") },
+                label = { Text(stringResource(id = R.string.church_phone_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(color = Color.Black)
             )
@@ -128,12 +125,13 @@ fun ChurchInfoScreen(
             OutlinedTextField(
                 value = state.churchIntro,
                 onValueChange = viewModel::onChurchIntroChange,
-                label = { Text("교회 소개") },
+                label = { Text(stringResource(id = R.string.church_intro_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(color = Color.Black)
             )
         }
 
+        // 다음 버튼 영역
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -142,12 +140,8 @@ fun ChurchInfoScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LargeButton(
-                onClick = {
-                    if (isNextEnabled) {
-                        onNavigateToAdminInfo()
-                    }
-                },
-                text = "다음",
+                onClick = { if (isNextEnabled) onNavigateToAdminInfo() },
+                text = stringResource(id = R.string.next_button_text),
                 backgroundColor = nextButtonColor
             )
         }
@@ -164,90 +158,82 @@ fun ChurchInfoScreen(
     )
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun ChurchInfoScreenPreview() {
-//    TebahTheme {
-//        ChurchInfoScreen()
-//    }
-//}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegionSelectorModal(
     show: Boolean,
     onDismissRequest: () -> Unit,
-    selectedRegion: String,
-    onRegionSelected: (String) -> Unit
+    selectedRegion: Region?,
+    onRegionSelected: (Region) -> Unit
 ) {
-    val regions = listOf("서울", "인천/경기", "대전/충남", "광주/전남", "대구/경북", "부산/경남")
-    if (show) {
-        ModalBottomSheet(
-            onDismissRequest = onDismissRequest,
-            sheetState = rememberModalBottomSheetState(
-                skipPartiallyExpanded = true
-            ),
-            containerColor = Color.White,
-            contentColor = Color.Black,
+    if (!show) return
+
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = Color.White,
+        contentColor = Color.Black,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    bottom = Paddings.layout_vertical,
+                    start = Paddings.layout_horizontal,
+                    end = Paddings.layout_horizontal
+                )
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        bottom = Paddings.layout_vertical,
-                        start = Paddings.layout_horizontal,
-                        end = Paddings.layout_horizontal
-                    )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // 헤더
+                Text(
+                    stringResource(id = R.string.region_selector_title),
+                    style = TebahTypography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+                IconButton(onClick = onDismissRequest) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.close_button_desc),
+                        tint = Color.Gray
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(Paddings.small))
+
+            Region.values().forEach { region ->
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = { onRegionSelected(region) }
+                        )
+                        .padding(vertical = Paddings.xlarge),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("지역 선택", style = TebahTypography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                    IconButton(onClick = onDismissRequest) {
-                        Icon(Icons.Default.Close, contentDescription = "닫기", tint = Color.Gray)
+                    Text(region.displayName, style = TebahTypography.titleMedium, color = Color.Black)
+                    Spacer(modifier = Modifier.weight(1f))
+                    if (region == selectedRegion) {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = stringResource(id = R.string.selected_text),
+                            tint = secondary
+                        )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(Paddings.small))
-
-                // 지역 선택 목록
-                regions.forEach { region ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable(
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() },
-                                onClick = { onRegionSelected(region) }
-                            )
-                            .padding(vertical = Paddings.xlarge),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(region,
-                            style = TebahTypography.titleMedium,
-                            color = Color.Black)
-                        Spacer(modifier = Modifier.weight(1f))
-                        if (region == selectedRegion) {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = "선택됨",
-                                tint = secondary
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(Paddings.xlarge))
-
-                LargeButton(
-                    onClick = onDismissRequest,
-                    text = "확인",
-                    backgroundColor = primary
-                )
             }
+
+            Spacer(modifier = Modifier.height(Paddings.xlarge))
+
+            LargeButton(
+                onClick = onDismissRequest,
+                text = stringResource(id = R.string.confirm_button_text),
+                backgroundColor = primary
+            )
         }
     }
 }

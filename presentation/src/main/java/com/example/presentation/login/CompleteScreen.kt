@@ -13,37 +13,34 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.presentation.R
 import com.example.presentation.component.LargeButton
 import com.example.presentation.main.admin.AdminMainActivity
 import com.example.presentation.main.member.MemberMainActivity
 import com.example.presentation.model.SignUpSideEffect
 import com.example.presentation.model.SignUpState
+import com.example.presentation.model.SignUpViewModel
 import com.example.presentation.theme.Paddings
-import com.example.presentation.theme.TebahTheme
 import com.example.presentation.theme.TebahTypography
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun <S : SignUpState> CompleteScreen(
     viewModel: SignUpViewModel<S>
 ) {
-    BackHandler(enabled = true) {
-        // 다이얼로그 띄워서 나가게 하던지 해야겠음.
-    }
-
     val context = LocalContext.current
 
+    // 뒤로가기 막기 (필요 시 다이얼로그로 변경 가능)
+    BackHandler(enabled = true) {}
+
+    // 사이드이펙트 처리
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is SignUpSideEffect.Toast -> {
@@ -51,19 +48,18 @@ fun <S : SignUpState> CompleteScreen(
             }
 
             is SignUpSideEffect.NavigateToMainActivity -> {
-                if (sideEffect.isAdmin) {
-                    context.startActivity(
-                        Intent(context, AdminMainActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                        }
-                    )
-                } else {
-                    context.startActivity(
-                        Intent(context, MemberMainActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                        }
-                    )
+                val intent = Intent(
+                    context,
+                    if (sideEffect.isAdmin) AdminMainActivity::class.java
+                    else MemberMainActivity::class.java
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 }
+                context.startActivity(intent)
+            }
+
+            else -> {
+                // 이 스크린에서는 무시되거나 예외처리 필요
             }
         }
     }
@@ -71,9 +67,9 @@ fun <S : SignUpState> CompleteScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = Paddings.layout_horizontal,
-                vertical = Paddings.layout_vertical)
+            .padding(horizontal = Paddings.layout_horizontal, vertical = Paddings.layout_vertical)
     ) {
+        // 상단 텍스트
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -82,28 +78,28 @@ fun <S : SignUpState> CompleteScreen(
             verticalArrangement = Arrangement.Bottom
         ) {
             Text(
-                text = "테바 가입이",
+                text = stringResource(R.string.complete_title_line1),
                 style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "완료되었어요",
+                text = stringResource(R.string.complete_title_line2),
                 style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
         }
 
+        // 이미지 or 공간 자리
         Box(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            Spacer(
-                modifier = Modifier.size(200.dp)
-            )
+            Spacer(modifier = Modifier.size(200.dp)) // 이미지 자리
         }
 
+        // 버튼
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -112,17 +108,9 @@ fun <S : SignUpState> CompleteScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LargeButton(
-                onClick = { viewModel.onSignUpClick() },
-                text = "메인으로 가기"
+                onClick = { viewModel.onSignInClick() },
+                text = stringResource(R.string.button_go_to_main)
             )
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun CompleteScreenPreview() {
-//    TebahTheme {
-//        CompleteScreen()
-//    }
-//}

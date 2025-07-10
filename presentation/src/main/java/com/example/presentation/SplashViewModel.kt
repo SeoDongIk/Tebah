@@ -1,6 +1,5 @@
 package com.example.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.UserRole
@@ -8,6 +7,7 @@ import com.example.domain.usecase.auth.GetAuthStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,18 +18,22 @@ class SplashViewModel @Inject constructor(
     val uiState = MutableStateFlow<SplashUiState>(SplashUiState.Loading)
 
     init {
+        Timber.tag("SplashViewModel").d("init - start loading auth status")
         viewModelScope.launch {
             runCatching {
+                Timber.tag("SplashViewModel").d("Calling getAuthStatusUseCase()")
                 getAuthStatusUseCase()
             }.onSuccess { status ->
-                Log.d("cursive", status.toString())
+                Timber.tag("SplashViewModel").d("Calling getAuthStatusUseCase()")
                 uiState.value = when {
-                    !status.isLoggedIn -> SplashUiState.GoToLogin
-                    status.role == UserRole.ADMIN -> SplashUiState.GoToAdmin
-                    status.role == UserRole.MEMBER -> SplashUiState.GoToMember
-                    else -> SplashUiState.GoToLogin // GUEST or unknown
+                    status.isLoggedIn && status.role == UserRole.ADMIN -> SplashUiState.GoToAdmin
+                    status.isLoggedIn && status.role == UserRole.MEMBER -> SplashUiState.GoToMember
+                    !status.isLoggedIn && (status.role == UserRole.ADMIN || status.role == UserRole.MEMBER) -> SplashUiState.GoToLogin
+                    else -> SplashUiState.GoToStart
                 }
-            }.onFailure {
+                Timber.tag("SplashViewModel").d("uiState updated: ${uiState.value}")
+            }.onFailure { error ->
+                Timber.tag("SplashViewModel").e(error, "getAuthStatusUseCase() failed")
                 uiState.value = SplashUiState.Error
             }
         }
@@ -41,5 +45,6 @@ sealed class SplashUiState {
     object GoToAdmin : SplashUiState()
     object GoToMember : SplashUiState()
     object GoToLogin : SplashUiState()
+    object GoToStart : SplashUiState()
     object Error : SplashUiState()
 }

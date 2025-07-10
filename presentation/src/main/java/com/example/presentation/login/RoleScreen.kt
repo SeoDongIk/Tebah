@@ -9,9 +9,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.presentation.R
 import com.example.presentation.component.LargeButton
 import com.example.presentation.theme.Paddings
 import com.example.presentation.theme.TebahTheme
@@ -25,8 +27,7 @@ fun RoleScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = Paddings.layout_horizontal,
-                vertical = Paddings.layout_vertical)
+            .padding(horizontal = Paddings.layout_horizontal, vertical = Paddings.layout_vertical)
     ) {
         Column(
             modifier = Modifier
@@ -37,12 +38,12 @@ fun RoleScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "역할을",
+                text = stringResource(R.string.role_title_line1),
                 style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "골라주세요",
+                text = stringResource(R.string.role_title_line2),
                 style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
@@ -52,19 +53,20 @@ fun RoleScreen(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Paddings.xlarge, Alignment.CenterVertically)
-            ) {
-
+            verticalArrangement = Arrangement.spacedBy(Paddings.xlarge, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             LargeButton(
-                text = "교회 채널 만들기",
+                text = stringResource(R.string.role_button_church_channel),
                 onClick = onNavigateToChurchInfo
             )
             LargeButton(
-                text = "개인 가입",
+                text = stringResource(R.string.role_button_personal_signup),
                 onClick = onNavigateToMemberInfo
             )
         }
 
+        // 빈 공간 (weight 1f) 필요하면 사용, 현재는 빈 Column 유지
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -72,15 +74,7 @@ fun RoleScreen(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
+            // 필요 시 추가 UI 넣기
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun RoleScreenPreview() {
-//    TebahTheme {
-//        RoleScreen()
-//    }
-//}

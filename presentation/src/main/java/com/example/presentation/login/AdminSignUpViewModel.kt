@@ -1,24 +1,32 @@
 package com.example.presentation.login
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
+import com.example.domain.model.AdminPosition
+import com.example.domain.model.AdminSignUpRequest
+import com.example.domain.model.Church
+import com.example.domain.model.ChurchInfo
+import com.example.domain.model.Region
+import com.example.domain.usecase.auth.SignInUseCase
+import com.example.domain.usecase.auth.SignUpAdminUseCase
 import com.example.presentation.model.SignUpSideEffect
 import com.example.presentation.model.SignUpState
+import com.example.presentation.model.SignUpViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class AdminSignUpViewModel @Inject constructor(
-//    private val adminSignUpUseCase: AdminSignUpUseCase
+    private val signInUseCase: SignInUseCase,
+    private val signUpAdminUseCase: SignUpAdminUseCase
 ) : ViewModel(), SignUpViewModel<AdminSignUpState> {
 
     override val container: Container<AdminSignUpState, SignUpSideEffect> = container(
@@ -30,11 +38,10 @@ class AdminSignUpViewModel @Inject constructor(
         }
     )
 
-    // 필드별 onChange 함수들
     fun onChurchNameChange(name: String) = blockingIntent {
         reduce { state.copy(churchName = name) }
     }
-    fun onRegionChange(region: String) = blockingIntent {
+    fun onRegionChange(region: Region) = blockingIntent {
         reduce { state.copy(region = region) }
     }
     fun onPhoneNumberChange(phone: String) = blockingIntent {
@@ -46,9 +53,6 @@ class AdminSignUpViewModel @Inject constructor(
     fun onAdminNameChange(name: String) = blockingIntent {
         reduce { state.copy(adminName = name) }
     }
-    fun onAdminRoleChange(role: String) = blockingIntent {
-        reduce { state.copy(adminRole = role) }
-    }
     fun onIdChange(id: String) = blockingIntent {
         reduce { state.copy(id = id) }
     }
@@ -58,18 +62,73 @@ class AdminSignUpViewModel @Inject constructor(
     fun onRepeatPasswordChange(password: String) = blockingIntent {
         reduce { state.copy(repeatPassword = password) }
     }
+    fun onAdminRoleChange(role: AdminPosition) = blockingIntent {
+        reduce {
+            if (role != AdminPosition.CUSTOM) {
+                state.copy(adminRole = role, customRole = "")
+            } else {
+                state.copy(adminRole = role)
+            }
+        }
+    }
+    fun onCustomRoleChange(customRole: String) = blockingIntent {
+        reduce { state.copy(customRole = customRole) }
+    }
+
+    override fun onSignInClick() {
+        intent {
+            try {
+                val result = signInUseCase(state.id, state.password)
+                result.onSuccess {
+                    postSideEffect(SignUpSideEffect.NavigateToMainActivity(true)) // 관리자니까 true
+                    postSideEffect(SignUpSideEffect.Toast("로그인 성공"))
+                }.onFailure { e ->
+                    postSideEffect(SignUpSideEffect.Toast(e.message ?: "로그인 실패"))
+                }
+            } catch (e: Exception) {
+                postSideEffect(SignUpSideEffect.Toast(e.message ?: "로그인 실패"))
+            }
+        }
+    }
 
     override fun onSignUpClick() {
         intent {
-            if(state.password != state.repeatPassword){
-                postSideEffect(SignUpSideEffect.Toast("비밀번호가 일치하지 않습니다."))
+            if (!state.isUserInfoValid) {
+                postSideEffect(SignUpSideEffect.Toast("입력 정보를 확인해주세요."))
                 return@intent
             }
-            val isSuccessful = true
 
-            if(isSuccessful){
-                postSideEffect(SignUpSideEffect.NavigateToMainActivity(true))
-                postSideEffect(SignUpSideEffect.Toast("관리자 회원가입 성공"))
+            val adminPosition = state.adminRole
+            val customPosition = if (adminPosition == AdminPosition.CUSTOM) state.customRole else null
+
+            val request = AdminSignUpRequest(
+                church = ChurchInfo(
+                    name = state.churchName,
+                    region = state.region ?: Region.SEOUL,
+                    phone = state.phoneNumber,
+                    description = state.churchIntro
+                ),
+                adminName = state.adminName,
+                adminEmail = state.id,
+                adminPassword = state.password,
+                adminPosition = adminPosition,
+                customPosition = customPosition
+            )
+
+            try {
+                Timber.d("🚀 [AdminSignUp] 회원가입 요청 시작: $request")
+                val result = signUpAdminUseCase(request)
+                result.onSuccess {
+                    Timber.i("✅ [AdminSignUp] 회원가입 성공: $it")
+                    postSideEffect(SignUpSideEffect.Toast("관리자 회원가입 성공"))
+                    postSideEffect(SignUpSideEffect.NavigateToCompleteScreen)  // 네비게이션 이벤트로 변경
+                }.onFailure { e ->
+                    Timber.e(e, "❌ [AdminSignUp] 회원가입 실패: ${e.message}")
+                    postSideEffect(SignUpSideEffect.Toast(e.message ?: "회원가입 실패"))
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "🔥 [AdminSignUp] 예외 발생: ${e.message}")
+                postSideEffect(SignUpSideEffect.Toast(e.message ?: "회원가입 실패"))
             }
         }
     }
@@ -80,10 +139,31 @@ data class AdminSignUpState(
     override val id: String = "",
     override val password: String = "",
     override val repeatPassword: String = "",
-    val churchName: String = "",
-    val region: String = "",
-    val phoneNumber: String = "",
-    val churchIntro: String = "",
     val adminName: String = "",
-    val adminRole: String = "목사"
-) : SignUpState
+    val adminRole: AdminPosition = AdminPosition.PASTOR,
+    val customRole: String = "",
+    val churchName: String = "",
+    val region: Region? = null,
+    val phoneNumber: String = "",
+    val churchIntro: String = ""
+) : SignUpState {
+
+    val isCustomInput: Boolean
+        get() = adminRole == AdminPosition.CUSTOM
+
+    // 회원 정보 관련 유효성 체크 (ID, PW, 이름, 커스텀 역할)
+    val isUserInfoValid: Boolean
+        get() = adminName.isNotBlank()
+                && id.isNotBlank()
+                && password.isNotBlank()
+                && repeatPassword.isNotBlank()
+                && password == repeatPassword
+                && (if (isCustomInput) customRole.isNotBlank() else true)
+
+    // 교회 정보 관련 유효성 체크 (이 화면에서만 사용)
+    val isChurchInfoValid: Boolean
+        get() = churchName.isNotBlank()
+                && phoneNumber.isNotBlank()
+                && churchIntro.isNotBlank()
+                && region != null
+}

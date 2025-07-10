@@ -3,10 +3,8 @@ package com.example.presentation.login.member
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -34,33 +32,26 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.presentation.R
 import com.example.presentation.component.LargeButton
 import com.example.presentation.login.MemberSignUpViewModel
+import com.example.presentation.model.SignUpSideEffect
 import com.example.presentation.theme.Paddings
-import com.example.presentation.theme.TebahTheme
-import com.example.presentation.theme.TebahTypography
 import com.example.presentation.theme.primary
-import com.example.presentation.theme.secondary
 import com.example.presentation.theme.third_01
-import com.example.presentation.theme.third_03
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
@@ -68,63 +59,79 @@ fun ChurchSelectScreen(
     viewModel: MemberSignUpViewModel,
     onNavigateToComplete: () -> Unit
 ) {
-    var selectedRegion by remember { mutableStateOf("전체") }
-    val churchesByRegion = mapOf(
-        "전체" to listOf("은혜교회", "사랑교회", "하나교회", "기쁨교회","은혜교회2", "사랑교회2", "하나교회2", "기쁨교회2"),
-        "서울" to listOf("서울제일교회", "강남은혜교회"),
-        "인천/경기" to listOf("수원교회", "인천믿음교회"),
-        "대전/충남" to listOf("대전중앙교회"),
-        "광주/전남" to listOf("광주은혜교회"),
-        "대구/경북" to listOf("대구제일교회"),
-        "부산/경남" to listOf("부산영광교회")
-    )
-
-    // ViewModel에서 상태 관찰
     val state by viewModel.container.stateFlow.collectAsState()
-    val selectedChurch = state.selectedChurchId
+    val sideEffectFlow = viewModel.container.sideEffectFlow
 
+    val churchesByRegion = state.churchesByRegion
+    val selectedRegion = state.selectedRegion
+    val selectedChurch = state.selectedChurchId
     val nextButtonColor = if (selectedChurch != null) primary else Color.LightGray
+
+    LaunchedEffect(Unit) {
+        sideEffectFlow.collect { sideEffect ->
+            when (sideEffect) {
+                is SignUpSideEffect.Toast -> {
+                    // Toast 처리 (예: Android Toast or Compose Snackbar)
+                }
+                SignUpSideEffect.NavigateToCompleteScreen -> {
+                    onNavigateToComplete()
+                }
+                else -> { /* 다른 이벤트 처리 */ }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+        // 타이틀 영역
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(top = Paddings.layout_vertical, start = Paddings.layout_horizontal, end = Paddings.layout_horizontal)
+                .padding(
+                    top = Paddings.layout_vertical,
+                    start = Paddings.layout_horizontal,
+                    end = Paddings.layout_horizontal
+                )
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "교회를",
-                style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Center
+                text = stringResource(id = R.string.church_select_title_1),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
             )
             Text(
-                text = "선택해주세요",
-                style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Center
+                text = stringResource(id = R.string.church_select_title_2),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
             )
         }
 
+        // 선택된 교회 배너 표시
         selectedChurch?.let {
             Spacer(modifier = Modifier.height(Paddings.medium))
             SelectedChurchBanner(
                 churchName = it,
-                churchRegion = "서울 강남구" // 고정된 값이지만 추후 동적으로 바꿔도 됩니다.
+                churchRegion = stringResource(id = R.string.selected_church_region_default) // 기본값
             )
             Spacer(modifier = Modifier.height(Paddings.large))
         }
 
-        Spacer(modifier = Modifier.height(Paddings.medium)
-            .fillMaxWidth()
-            .background(Color(0xFFF5F5F5)))
+        Spacer(
+            modifier = Modifier
+                .height(Paddings.medium)
+                .fillMaxWidth()
+                .background(Color(0xFFF5F5F5))
+        )
 
+        // 지역 선택 버튼 및 교회 리스트
         Column(
             modifier = Modifier
-                .padding(top = Paddings.layout_vertical, start = Paddings.layout_horizontal,
-                    end = Paddings.layout_horizontal)
+                .padding(
+                    top = Paddings.layout_vertical,
+                    start = Paddings.layout_horizontal,
+                    end = Paddings.layout_horizontal
+                )
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(Paddings.xlarge),
             horizontalAlignment = Alignment.Start
@@ -133,16 +140,18 @@ fun ChurchSelectScreen(
                 mainAxisSpacing = Paddings.medium,
                 crossAxisSpacing = Paddings.medium
             ) {
-                val regions = churchesByRegion.keys.toList()
-                regions.forEach { region ->
+                churchesByRegion.keys.forEach { region ->
                     val isSelected = region == selectedRegion
                     Button(
-                        onClick = { selectedRegion = region },
+                        onClick = { viewModel.onRegionSelected(region) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (isSelected) primary else Color.LightGray
                         ),
                         shape = RoundedCornerShape(Paddings.xlarge),
-                        contentPadding = PaddingValues(horizontal = Paddings.xlarge, vertical = Paddings.medium)
+                        contentPadding = PaddingValues(
+                            horizontal = Paddings.xlarge,
+                            vertical = Paddings.medium
+                        )
                     ) {
                         Text(
                             text = region,
@@ -164,11 +173,9 @@ fun ChurchSelectScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = Paddings.small)
-                            .clickable {
-                                viewModel.onChurchSelect(church) // ViewModel에 선택된 교회 전달
-                            },
+                            .clickable { viewModel.onChurchSelected(church) },
                         colors = CardDefaults.cardColors(
-                            containerColor = if (selectedChurch == church) third_01.copy(0.4f) else Color.White
+                            containerColor = if (selectedChurch == church) third_01.copy(alpha = 0.4f) else Color.White
                         )
                     ) {
                         Text(
@@ -178,50 +185,47 @@ fun ChurchSelectScreen(
                             color = if (selectedChurch == church) Color.White else Color.Black
                         )
                     }
-                    Spacer(modifier = Modifier.height(Paddings.xsmall)
-                        .fillMaxWidth()
-                        .background(Color(0xFFF5F5F5)))
+                    Spacer(
+                        modifier = Modifier
+                            .height(Paddings.xsmall)
+                            .fillMaxWidth()
+                            .background(Color(0xFFF5F5F5))
+                    )
                 }
             }
         }
 
+        // 다음 버튼 영역
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(bottom = Paddings.layout_vertical, start = Paddings.layout_horizontal,
-                    end = Paddings.layout_horizontal)
+                .padding(
+                    bottom = Paddings.layout_vertical,
+                    start = Paddings.layout_horizontal,
+                    end = Paddings.layout_horizontal
+                )
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LargeButton(
                 onClick = {
-                    if (selectedChurch != null) {
-                        onNavigateToComplete()
-                    }
+                    if (selectedChurch != null) { viewModel.onSignUpClick() }
                 },
-                text = "다음",
+                text = stringResource(id = R.string.next_button_text),
                 backgroundColor = nextButtonColor
             )
         }
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun ChurchSelectScreenPreview() {
-//    TebahTheme {
-//        ChurchSelectScreen()
-//    }
-//}
-
 @Composable
 fun SelectedChurchBanner(
     churchName: String,
-    churchRegion: String = "지역 정보 없음"
+    churchRegion: String = stringResource(id = R.string.selected_church_region_default)
 ) {
     AnimatedVisibility(
-        visible = true,
+        visible = churchName.isNotBlank(),
         enter = fadeIn(animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)) +
                 slideInVertically(
                     initialOffsetY = { fullHeight -> -fullHeight / 2 },
@@ -232,7 +236,6 @@ fun SelectedChurchBanner(
                     targetOffsetY = { fullHeight -> -fullHeight / 2 },
                     animationSpec = tween(300)
                 )
-
     ) {
         Row(
             modifier = Modifier
@@ -247,25 +250,23 @@ fun SelectedChurchBanner(
                 .padding(Paddings.large),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 왼쪽 원형 이미지 영역
             Box(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFF5F5F5)) // 회색
+                    .background(Color(0xFFF5F5F5))
             )
 
             Spacer(modifier = Modifier.width(Paddings.xlarge))
 
-            // 오른쪽 텍스트 2줄
             Column {
                 Text(
                     text = churchName,
-                    style = TebahTypography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
                     text = churchRegion,
-                    style = TebahTypography.bodyMedium.copy(color = Color.Gray)
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray)
                 )
             }
         }

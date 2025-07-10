@@ -90,4 +90,6 @@ dependencies {
     // 미정
     implementation("com.airbnb.android:lottie-compose:6.3.0")
     implementation("com.google.accompanist:accompanist-flowlayout:0.34.0") // 최신 버전 확인 필요
+
+    implementation(libs.timber)
 }
