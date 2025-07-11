@@ -15,7 +15,7 @@ interface AuthRepository {
     suspend fun checkEmailExists(email: String): Boolean
     suspend fun signUpMember(request: MemberSignUpRequest): Result<User>
     suspend fun signUpAdmin(request: AdminSignUpRequest): Result<User>
-    suspend fun signIn(email: String, password: String): Result<SignInResult>
+    suspend fun signIn(email: String, password: String, autoLogin: Boolean): Result<SignInResult>
 
     suspend fun getRootChannelSignUpStatus(userId: String): Result<SignUpStatus>
     suspend fun isSignedIn(): Boolean

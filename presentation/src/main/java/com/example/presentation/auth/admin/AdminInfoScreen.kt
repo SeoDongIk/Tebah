@@ -1,4 +1,4 @@
-package com.example.presentation.login.admin
+package com.example.presentation.auth.admin
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,9 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -34,15 +32,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.domain.model.AdminPosition
 import com.example.presentation.R
 import com.example.presentation.component.LargeButton
-import com.example.presentation.login.AdminSignUpViewModel
+import com.example.presentation.auth.AdminSignUpViewModel
 import com.example.presentation.model.SignUpSideEffect
 import com.example.presentation.theme.Paddings
-import com.example.presentation.theme.TebahTheme
 import com.example.presentation.theme.TebahTypography
 import com.example.presentation.theme.primary
 

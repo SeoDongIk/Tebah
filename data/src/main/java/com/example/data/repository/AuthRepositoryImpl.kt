@@ -2,6 +2,7 @@ package com.example.data.repository
 
 import com.example.data.UserRoleProto
 import com.example.data.mapper.toDomain
+import com.example.data.mapper.toProto
 import com.example.data.source.preference.UserPreferencesDataStore
 import com.example.domain.model.AdminSignUpRequest
 import com.example.domain.model.Church
@@ -21,6 +22,7 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
+    private val firestore: FirebaseFirestore,
     private val userDataSource: UserPreferencesDataStore
 ) :AuthRepository {
     override suspend fun isLoggedIn(): Boolean {
@@ -56,18 +58,14 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signUpAdmin(request: AdminSignUpRequest): Result<User> {
         return try {
-            // 1. Firebase Auth 이메일/비밀번호 회원가입
             val result = firebaseAuth.createUserWithEmailAndPassword(request.adminEmail, request.adminPassword).await()
             val firebaseUser = result.user ?: return Result.failure(Exception("Admin user creation failed"))
 
-            // 2. Firestore 인스턴스 및 문서 참조 생성
-            val firestore = FirebaseFirestore.getInstance()
-            val churchRef = firestore.collection("churches").document()  // 새 문서 (자동 ID)
+            val churchRef = firestore.collection("churches").document()
             val userRef = firestore.collection("users").document(firebaseUser.uid)
 
             val churchId = churchRef.id
 
-            // 3. 데이터 모델 생성
             val church = Church(
                 id = churchId,
                 name = request.church.name,
@@ -84,7 +82,6 @@ class AuthRepositoryImpl @Inject constructor(
                 profile = null
             )
 
-            // 4. Firestore WriteBatch로 원자적 저장
             val batch = firestore.batch()
             batch.set(churchRef, church)
             batch.set(userRef, user)
@@ -102,15 +99,11 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signUpMember(request: MemberSignUpRequest): Result<User> {
         return try {
-            // 1. Firebase Auth 회원가입
             val result = firebaseAuth.createUserWithEmailAndPassword(request.email, request.password).await()
             val firebaseUser = result.user ?: return Result.failure(Exception("Member user creation failed"))
 
-            // 2. Firestore 인스턴스 및 유저 문서 참조
-            val firestore = FirebaseFirestore.getInstance()
             val userRef = firestore.collection("users").document(firebaseUser.uid)
 
-            // 3. User 데이터 모델 생성 (role은 MEMBER, churchId는 회원가입 시 주어진 값 혹은 null)
             val user = User(
                 id = firebaseUser.uid,
                 email = request.email,
@@ -120,7 +113,6 @@ class AuthRepositoryImpl @Inject constructor(
                 profile = null
             )
 
-            // 4. Firestore에 저장
             userRef.set(user).await()
 
             // TODO: 룸에 캐싱해두기
@@ -133,18 +125,20 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun signIn(email: String, password: String): Result<SignInResult> {
+    override suspend fun signIn(email: String, password: String, autoLogin: Boolean): Result<SignInResult> {
         return try {
             val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             val firebaseUser = authResult.user ?: return Result.failure(Exception("로그인 실패"))
 
-            // Firestore에서 역할 읽기
-            val firestore = FirebaseFirestore.getInstance()
             val userDoc = firestore.collection("users").document(firebaseUser.uid).get().await()
             val roleString = userDoc.getString("role")
             val role = UserRole.fromString(roleString)
 
-            // TODO: 룸에 캐싱해두기
+            userDataSource.updateUserInfo(
+                id = firebaseUser.uid,
+                isAutoLogin = autoLogin,
+                role = role.toProto()
+            )
 
             Result.success(SignInResult(role))
         } catch (e: Exception) {

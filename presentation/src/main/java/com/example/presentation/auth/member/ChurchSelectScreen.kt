@@ -1,4 +1,4 @@
-package com.example.presentation.login.member
+package com.example.presentation.auth.member
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.presentation.R
 import com.example.presentation.component.LargeButton
-import com.example.presentation.login.MemberSignUpViewModel
+import com.example.presentation.auth.MemberSignUpViewModel
 import com.example.presentation.model.SignUpSideEffect
 import com.example.presentation.theme.Paddings
 import com.example.presentation.theme.primary

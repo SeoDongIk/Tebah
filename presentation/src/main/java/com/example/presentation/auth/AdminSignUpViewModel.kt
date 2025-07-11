@@ -1,10 +1,9 @@
-package com.example.presentation.login
+package com.example.presentation.auth
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import com.example.domain.model.AdminPosition
 import com.example.domain.model.AdminSignUpRequest
-import com.example.domain.model.Church
 import com.example.domain.model.ChurchInfo
 import com.example.domain.model.Region
 import com.example.domain.usecase.auth.SignInUseCase
@@ -78,7 +77,7 @@ class AdminSignUpViewModel @Inject constructor(
     override fun onSignInClick() {
         intent {
             try {
-                val result = signInUseCase(state.id, state.password)
+                val result = signInUseCase(state.id, state.password, true)
                 result.onSuccess {
                     postSideEffect(SignUpSideEffect.NavigateToMainActivity(true)) // 관리자니까 true
                     postSideEffect(SignUpSideEffect.Toast("로그인 성공"))

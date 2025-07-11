@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
-        <activity android:name=".login.LoginActivity" />
+        <activity android:name=".auth.AuthActivity" />
         <activity android:name=".main.admin.AdminMainActivity" />
         <activity android:name=".main.member.MemberMainActivity" />
         <activity android:name=".SplashActivity"

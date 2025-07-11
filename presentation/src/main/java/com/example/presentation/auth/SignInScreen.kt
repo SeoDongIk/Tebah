@@ -1,4 +1,4 @@
-package com.example.presentation.login
+package com.example.presentation.auth
 
 import android.content.Intent
 import android.widget.Toast
@@ -21,9 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,44 +37,41 @@ import com.example.presentation.component.LargeButton
 import com.example.presentation.component.MediumButton
 import com.example.presentation.main.admin.AdminMainActivity
 import com.example.presentation.main.member.MemberMainActivity
-import com.example.presentation.model.LoginSideEffect
+import com.example.presentation.model.SignInSideEffect
 import com.example.presentation.theme.Paddings
 import com.example.presentation.theme.TebahTypography
-import com.example.presentation.theme.primary
 
 @Composable
-fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
+fun SignInScreen(
+    viewModel: SignInViewModel = hiltViewModel(),
     onNavigateToRole: () -> Unit,
 ) {
-    val state by viewModel.container.stateFlow.collectAsState()
-
     val context = LocalContext.current
+    val state by viewModel.container.stateFlow.collectAsState()
+    val sideEffect by viewModel.container.sideEffectFlow.collectAsState(initial = null)
+    val isLoginEnabled = state.isLoginEnabled
+    val loginButtonColor = state.loginButtonColor
 
-    // sideEffect 구독
-    val sideEffect = viewModel.container.sideEffectFlow.collectAsState(initial = null).value
     LaunchedEffect(sideEffect) {
-        when (val effect = sideEffect) {
-            is LoginSideEffect.Toast -> {
-                Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-            }
-            is LoginSideEffect.NavigateToMainActivity -> {
-                val intent = if (effect.role == UserRole.ADMIN) {
-                    Intent(context, AdminMainActivity::class.java)
-                } else {
-                    Intent(context, MemberMainActivity::class.java)
+        sideEffect?.let { effect ->
+            when (effect) {
+                is SignInSideEffect.Toast -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                context.startActivity(intent)
+                is SignInSideEffect.NavigateToMainActivity -> {
+                    val targetActivity = if (effect.role == UserRole.ADMIN) {
+                        AdminMainActivity::class.java
+                    } else {
+                        MemberMainActivity::class.java
+                    }
+                    val intent = Intent(context, targetActivity).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    context.startActivity(intent)
+                }
             }
-            else -> {}
         }
     }
-
-    var saveLogin by remember { mutableStateOf(false) }
-
-    val isLoginEnabled = state.id.isNotBlank() && state.password.isNotBlank()
-    val loginButtonColor = if (isLoginEnabled) primary else Color.LightGray
 
     Column(
         modifier = Modifier
@@ -109,6 +103,7 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(color = Color.Black)
             )
+
             OutlinedTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChange,
@@ -126,8 +121,8 @@ fun LoginScreen(
                     .wrapContentWidth(Alignment.Start)
             ) {
                 Checkbox(
-                    checked = saveLogin,
-                    onCheckedChange = { saveLogin = it },
+                    checked = state.autoLogin,
+                    onCheckedChange = viewModel::onAutoLoginChange,
                     modifier = Modifier.size(Paddings.extra)
                 )
                 Spacer(modifier = Modifier.width(Paddings.medium))
@@ -154,8 +149,9 @@ fun LoginScreen(
         ) {
             LargeButton(
                 text = stringResource(R.string.button_login),
-                onClick = { viewModel.onLoginClick() },
-                backgroundColor = loginButtonColor
+                onClick = { viewModel.onSignInClick() },
+                backgroundColor = loginButtonColor,
+                enabled = isLoginEnabled
             )
         }
     }

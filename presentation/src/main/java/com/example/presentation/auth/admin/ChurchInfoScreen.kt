@@ -1,4 +1,4 @@
-package com.example.presentation.login.admin
+package com.example.presentation.auth.admin
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,18 +36,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.Region
 import com.example.presentation.R
 import com.example.presentation.component.LargeButton
-import com.example.presentation.login.AdminSignUpViewModel
+import com.example.presentation.auth.AdminSignUpViewModel
 import com.example.presentation.theme.Paddings
-import com.example.presentation.theme.TebahTheme
 import com.example.presentation.theme.TebahTypography
 import com.example.presentation.theme.primary
 import com.example.presentation.theme.secondary
-import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun ChurchInfoScreen(

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.UserRole
 import com.example.domain.usecase.auth.GetAuthStatusUseCase
+import com.example.presentation.model.SplashUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -38,13 +39,4 @@ class SplashViewModel @Inject constructor(
             }
         }
     }
-}
-
-sealed class SplashUiState {
-    object Loading : SplashUiState()
-    object GoToAdmin : SplashUiState()
-    object GoToMember : SplashUiState()
-    object GoToLogin : SplashUiState()
-    object GoToStart : SplashUiState()
-    object Error : SplashUiState()
 }

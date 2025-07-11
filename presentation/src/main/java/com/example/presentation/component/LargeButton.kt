@@ -32,7 +32,9 @@ fun LargeButton(
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
-            contentColor = contentColor
+            contentColor = contentColor,
+            disabledContainerColor = backgroundColor,
+            disabledContentColor = contentColor
         )
     ) {
         Text(text, style = TebahTypography.titleMedium.copy(fontWeight = FontWeight.Bold))

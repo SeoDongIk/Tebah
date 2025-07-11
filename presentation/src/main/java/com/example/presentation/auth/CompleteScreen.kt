@@ -1,4 +1,4 @@
-package com.example.presentation.login
+package com.example.presentation.auth
 
 import android.content.Intent
 import android.widget.Toast

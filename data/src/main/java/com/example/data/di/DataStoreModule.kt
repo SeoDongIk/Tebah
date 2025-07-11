@@ -7,6 +7,8 @@ import androidx.datastore.dataStoreFile
 import com.example.data.UserPreferences
 import com.example.data.source.preference.UserPreferencesDataStore
 import com.example.data.source.preference.UserPreferencesSerializer
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

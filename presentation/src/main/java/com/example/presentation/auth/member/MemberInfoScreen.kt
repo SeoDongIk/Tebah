@@ -1,4 +1,4 @@
-package com.example.presentation.login.member
+package com.example.presentation.auth.member
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,9 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,19 +19,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.presentation.R
 import com.example.presentation.component.LargeButton
-import com.example.presentation.component.LargeDialog
-import com.example.presentation.component.MediumButton
 import com.example.presentation.component.MediumDialog
-import com.example.presentation.login.MemberSignUpViewModel
+import com.example.presentation.auth.MemberSignUpViewModel
 import com.example.presentation.model.SignUpSideEffect
 import com.example.presentation.theme.Paddings
-import com.example.presentation.theme.TebahTheme
 import com.example.presentation.theme.TebahTypography
 import com.example.presentation.theme.primary
-import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun MemberInfoScreen(

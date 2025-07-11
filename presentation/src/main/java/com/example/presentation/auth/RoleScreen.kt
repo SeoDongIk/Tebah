@@ -1,4 +1,4 @@
-package com.example.presentation.login
+package com.example.presentation.auth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,11 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.presentation.R
 import com.example.presentation.component.LargeButton
 import com.example.presentation.theme.Paddings
-import com.example.presentation.theme.TebahTheme
 import com.example.presentation.theme.TebahTypography
 
 @Composable
