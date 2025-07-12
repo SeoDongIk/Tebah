@@ -1,18 +1,14 @@
 package com.example.data.di
 
 import com.example.data.repository.AuthRepositoryImpl
-import com.example.data.repository.BannerRepositoryImpl
 import com.example.data.repository.ChannelRepositoryImpl
 import com.example.data.repository.CommentRepositoryImpl
-import com.example.data.repository.NoticeRepositoryImpl
 import com.example.data.repository.NotificationRepositoryImpl
 import com.example.data.repository.PostRepositoryImpl
 import com.example.data.repository.UserRepositoryImpl
 import com.example.domain.repository.AuthRepository
-import com.example.domain.repository.BannerRepository
 import com.example.domain.repository.ChannelRepository
 import com.example.domain.repository.CommentRepository
-import com.example.domain.repository.NoticeRepository
 import com.example.domain.repository.NotificationRepository
 import com.example.domain.repository.PostRepository
 import com.example.domain.repository.UserRepository
@@ -34,12 +30,6 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindBannerRepository(
-        impl: BannerRepositoryImpl
-    ): BannerRepository
-
-    @Binds
-    @Singleton
     abstract fun bindChannelRepository(
         impl: ChannelRepositoryImpl
     ): ChannelRepository
@@ -49,12 +39,6 @@ abstract class RepositoryModule {
     abstract fun bindCommentRepository(
         impl: CommentRepositoryImpl
     ): CommentRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindNoticeRepository(
-        impl: NoticeRepositoryImpl
-    ): NoticeRepository
 
     @Binds
     @Singleton

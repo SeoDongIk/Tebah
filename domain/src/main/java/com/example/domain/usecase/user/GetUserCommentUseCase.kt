@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetUserCommentUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(): Result<List<Comment>> {
-        return userRepository.getUserComments()
-    }
+//    suspend operator fun invoke(): Result<List<Comment>> {
+//        return userRepository.getUserComments()
+//    }
 }

@@ -1,16 +1,11 @@
 package com.example.data.model.dto
 
-//data class CommentDto(
-//    val id: String = "",
-//    val postId: String = "",
-//    val parentCommentId: String? = null,
-//    val content: String = "",
-//    val createdAt: Long = System.currentTimeMillis(),
-//    val userId: String = ""
-//) {
-//    companion object {
-//        fun generate(postId: String, content: String): Any {
-//
-//        }
-//    }
-//}
+data class CommentDto(
+    val id: String = "",
+    val postId: String = "",
+    val userId: String = "",
+    val userName: String = "",
+    val userProfileImageUrl: String? = null,
+    val content: String = "",
+    val createdAt: Long = 0L
+)

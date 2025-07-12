@@ -5,10 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.example.data.UserPreferences
-import com.example.data.source.preference.UserPreferencesDataStore
-import com.example.data.source.preference.UserPreferencesSerializer
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.data.source.local.datastore.DefaultAppPreferencesDataStore
+import com.example.data.source.local.datastore.AppPreferencesSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,13 +24,9 @@ object DataStoreModule {
         @ApplicationContext context: Context
     ): DataStore<UserPreferences> {
         return DataStoreFactory.create(
-            serializer = UserPreferencesSerializer,
+            serializer = AppPreferencesSerializer,
             produceFile = { context.dataStoreFile("user_prefs.pb") }
         )
     }
 
-    @Provides
-    @Singleton
-    fun provideUserPreferencesDataStore(dataStore: DataStore<UserPreferences>): UserPreferencesDataStore =
-        UserPreferencesDataStore(dataStore)
 }

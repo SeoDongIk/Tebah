@@ -2,8 +2,7 @@ package com.example.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.data.dao.PostDao
-import com.example.data.source.local.AppDatabase
+import com.example.data.source.local.database.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +22,4 @@ object DatabaseModule {
             "app_database"
         ).build()
 
-    @Provides
-    fun providePostDao(database: AppDatabase): PostDao =
-        database.postDao()
 }

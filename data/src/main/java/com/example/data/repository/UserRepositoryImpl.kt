@@ -1,41 +1,36 @@
 package com.example.data.repository
 
-import com.example.domain.model.Channel
-import com.example.domain.model.Comment
-import com.example.domain.model.Post
-import com.example.domain.model.UserProfile
-import com.example.domain.model.UserProfileUpdateRequest
+import com.example.data.mapper.toDomain
+import com.example.data.source.local.UserLocalDataSource
+import com.example.data.source.remote.UserRemoteDataSource
+import com.example.domain.model.User
 import com.example.domain.repository.UserRepository
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
+    private val local: UserLocalDataSource,
+    private val remote: UserRemoteDataSource
+): UserRepository {
 
-) :UserRepository{
-    override suspend fun getLikedPosts(): Result<List<Post>> {
-        TODO("Not yet implemented")
+    override suspend fun getUserById(userId: String): Result<User> {
+        val entity = local.getUserById(userId)
+        return entity?.let { Result.success(it.toDomain()) }
+            ?: remote.getUserById(userId).map { it.toDomain() }
     }
 
-    override suspend fun getMyPosts(): Result<List<Post>> {
-        TODO("Not yet implemented")
+    override suspend fun getUsersByChurch(churchId: String): Result<List<User>> {
+        return remote.getUsersByChurch(churchId).map { list -> list.map { it.toDomain() } }
     }
 
-    override suspend fun getUserComments(): Result<List<Comment>> {
-        TODO("Not yet implemented")
+    override suspend fun followUser(fromUserId: String, toUserId: String): Result<Unit> {
+        return remote.followUser(fromUserId, toUserId)
     }
 
-    override suspend fun getUserCreatedChannels(): Result<List<Channel>> {
-        TODO("Not yet implemented")
+    override suspend fun getFollowees(userId: String): Result<List<User>> {
+        return remote.getFollowees(userId).map { list -> list.map { it.toDomain() } }
     }
 
-    override suspend fun getUserProfile(): Result<UserProfile> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getUserSubscribedChannels(): Result<List<Channel>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun updateUserProfile(profile: UserProfileUpdateRequest): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun getFollowers(userId: String): Result<List<User>> {
+        return remote.getFollowers(userId).map { list -> list.map { it.toDomain() } }
     }
 }

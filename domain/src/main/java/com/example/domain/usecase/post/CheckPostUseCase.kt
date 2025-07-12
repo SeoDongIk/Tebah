@@ -8,7 +8,7 @@ import javax.inject.Inject
 class CheckPostUseCase @Inject constructor(
     private val postRepository: PostRepository
 ) {
-    suspend operator fun invoke(postId: String): Result<Unit> {
-        return postRepository.checkPost(postId)
-    }
+//    suspend operator fun invoke(postId: String): Result<Unit> {
+//        return postRepository.checkPost(postId)
+//    }
 }

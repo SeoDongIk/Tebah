@@ -1,9 +1,0 @@
-package com.example.domain.model
-
-data class Church(
-    val id: String,
-    val name: String,
-    val region: Region,
-    val phone: String,
-    val description: String
-)

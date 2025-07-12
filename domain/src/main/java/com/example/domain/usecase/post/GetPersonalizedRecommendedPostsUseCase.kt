@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetPersonalizedRecommendedPostsUseCase @Inject constructor(
     private val postRepository: PostRepository
 ) {
-    suspend operator fun invoke(userId: String): Result<List<Post>> {
-        return postRepository.getPersonalizedRecommendedPosts(userId)
-    }
+//    suspend operator fun invoke(userId: String): Result<List<Post>> {
+//        return postRepository.getPersonalizedRecommendedPosts(userId)
+//    }
 }

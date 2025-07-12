@@ -103,4 +103,13 @@ dependencies {
     implementation(libs.protobuf.kotlin.lite)
     implementation(libs.timber)
 
+    //
+    implementation(libs.kotlinx.serialization.core)
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3")
+        force("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    }
 }

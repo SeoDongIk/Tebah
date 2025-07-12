@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetNoticesByChannelUseCase @Inject constructor(
     private val postRepository: PostRepository
 ) {
-    suspend operator fun invoke(channelId: String): Result<List<Post>> {
-        return postRepository.getNoticesByChannel(channelId)
-    }
+//    suspend operator fun invoke(channelId: String): Result<List<Post>> {
+//        return postRepository.getNoticesByChannel(channelId)
+//    }
 }

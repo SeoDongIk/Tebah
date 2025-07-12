@@ -1,14 +1,21 @@
 package com.example.data.model.dto
 
-//data class PostDto(
-//    val id: String = "",
-//    val authorId: String = "",
-//    val content: String = "",
-//    val createdAt: Long = System.currentTimeMillis(),
-//    val checkedUserIds: List<String> = emptyList(),
-//    val likedUserIds: List<String> = emptyList(),
-//    val savedUserIds: List<String> = emptyList(),
-//    val commentIds: List<String> = emptyList(),
-//    val channelIds: List<String> = emptyList(),
-//    val isNotice: Boolean = false
-//)
+import com.example.domain.model.PostType
+
+data class PostDto(
+    val id: String = "",
+    val authorId: String = "",
+    val authorName: String = "",
+    val authorProfileUrl: String? = null,
+    val content: String = "",
+    val imageUrls: List<String> = emptyList(),
+    val createdAt: Long = 0L,
+    val type: String = "GLOBAL",
+    val churchId: String? = null,
+    val requestedChannelIds: List<String> = emptyList(),
+    val approvedChannelIds: List<String> = emptyList(),
+    val likeCount: Int = 0,
+    val saveCount: Int = 0,
+    val checkCount: Int = 0,
+    val commentCount: Int = 0
+)

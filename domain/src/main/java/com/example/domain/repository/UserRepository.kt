@@ -1,17 +1,11 @@
 package com.example.domain.repository
 
-import com.example.domain.model.Channel
-import com.example.domain.model.Comment
-import com.example.domain.model.Post
-import com.example.domain.model.UserProfile
-import com.example.domain.model.UserProfileUpdateRequest
+import com.example.domain.model.User
 
 interface UserRepository {
-    suspend fun getLikedPosts(): Result<List<Post>>
-    suspend fun getMyPosts(): Result<List<Post>>
-    suspend fun getUserComments(): Result<List<Comment>>
-    suspend fun getUserCreatedChannels(): Result<List<Channel>>
-    suspend fun getUserProfile(): Result<UserProfile>
-    suspend fun getUserSubscribedChannels(): Result<List<Channel>>
-    suspend fun updateUserProfile(profile: UserProfileUpdateRequest): Result<Unit>
+    suspend fun getUserById(userId: String): Result<User>
+    suspend fun getUsersByChurch(churchId: String): Result<List<User>>
+    suspend fun followUser(fromUserId: String, toUserId: String): Result<Unit>
+    suspend fun getFollowees(userId: String): Result<List<User>>
+    suspend fun getFollowers(userId: String): Result<List<User>>
 }

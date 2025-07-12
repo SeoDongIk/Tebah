@@ -1,5 +1,9 @@
 package com.example.domain.model
 
 enum class NotificationType {
-    COMMENT, LIKE, NOTICE_APPROVED
+    FOLLOW,
+    COMMENT,
+    LIKE,
+    MENTION,
+    SYSTEM
 }

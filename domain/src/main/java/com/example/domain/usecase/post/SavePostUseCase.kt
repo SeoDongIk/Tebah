@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SavePostUseCase @Inject constructor(
     private val postRepository: PostRepository
 ) {
-    suspend operator fun invoke(postId: String): Result<Unit> {
-        return postRepository.savePost(postId)
-    }
+//    suspend operator fun invoke(postId: String): Result<Unit> {
+//        return postRepository.savePost(postId)
+//    }
 }

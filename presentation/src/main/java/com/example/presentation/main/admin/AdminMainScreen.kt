@@ -50,9 +50,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.presentation.R
 import com.example.presentation.component.PostPreviewCard
-import com.example.presentation.main.MainBottomNavigationBar
-import com.example.presentation.main.MainRoute
-import com.example.presentation.main.launchWriteActivity
+import com.example.presentation.main.member.MainBottomNavigationBar
+import com.example.presentation.model.MainRoute
+import com.example.presentation.main.member.launchWriteActivity
 import com.example.presentation.model.PostData
 import com.example.presentation.theme.Paddings
 import com.example.presentation.theme.primary

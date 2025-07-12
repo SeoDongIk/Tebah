@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetUserSubscribedChannelsUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(): Result<List<Channel>> {
-        return userRepository.getUserSubscribedChannels()
-    }
+//    suspend operator fun invoke(): Result<List<Channel>> {
+//        return userRepository.getUserSubscribedChannels()
+//    }
 }

@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetLikedPostsUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(): Result<List<Post>> {
-        return userRepository.getLikedPosts()
-    }
+//    suspend operator fun invoke(): Result<List<Post>> {
+//        return userRepository.getLikedPosts()
+//    }
 }

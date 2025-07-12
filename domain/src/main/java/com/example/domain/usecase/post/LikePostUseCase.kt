@@ -7,7 +7,7 @@ import javax.inject.Inject
 class LikePostUseCase @Inject constructor(
     private val postRepository: PostRepository
 ) {
-    suspend operator fun invoke(postId: String): Result<Unit> {
-        return postRepository.likePost(postId)
-    }
+//    suspend operator fun invoke(postId: String): Result<Unit> {
+//        return postRepository.likePost(postId)
+//    }
 }

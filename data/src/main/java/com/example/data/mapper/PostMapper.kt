@@ -1,125 +1,79 @@
 package com.example.data.mapper
 
+import com.example.data.model.dto.PostDto
 import com.example.data.model.entity.PostEntity
 import com.example.domain.model.Post
+import com.example.domain.model.PostCreateRequest
+import com.example.domain.model.PostPreviewItem
+import com.example.domain.model.PostType
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-//private val json = Json { ignoreUnknownKeys = true }
-//
-////
-//// Dto ↔ Domain
-////
-//
-//fun PostDto.toDomain(
-//    title: String,
-//    imageUrls: List<String>,
-//    noticeRequestId: String?,
-//    isSavedLocally: Boolean
-//): Post {
-//    return Post(
-//        id = id,
-//        authorId = authorId,
-//        title = title,
-//        content = content,
-//        imageUrls = imageUrls,
-//        isNotice = isNotice,
-//        noticeRequestId = noticeRequestId,
-//        createdAt = createdAt,
-//        likedUserIds = likedUserIds,
-//        checkedUserIds = checkedUserIds,
-//        isSavedLocally = isSavedLocally
-//    )
-//}
-//
-//fun Post.toDto(): PostDto {
-//    return PostDto(
-//        id = id,
-//        authorId = authorId,
-//        content = content,
-//        createdAt = createdAt,
-//        checkedUserIds = checkedUserIds,
-//        likedUserIds = likedUserIds,
-//        isNotice = isNotice
-//        // savedUserIds, commentIds, channelIds는 필요에 따라 채워야 함
-//    )
-//}
-//
-////
-//// Dto ↔ Entity
-////
-//
-//fun PostDto.toEntity(): PostEntity {
-//    return PostEntity(
-//        id = id,
-//        authorId = authorId,
-//        content = content,
-//        createdAt = createdAt,
-//        checkedUserIds = json.encodeToString(checkedUserIds),
-//        likedUserIds = json.encodeToString(likedUserIds),
-//        savedUserIds = json.encodeToString(savedUserIds),
-//        commentIds = json.encodeToString(commentIds),
-//        channelIds = json.encodeToString(channelIds),
-//        isNotice = isNotice
-//    )
-//}
-//
-//fun PostEntity.toDto(): PostDto {
-//    return PostDto(
-//        id = id,
-//        authorId = authorId,
-//        content = content,
-//        createdAt = createdAt,
-//        checkedUserIds = json.decodeFromString(checkedUserIds),
-//        likedUserIds = json.decodeFromString(likedUserIds),
-//        savedUserIds = json.decodeFromString(savedUserIds),
-//        commentIds = json.decodeFromString(commentIds),
-//        channelIds = json.decodeFromString(channelIds),
-//        isNotice = isNotice
-//    )
-//}
-//
-////
-//// Entity ↔ Domain
-////
-//
-//fun PostEntity.toDomain(
-//    title: String,
-//    imageUrls: List<String>,
-//    noticeRequestId: String?,
-//    isSavedLocally: Boolean
-//): Post {
-//    return Post(
-//        id = id,
-//        authorId = authorId,
-//        title = title,
-//        content = content,
-//        imageUrls = imageUrls,
-//        isNotice = isNotice,
-//        noticeRequestId = noticeRequestId,
-//        createdAt = createdAt,
-//        likedUserIds = json.decodeFromString(likedUserIds),
-//        checkedUserIds = json.decodeFromString(checkedUserIds),
-//        isSavedLocally = isSavedLocally
-//    )
-//}
-//
-//fun Post.toEntity(
-//    savedUserIds: List<String>,
-//    commentIds: List<String>,
-//    channelIds: List<String>
-//): PostEntity {
-//    return PostEntity(
-//        id = id,
-//        authorId = authorId,
-//        content = content,
-//        createdAt = createdAt,
-//        checkedUserIds = json.encodeToString(checkedUserIds),
-//        likedUserIds = json.encodeToString(likedUserIds),
-//        savedUserIds = json.encodeToString(savedUserIds),
-//        commentIds = json.encodeToString(commentIds),
-//        channelIds = json.encodeToString(channelIds),
-//        isNotice = isNotice
-//    )
-//}
+fun PostDto.toDomain(): Post = Post(
+    id, authorId, authorName, authorProfileUrl,
+    content, imageUrls, createdAt,
+    PostType.valueOf(type),
+    churchId, requestedChannelIds, approvedChannelIds,
+    likeCount, saveCount, checkCount, commentCount
+)
+
+fun Post.toDto(): PostDto = PostDto(
+    id, authorId, authorName, authorProfileUrl,
+    content, imageUrls, createdAt,
+    type.name,
+    churchId, requestedChannelIds, approvedChannelIds,
+    likeCount, saveCount, checkCount, commentCount
+)
+
+fun PostEntity.toDomain(): Post = Post(
+    id, authorId, authorName, authorProfileUrl,
+    content, imageUrls, createdAt,
+    PostType.valueOf(type),
+    churchId, requestedChannelIds, approvedChannelIds,
+    likeCount, saveCount, checkCount, commentCount
+)
+
+fun Post.toEntity(): PostEntity = PostEntity(
+    id, authorId, authorName, authorProfileUrl,
+    content, imageUrls, createdAt,
+    type.name,
+    churchId, requestedChannelIds, approvedChannelIds,
+    likeCount, saveCount, checkCount, commentCount
+)
+
+fun PostDto.toEntity(): PostEntity = PostEntity(
+    id, authorId, authorName, authorProfileUrl,
+    content, imageUrls, createdAt,
+    type,
+    churchId, requestedChannelIds, approvedChannelIds,
+    likeCount, saveCount, checkCount, commentCount
+)
+
+fun PostEntity.toDto(): PostDto = PostDto(
+    id, authorId, authorName, authorProfileUrl,
+    content, imageUrls, createdAt,
+    type,
+    churchId, requestedChannelIds, approvedChannelIds,
+    likeCount, saveCount, checkCount, commentCount
+)
+
+fun PostCreateRequest.toDto(id: String): PostDto {
+    return PostDto(
+        id = id,
+        authorId = this.authorId,
+        authorName = this.authorName,
+        authorProfileUrl = this.authorProfileUrl,
+        content = this.content,
+        imageUrls = this.imageUrls,
+        createdAt = this.createdAt,
+        type = this.type.name,
+        churchId = this.churchId,
+        requestedChannelIds = this.requestedChannelIds,
+        approvedChannelIds = emptyList(), // 초기엔 빈 리스트
+        likeCount = 0,
+        saveCount = 0,
+        checkCount = 0,
+        commentCount = 0
+    )
+}

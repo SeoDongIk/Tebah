@@ -1,55 +1,60 @@
 package com.example.data.repository
 
-import com.example.domain.model.CreatePostRequest
+import com.example.data.mapper.toDomain
+import com.example.data.mapper.toEntity
+import com.example.data.source.local.PostLocalDataSource
+import com.example.data.source.remote.PostRemoteDataSource
 import com.example.domain.model.Post
-import com.example.domain.model.PostDetail
+import com.example.domain.model.PostCreateRequest
+import com.example.domain.model.PostPreviewItem
 import com.example.domain.repository.PostRepository
 import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
+    private val remote: PostRemoteDataSource,
+    private val local: PostLocalDataSource
+) : PostRepository {
 
-) :PostRepository {
-    override suspend fun createPost(request: CreatePostRequest): Result<Post> {
-        TODO("Not yet implemented")
+    override suspend fun createPost(request: PostCreateRequest): Result<Post> {
+        return remote.createPost(request)
+            .onSuccess {
+                local.savePosts(listOf(it.toEntity()))
+            }.map { it.toDomain() }
     }
 
-    override suspend fun getNoticePosts(): Result<List<Post>> {
-        TODO("Not yet implemented")
+    override suspend fun getPostById(postId: String): Result<Post> {
+        return remote.getPostById(postId)
+            .onSuccess {
+                local.savePosts(listOf(it.toEntity()))
+            }.map { it.toDomain() }
     }
 
-    override suspend fun getNoticesByChannel(channelId: String): Result<List<Post>> {
-        TODO("Not yet implemented")
+    override suspend fun getPostsByChurchId(churchId: String): Result<List<Post>> {
+        return remote.getPostsByChurchId(churchId)
+            .onSuccess {
+                local.savePosts(it.map { dto -> dto.toEntity() })
+            }.map { list -> list.map { it.toDomain() } }
     }
 
-    override suspend fun getPersonalizedRecommendedPosts(userId: String): Result<List<Post>> {
-        TODO("Not yet implemented")
+    override suspend fun getPostsByChannelId(channelId: String): Result<List<Post>> {
+        return remote.getPostsByChannelId(channelId)
+            .onSuccess {
+                local.savePosts(it.map { dto -> dto.toEntity() })
+            }.map { list -> list.map { it.toDomain() } }
     }
 
-    override suspend fun getPostDetail(postId: String): Result<PostDetail> {
-        TODO("Not yet implemented")
+    override suspend fun getGlobalPosts(): Result<List<Post>> {
+        return remote.getGlobalPosts()
+            .onSuccess {
+                local.savePosts(it.map { dto -> dto.toEntity() })
+            }.map { list -> list.map { it.toDomain() } }
     }
 
-    override suspend fun getRecentPosts(): Result<List<Post>> {
-        TODO("Not yet implemented")
+    override suspend fun deletePost(postId: String): Result<Unit> {
+        return remote.deletePost(postId)
+            .onSuccess {
+                local.deletePost(postId)
+            }
     }
 
-    override suspend fun getRecommendedPosts(): Result<List<Post>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun checkPost(postId: String): Result<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun likePost(postId: String): Result<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun savePost(postId: String): Result<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun searchPost(keyword: String): Result<List<Post>> {
-        TODO("Not yet implemented")
-    }
 }

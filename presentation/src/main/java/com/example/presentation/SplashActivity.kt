@@ -13,6 +13,7 @@ import com.example.presentation.auth.AuthActivity
 import com.example.presentation.main.admin.AdminMainActivity
 import com.example.presentation.main.member.MemberMainActivity
 import com.example.presentation.model.SplashUiState
+import com.example.presentation.theme.TebahTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -54,14 +55,16 @@ class SplashActivity : AppCompatActivity() {
 
     private fun showStartScreen() {
         setContent {
-            StartScreen(
-                onNavigateToLogin = {
-                    navigateTo(AuthActivity::class.java)
-                },
-                onBrowseServiceClick = {
-                    navigateTo(MemberMainActivity::class.java)
-                }
-            )
+            TebahTheme {
+                StartScreen(
+                    onNavigateToLogin = {
+                        navigateTo(AuthActivity::class.java)
+                    },
+                    onBrowseServiceClick = {
+                        navigateTo(MemberMainActivity::class.java)
+                    }
+                )
+            }
         }
     }
 }

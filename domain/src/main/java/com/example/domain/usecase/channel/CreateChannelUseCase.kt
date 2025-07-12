@@ -1,8 +1,5 @@
 package com.example.domain.usecase.channel
 
-import com.example.domain.model.Banner
-import com.example.domain.model.Channel
-import com.example.domain.model.CreateChannelRequest
 import com.example.domain.repository.ChannelRepository
 import javax.inject.Inject
 
@@ -13,7 +10,7 @@ import javax.inject.Inject
 class CreateChannelUseCase @Inject constructor(
     private val channelRepository: ChannelRepository
 ) {
-    suspend operator fun invoke(request: CreateChannelRequest): Result<Channel> {
-        return channelRepository.createChannel(request)
-    }
+//    suspend operator fun invoke(request: CreateChannelRequest): Result<Channel> {
+//        return channelRepository.createChannel(request)
+//    }
 }

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class SearchPostUseCase @Inject constructor(
     private val postRepository: PostRepository
 ) {
-    suspend operator fun invoke(keyword: String): Result<List<Post>> {
-        return postRepository.searchPost(keyword)
-    }
+//    suspend operator fun invoke(keyword: String): Result<List<Post>> {
+//        return postRepository.searchPost(keyword)
+//    }
 }
