@@ -6,7 +6,6 @@ import com.example.data.source.local.PostLocalDataSource
 import com.example.data.source.remote.PostRemoteDataSource
 import com.example.domain.model.Post
 import com.example.domain.model.PostCreateRequest
-import com.example.domain.model.PostPreviewItem
 import com.example.domain.repository.PostRepository
 import javax.inject.Inject
 

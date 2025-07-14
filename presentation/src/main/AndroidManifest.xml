@@ -2,16 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
         <activity android:name=".auth.AuthActivity" />
-        <activity android:name=".main.admin.AdminMainActivity" />
-        <activity android:name=".main.member.MemberMainActivity" />
-        <activity android:name=".SplashActivity"
+        <activity android:name=".admin.AdminActivity" />
+        <activity android:name=".member.MemberActivity" />
+        <activity android:name=".splash.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".main.member.write.WriteActivity"
+        <activity android:name=".write.WriteActivity"
             android:windowSoftInputMode="adjustResize"/>
     </application>
 </manifest>

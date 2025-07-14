@@ -2,7 +2,6 @@ package com.example.domain.repository
 
 import com.example.domain.model.Post
 import com.example.domain.model.PostCreateRequest
-import com.example.domain.model.PostPreviewItem
 
 interface PostRepository {
 
