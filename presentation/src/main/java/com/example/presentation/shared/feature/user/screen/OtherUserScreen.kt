@@ -44,11 +44,10 @@ import com.example.presentation.common.theme.TebahTheme
 
 @Composable
 fun OtherUserScreen(
-    userProfile: UserProfileData,
-    posts: List<PostData>,
-    isFollowing: Boolean,
-    onFollowToggle: () -> Unit,
-    onUnfollowConfirm: () -> Unit
+    userId: String,
+    onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
+    onChannelClick: (String) -> Unit,
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -59,41 +58,41 @@ fun OtherUserScreen(
     ) {
         item {
             Column(modifier = Modifier.background(Color.White)) {
-                OtherUserProfileHeader(
-                    profileImage = userProfile.profileImage,
-                    nickname = userProfile.nickname,
-                    introduction = userProfile.introduction,
-                    followerCount = userProfile.followerCount,
-                    followingCount = userProfile.followingCount,
-                    postCount = userProfile.postCount,
-                    isFollowing = isFollowing,
-                    onFollowClick = {
-                        if (isFollowing) {
-                            showDialog = true
-                        } else {
-                            onFollowToggle()
-                        }
-                    }
-                )
+//                OtherUserProfileHeader(
+//                    profileImage = userProfile.profileImage,
+//                    nickname = userProfile.nickname,
+//                    introduction = userProfile.introduction,
+//                    followerCount = userProfile.followerCount,
+//                    followingCount = userProfile.followingCount,
+//                    postCount = userProfile.postCount,
+//                    isFollowing = isFollowing,
+//                    onFollowClick = {
+//                        if (isFollowing) {
+//                            showDialog = true
+//                        } else {
+//                            onFollowToggle()
+//                        }
+//                    }
+//                )
             }
         }
 
-        if (posts.isEmpty()) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 80.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("게시글이 없어요", color = Color.Gray, fontSize = 14.sp)
-                }
-            }
-        } else {
-            items(posts) { post ->
-                PostPreviewCard(post)
-            }
-        }
+//        if (posts.isEmpty()) {
+//            item {
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 80.dp),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Text("게시글이 없어요", color = Color.Gray, fontSize = 14.sp)
+//                }
+//            }
+//        } else {
+//            items(posts) { post ->
+//                PostPreviewCard(post)
+//            }
+//        }
     }
 
     if (showDialog) {
@@ -106,7 +105,6 @@ fun OtherUserScreen(
                 Button(
                     onClick = {
                         showDialog = false
-                        onUnfollowConfirm()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
                 ) {
@@ -197,111 +195,3 @@ fun StatItem(label: String, value: String) {
         Text(text = label, fontSize = 12.sp, color = Color.Gray)
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun OtherUserScreenPreview() {
-    val dummyImage = painterResource(R.drawable.profile_image)
-    val dummyImage2 = painterResource(R.drawable.sample_image_01)
-    val dummyImage3 = painterResource(R.drawable.sample_image_02)
-    val posts = listOf(
-        // ✅ 공지글 + 이미지 + 좋아요/저장/체크
-        PostData(
-            id = "p1",
-            isOfficial = true,
-            hasImages = true,
-            profileImage = dummyImage,
-            userId = "관리자",
-            postTime = "방금 전",
-            previewText = "이번 주 예배 안내드립니다. 꼭 확인해주세요!",
-            imageList = listOf(dummyImage, dummyImage2),
-            likeCount = 23,
-            saveCount = 5,
-            checkCount = 18,
-            isNotice = true
-        ),
-        // ✅ 일반글 + 이미지 없음
-        PostData(
-            id = "p2",
-            isOfficial = false,
-            hasImages = false,
-            profileImage = dummyImage2,
-            userId = "user123",
-            postTime = "5분 전",
-            previewText = "안녕하세요! 오늘도 은혜로운 하루 되세요 :)",
-            likeCount = 3,
-            saveCount = 1,
-            checkCount = 0,
-            isNotice = false
-        ),
-        // ✅ 일반글 + 이미지 여러 개
-        PostData(
-            id = "p3",
-            isOfficial = false,
-            hasImages = true,
-            profileImage = dummyImage3,
-            userId = "user456",
-            postTime = "10분 전",
-            previewText = "오늘 큐티 나눔이에요! 함께 은혜 나눠요 🙏",
-            imageList = listOf(dummyImage2, dummyImage3),
-            likeCount = 12,
-            saveCount = 4,
-            checkCount = 0,
-            isNotice = false
-        ),
-        // ✅ 공식 채널 글이지만 공지는 아님
-        PostData(
-            id = "p4",
-            isOfficial = true,
-            hasImages = false,
-            profileImage = dummyImage2,
-            userId = "예배팀",
-            postTime = "1시간 전",
-            previewText = "이번 주 찬양곡 리스트를 공유드립니다.",
-            likeCount = 30,
-            saveCount = 10,
-            checkCount = 0,
-            isNotice = false
-        ),
-        // ✅ 공지글인데 이미지 없음
-        PostData(
-            id = "p5",
-            isOfficial = false,
-            hasImages = false,
-            profileImage = dummyImage3,
-            userId = "목사님",
-            postTime = "2시간 전",
-            previewText = "오늘 주보 첨부합니다. 모두 꼭 읽어주세요.",
-            likeCount = 8,
-            saveCount = 2,
-            checkCount = 5,
-            isNotice = true
-        )
-    )
-    val profile = UserProfileData(
-        profileImage = dummyImage,
-        nickname = "animalllll_123",
-        introduction = "독서를 좋아해요",
-        followerCount = 4467,
-        followingCount = 12,
-        postCount = 135
-    )
-    TebahTheme {
-        OtherUserScreen(
-            userProfile = profile,
-            posts = posts,
-            isFollowing = true,
-            onFollowToggle = {},
-            onUnfollowConfirm = {}
-        )
-    }
-}
-
-data class UserProfileData(
-    val profileImage: Painter,
-    val nickname: String,
-    val introduction: String,
-    val followerCount: Int,
-    val followingCount: Int,
-    val postCount: Int
-)

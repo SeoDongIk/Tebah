@@ -50,15 +50,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.presentation.R
 import com.example.presentation.shared.component.PostPreviewCard2
-import com.example.presentation.member.screen.MainBottomNavigationBar
-import com.example.presentation.member.state.MainRoute
-import com.example.presentation.member.screen.launchWriteActivity
+import com.example.presentation.member.screen.MemberTabRoute
 import com.example.presentation.write.PostData2
 import com.example.presentation.common.theme.Paddings
 import com.example.presentation.common.theme.primary
 import com.example.presentation.common.theme.secondary
 import com.example.presentation.common.theme.third_02
 import com.example.presentation.common.theme.third_03
+import com.example.presentation.member.launchWriteActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -69,7 +68,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AdminMainScreen() {
     val context = LocalContext.current
-    var currentRoute by remember { mutableStateOf(MainRoute.HOME) }
+    var currentRoute by remember { mutableStateOf(MemberTabRoute.HOME) }
     var bottomBarState by remember { mutableStateOf(true) }
 
     val transition =  updateTransition(targetState = bottomBarState, label = "BottomBarTransition")
@@ -302,12 +301,12 @@ fun AdminMainScreen() {
             exit = slideOutVertically { it },
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
-            MainBottomNavigationBar(
-                currentRoute = currentRoute,
-                onItemSelected = { selectedRoute ->
-                    currentRoute = selectedRoute
-                }
-            )
+//            MainBottomNavigationBar(
+//                currentRoute = currentRoute,
+//                onItemSelected = { selectedRoute ->
+//                    currentRoute = selectedRoute
+//                }
+//            )
         }
 
         Box(

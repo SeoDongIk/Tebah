@@ -18,4 +18,5 @@ interface AuthRemoteDataSource {
     suspend fun createUser(email: String, password: String): String
     suspend fun isLoggedIn(): Boolean
     suspend fun getCurrentUserRole(): UserRole
+    suspend fun signInAnonymously(): Result<Unit>
 }

@@ -10,9 +10,11 @@ import com.example.domain.model.UserRole
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 class AuthRemoteDataSourceImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
@@ -159,5 +161,20 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         val doc = firestore.collection("users").document(uid).get().await()
         val roleString = doc.getString("role")
         return UserRole.fromString(roleString)
+    }
+
+    override suspend fun signInAnonymously(): Result<Unit> = suspendCancellableCoroutine { cont ->
+        if (firebaseAuth.currentUser != null) {
+            cont.resume(Result.success(Unit))
+        } else {
+            firebaseAuth.signInAnonymously()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        cont.resume(Result.success(Unit))
+                    } else {
+                        cont.resume(Result.failure(task.exception ?: Exception("익명 로그인 실패")))
+                    }
+                }
+        }
     }
 }

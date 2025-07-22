@@ -1,6 +1,5 @@
  package com.example.presentation.member.screen.home
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,13 +10,15 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,143 +30,74 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.presentation.R
-import com.example.presentation.shared.component.PostPreviewCard2
-import com.example.presentation.write.PostData2
 import com.example.presentation.common.theme.TebahTypography
 import com.example.presentation.common.theme.primary
 import com.example.presentation.common.theme.third_01
 import com.example.presentation.common.theme.third_03
+import com.example.presentation.shared.component.PostData
+import com.example.presentation.shared.component.PostPreviewCard2
+import com.example.presentation.shared.feature.post.screen.PostPreviewCard
 
- @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
- @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+ @OptIn(ExperimentalFoundationApi::class)
  @Composable
-fun HomeScreen(
-    pullProgress: Float
-) {
-
+ fun HomeScreen(
+     listState: LazyListState,
+     onPostClick: (String) -> Unit,
+     onUserClick: (String) -> Unit,
+     onChannelClick: (String) -> Unit,
+ ) {
      var selectedTab by remember { mutableStateOf(0) }
      val tabs = listOf("팔로잉", "공지")
+
+//     // listState 기반 pullProgress 계산 (0f ~ 1f)
+//     val pullProgress by remember {
+//         derivedStateOf {
+//             val offset = listState.firstVisibleItemScrollOffset.coerceAtMost(100)
+//             offset / 100f
+//         }
+//     }
 
      val dummyImage = painterResource(R.drawable.profile_image)
      val dummyImage2 = painterResource(R.drawable.sample_image_01)
      val dummyImage3 = painterResource(R.drawable.sample_image_02)
+
      val posts = listOf(
-         PostData2(
-             isNotice = true,
-             hasImages = true,
-             profileImage = dummyImage,
-             userId = "채널장1",
-             postTime = "1분 전",
-             previewText = "공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.",
-             imageList = List(2) { dummyImage }
-         ),
-         PostData2(
-             isNotice = false,
-             hasImages = true,
-             profileImage = dummyImage,
-             userId = "채널장1",
-             postTime = "10분 전",
-             previewText = "오늘 날씨가 정말 좋네요~ 사진 몇 장 공유해요!공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.",
-             imageList = List(3) { dummyImage2 }
-         ),
-         PostData2(
-             isNotice = false,
-             hasImages = false,
-             profileImage = dummyImage,
-             userId = "user_02",
-             postTime = "1시간 전",
-             previewText = "이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다."
-         ),
-         PostData2(
-             isNotice = false,
-             hasImages = false,
-             profileImage = dummyImage,
-             userId = "user_02",
-             postTime = "1시간 전",
-             previewText = "이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다."
-         ),
-         PostData2(
-             isNotice = false,
-             hasImages = true,
-             profileImage = dummyImage,
-             userId = "user_01",
-             postTime = "10분 전",
-             previewText = "오늘 날씨가 정말 좋네요~ 사진 몇 장 공유해요!공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.",
-             imageList = listOf(dummyImage, dummyImage2, dummyImage3)
-         ),
-         PostData2(
-             isNotice = false,
-             hasImages = false,
-             profileImage = dummyImage,
-             userId = "user_02",
-             postTime = "1시간 전",
-             previewText = "이미지는 없지만 내용은 충실한 게시이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확글입니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다."
-         ),
-         PostData2(
-             isNotice = false,
-             hasImages = true,
-             profileImage = dummyImage,
-             userId = "user_01",
-             postTime = "10분 전",
-             previewText = "오늘 날씨가 정말 좋네요~ 사진 몇 장이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확 공유해요!공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.",
-             imageList = List(3) { dummyImage }
-         ),
-         PostData2(
-             isNotice = true,
-             hasImages = false,
-             profileImage = dummyImage,
-             userId = "user_02",
-             postTime = "1시간 전",
-             previewText = "이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확인 바랍이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확니다.공지사항입니다. 필수 확인 바랍니다."
-         ),
-         PostData2(
-             isNotice = false,
-             hasImages = false,
-             profileImage = dummyImage,
-             userId = "user_02",
-             postTime = "1시간 전",
-             previewText = "이미지는 없지만 내용은 충실한 게시글입니다.공지사항이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다."
-         ),
-         PostData2(
-             isNotice = true,
-             hasImages = false,
-             profileImage = dummyImage,
-             userId = "user_02",
-             postTime = "1시간 전",
-             previewText = "이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다."
-         ),
-         PostData2(
-             isNotice = false,
-             hasImages = true,
-             profileImage = dummyImage,
-             userId = "user_01",
-             postTime = "10분 전",
-             previewText = "오늘 날씨가 정말 좋네요~ 사진 몇 장 공유해요!공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.",
-             imageList = List(3) { dummyImage }
+         PostData("p1", true, true, dummyImage, "관리자", "방금 전", "이번 주 예배 안내드립니다. 꼭 확인해주세요!", listOf(dummyImage, dummyImage2), 23, 5, 18, true),
+         PostData("p2", false, false, dummyImage2, "user123", "5분 전", "안녕하세요! 오늘도 은혜로운 하루 되세요 :)", emptyList(), 3, 1, 0, false),
+         PostData("p3", false, true, dummyImage3, "user456", "10분 전", "오늘 큐티 나눔이에요! 함께 은혜 나눠요 🙏", listOf(dummyImage2, dummyImage3), 12, 4, 0, false),
+         PostData("p4", true, false, dummyImage2, "예배팀", "1시간 전", "이번 주 찬양곡 리스트를 공유드립니다.", emptyList(), 30, 10, 0, false),
+         PostData("p6", false, false, dummyImage3, "목사님", "2시간 전", "오늘 주보 첨부합니다. 모두 꼭 읽어주세요.", emptyList(), 8, 2, 5, true),
+         PostData("p7", false, false, dummyImage3, "목사님", "2시간 전", "오늘 주보 첨부합니다. 모두 꼭 읽어주세요.", emptyList(), 8, 2, 5, true),
+         PostData("p8", false, false, dummyImage3, "목사님", "2시간 전", "오늘 주보 첨부합니다. 모두 꼭 읽어주세요.", emptyList(), 8, 2, 5, true),
+         PostData("p9", false, false, dummyImage3, "목사님", "2시간 전", "오늘 주보 첨부합니다. 모두 꼭 읽어주세요.", emptyList(), 8, 2, 5, true),
          )
-     )
 
      LazyColumn(
+         state = listState,
          modifier = Modifier
              .fillMaxSize()
              .background(Color.White)
      ) {
-         item {
-             Box(
-                 modifier = Modifier
-                     .fillMaxWidth()
-                     .background(Color.White),
-                 contentAlignment = Alignment.Center
-             ) {
-                 Icon(
-                     painter = painterResource(id = R.drawable.vector),
-                     contentDescription = "로고 이미지",
-                     tint = primary,
-                     modifier = Modifier.size(48.dp + (pullProgress*50).dp)
-                 )
-             }
-         }
+         // ✅ pullProgress 기반 로고 크기 & 위치 변화
+//         item {
+//             Box(
+//                 modifier = Modifier
+//                     .fillMaxWidth()
+//                     .height(100.dp),
+//                 contentAlignment = Alignment.Center
+//             ) {
+//                 Icon(
+//                     painter = painterResource(id = R.drawable.vector),
+//                     contentDescription = "로고 이미지",
+//                     tint = primary,
+//                     modifier = Modifier
+//                         .size(48.dp + (pullProgress * 50).dp)
+//                         .offset(y = (pullProgress * 24).dp)
+//                 )
+//             }
+//         }
 
+         // ✅ 탭 헤더 고정
          stickyHeader {
              Column(modifier = Modifier.background(Color.White)) {
                  Row(
@@ -215,17 +147,8 @@ fun HomeScreen(
              }
          }
 
+         // ✅ 게시물 리스트
          items(posts) { post ->
-             PostPreviewCard2(
-                 isNotice = post.isNotice,
-                 hasImages = post.hasImages,
-                 profileImage = post.profileImage,
-                 userId = post.userId,
-                 postTime = post.postTime,
-                 previewText = post.previewText,
-                 imageList = post.imageList
-             )
          }
      }
-
-}
+ }

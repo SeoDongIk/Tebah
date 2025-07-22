@@ -16,4 +16,5 @@ interface AuthRepository {
     suspend fun signUpAdmin(request: AdminSignUpRequest): Result<User>
     suspend fun signIn(email: String, password: String, autoLogin: Boolean): Result<SignInResult>
     suspend fun signOut(): Result<Unit>
+    suspend fun signInAnonymously(): Result<Unit>
 }

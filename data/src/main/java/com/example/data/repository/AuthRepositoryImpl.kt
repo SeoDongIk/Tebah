@@ -78,4 +78,8 @@ class AuthRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override suspend fun signInAnonymously(): Result<Unit> {
+        return authRemoteDataSource.signInAnonymously()
+    }
+
 }

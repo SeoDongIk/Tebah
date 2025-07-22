@@ -1,32 +1,35 @@
 package com.example.presentation.shared.feature.user.screen
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,188 +40,112 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.LastBaseline
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.presentation.R
 import com.example.presentation.shared.component.MiniChannelItem
 import com.example.presentation.shared.component.MiniCommentItem
-import com.example.presentation.shared.component.PostPreviewCard2
-import com.example.presentation.common.component.TebahTopBar
-import com.example.presentation.common.component.TopBarIconData
-import com.example.presentation.write.PostData2
-import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTheme
 import com.example.presentation.common.theme.TebahTypography
-import com.example.presentation.common.theme.primary
 import com.example.presentation.common.theme.third_01
 import com.example.presentation.common.theme.third_03
+import com.example.presentation.shared.component.ChannelData
+import com.example.presentation.shared.component.CommentData
+import com.example.presentation.shared.component.PostData
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun UserScreen(pullProgress: Float) {
+fun UserScreen(
+    listState: LazyListState,
+    onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
+    onChannelClick: (String) -> Unit,
+    onPhotoClick: (String) -> Unit,
+    onEditProfile: () -> Unit,
+) {
     var selectedTab by remember { mutableStateOf(0) }
-    var selectedSubTab01 by remember { mutableStateOf(0) }
-    var selectedSubTab02 by remember { mutableStateOf(0) }
+    var channelSubTabIndex by remember { mutableStateOf(0) }
+    var activitySubTabIndex by remember { mutableStateOf(0) }
 
-    val dummyImage = painterResource(R.drawable.profile_image)
-    val dummyImage2 = painterResource(R.drawable.sample_image_01)
-    val dummyImage3 = painterResource(R.drawable.sample_image_02)
+    var showPhotoDialog by remember { mutableStateOf(false) }
+    var showBioDialog by remember { mutableStateOf(false) }
+    var editedBioText by remember { mutableStateOf("") }
+
+    val profileImg = painterResource(R.drawable.profile_image)
+    val sampleImg1 = painterResource(R.drawable.sample_image_01)
+    val sampleImg2 = painterResource(R.drawable.sample_image_02)
 
     val posts = listOf(
-        // ✅ 공지글 + 이미지 + 좋아요/저장/체크
-        PostData(
-            id = "p1",
-            isOfficial = true,
-            hasImages = true,
-            profileImage = dummyImage,
-            userId = "관리자",
-            postTime = "방금 전",
-            previewText = "이번 주 예배 안내드립니다. 꼭 확인해주세요!",
-            imageList = listOf(dummyImage, dummyImage2),
-            likeCount = 23,
-            saveCount = 5,
-            checkCount = 18,
-            isNotice = true
-        ),
-        // ✅ 일반글 + 이미지 없음
-        PostData(
-            id = "p2",
-            isOfficial = false,
-            hasImages = false,
-            profileImage = dummyImage2,
-            userId = "user123",
-            postTime = "5분 전",
-            previewText = "안녕하세요! 오늘도 은혜로운 하루 되세요 :)",
-            likeCount = 3,
-            saveCount = 1,
-            checkCount = 0,
-            isNotice = false
-        ),
-        // ✅ 일반글 + 이미지 여러 개
-        PostData(
-            id = "p3",
-            isOfficial = false,
-            hasImages = true,
-            profileImage = dummyImage3,
-            userId = "user456",
-            postTime = "10분 전",
-            previewText = "오늘 큐티 나눔이에요! 함께 은혜 나눠요 🙏",
-            imageList = listOf(dummyImage2, dummyImage3),
-            likeCount = 12,
-            saveCount = 4,
-            checkCount = 0,
-            isNotice = false
-        ),
-        // ✅ 공식 채널 글이지만 공지는 아님
-        PostData(
-            id = "p4",
-            isOfficial = true,
-            hasImages = false,
-            profileImage = dummyImage2,
-            userId = "예배팀",
-            postTime = "1시간 전",
-            previewText = "이번 주 찬양곡 리스트를 공유드립니다.",
-            likeCount = 30,
-            saveCount = 10,
-            checkCount = 0,
-            isNotice = false
-        ),
-        // ✅ 공지글인데 이미지 없음
-        PostData(
-            id = "p5",
-            isOfficial = false,
-            hasImages = false,
-            profileImage = dummyImage3,
-            userId = "목사님",
-            postTime = "2시간 전",
-            previewText = "오늘 주보 첨부합니다. 모두 꼭 읽어주세요.",
-            likeCount = 8,
-            saveCount = 2,
-            checkCount = 5,
-            isNotice = true
-        )
+        PostData("p1", true, true, profileImg, "관리자", "방금 전", "예배 안내", listOf(profileImg, sampleImg1), 23, 5, 18, true),
+        PostData("p2", false, false, sampleImg1, "user123", "5분 전", "은혜로운 하루", emptyList(), 3, 1, 0, false)
     )
-
-    val myChannels = listOf(
-        ChannelData("1", "기도방", "함께 기도해요", 120, dummyImage2),
-        ChannelData("2", "QT 나눔", "오늘 말씀 나눠요", 85, dummyImage3)
-    )
-
-    val subscribedChannels = listOf(
-        ChannelData("3", "추천 채널", "다들 좋아하는 채널이에요", 300, dummyImage)
-    )
-
-    val comments = listOf(
-        CommentData("c1", "malcong", "좋은 글이네요!", "1시간 전", dummyImage),
-        CommentData("c2", "guest", "감사합니다", "2시간 전", dummyImage2)
-    )
-
-    val likedPosts = posts.take(2)
+    val myChannels = listOf(ChannelData("1", "기도방", "함께 기도", 120, sampleImg1))
+    val joinedChannels = listOf(ChannelData("2", "추천 채널", "다들 좋아함", 300, sampleImg2))
+    val comments = listOf(CommentData("c1", "malcong", "좋은 글!", "1시간 전", profileImg))
+    val likedPosts = posts.take(1)
     val savedPosts = posts
 
+    val screenWidth = LocalContext.current.resources.displayMetrics.widthPixels / LocalContext.current.resources.displayMetrics.density
+    val tabs = listOf(0, 1, 2)
+    val offsets = tabs.map { tab ->
+        animateDpAsState(
+            targetValue = when (tab) {
+                selectedTab -> 0.dp
+                else -> if (tabs.indexOf(tab) < tabs.indexOf(selectedTab)) -screenWidth.dp else screenWidth.dp
+            },
+            animationSpec = tween(durationMillis = 250)
+        )
+    }
+
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
         item {
-            Column(modifier = Modifier.background(Color.White)) {
-                // 로고
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.vector),
-                        contentDescription = "로고 이미지",
-                        tint = Color.Black, // 수정: primary → Color.Black
-                        modifier = Modifier.size(48.dp + (pullProgress * 50).dp)
-                    )
+            UserProfileHeader(
+                profileImage = profileImg,
+                nickname = "MalcongMalcom",
+                introduction = "안녕하세요! 개발자이자 예배자입니다.",
+                followerCount = 4467,
+                followingCount = 12,
+                postCount = posts.size,
+                onEditClick = { onEditProfile() },
+                onProfileImageClick = { showPhotoDialog = true },
+                onBioClick = {
+                    showBioDialog = true
+                    editedBioText = it
                 }
-
-                // 프로필 헤더
-                UserProfileHeader(
-                    profileImage = dummyImage,
-                    nickname = "MalcongMalcom",
-                    introduction = "안녕하세요! 개발자이자 예배자입니다.",
-                    followerCount = 4467,
-                    followingCount = 12,
-                    postCount = posts.size,
-                    onEditClick = { /* TODO */ }
-                )
-            }
+            )
         }
 
-        // 탭 고정 영역
         stickyHeader {
             Column(modifier = Modifier.background(Color.White)) {
                 UserTopTabRow(
                     selectedTabIndex = selectedTab,
                     onTabSelected = { selectedTab = it },
-                    textColor = Color.Black // 명시적 전달 가능
+                    textColor = Color.Black
                 )
 
                 when (selectedTab) {
                     1 -> SubTabRow(
                         tabs = listOf("내 채널", "참여 채널"),
-                        selectedIndex = selectedSubTab01,
-                        onTabSelected = { selectedSubTab01 = it },
+                        selectedIndex = channelSubTabIndex,
+                        onTabSelected = { channelSubTabIndex = it },
                         selectedColor = Color.Black,
                         unselectedColor = Color.Gray
                     )
 
                     2 -> SubTabRow(
                         tabs = listOf("내 댓글", "좋아요", "북마크"),
-                        selectedIndex = selectedSubTab02,
-                        onTabSelected = { selectedSubTab02 = it },
+                        selectedIndex = activitySubTabIndex,
+                        onTabSelected = { activitySubTabIndex = it },
                         selectedColor = Color.Black,
                         unselectedColor = Color.Gray
                     )
@@ -226,40 +153,198 @@ fun UserScreen(pullProgress: Float) {
             }
         }
 
-        // 본문 콘텐츠
-        when (selectedTab) {
-            0 -> items(posts) { post ->
-                PostPreviewCard(post)
-            }
-
-            1 -> {
-                val channels = if (selectedSubTab01 == 0) myChannels else subscribedChannels
-                if (selectedSubTab01 == 0) {
-                    item {
-                        CreateChannelButton(
-                            onClick = { /* TODO */ },
-                            textColor = Color.Black
-                        )
+        item {
+            Box(modifier = Modifier.fillMaxWidth().heightIn(min = 600.dp)) {
+                // 게시글
+                Box(modifier = Modifier.offset(x = offsets[0].value)) {
+                    Column {
+                        posts.forEach { post ->
+//                            PostPreviewCard2(
+//                                data = post,
+//                                onClick = { onPostClick(post.id) },
+//                                onImageClick = { url -> onPhotoClick(url) },
+//                                onUserClick = { onUserClick(post.userId) }
+//                            )
+                        }
                     }
                 }
-                items(channels) { channel ->
-                    MiniChannelItem(channel, textColor = Color.Black)
-                }
-            }
 
-            2 -> when (selectedSubTab02) {
-                0 -> items(comments) { comment ->
-                    MiniCommentItem(comment, textColor = Color.Black)
+                // 채널
+                Box(modifier = Modifier.offset(x = offsets[1].value)) {
+                    Column {
+                        if (channelSubTabIndex == 0) {
+                            CreateChannelButton(onClick = { /* TODO */ })
+                        }
+                        val channels = if (channelSubTabIndex == 0) myChannels else joinedChannels
+                        channels.forEach { channel ->
+                            MiniChannelItem(channel, onChannelClick = { onChannelClick(channel.id) })
+                        }
+                    }
                 }
 
-                1 -> items(likedPosts) { post ->
-                    PostPreviewCard(post)
-                }
-
-                2 -> items(savedPosts) { post ->
-                    PostPreviewCard(post)
+                // 내 활동
+                Box(modifier = Modifier.offset(x = offsets[2].value)) {
+                    Column {
+                        when (activitySubTabIndex) {
+                            0 -> comments.forEach { comment ->
+                                MiniCommentItem(comment, onCommentClick = { onPostClick(comment.id) })
+                            }
+                            1 -> likedPosts.forEach { post ->
+//                                PostPreviewCard2(
+//                                    data = post,
+//                                    onClick = { onPostClick(post.id) },
+//                                    onImageClick = { url -> onPhotoClick(url) },
+//                                    onUserClick = { onUserClick(post.userId) }
+//                                )
+                            }
+                            2 -> savedPosts.forEach { post ->
+//                                PostPreviewCard2(
+//                                    data = post,
+//                                    onClick = { onPostClick(post.id) },
+//                                    onImageClick = { url -> onPhotoClick(url) },
+//                                    onUserClick = { onUserClick(post.userId) }
+//                                )
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun UserProfileHeader(
+    profileImage: Painter,
+    nickname: String,
+    introduction: String,
+    followerCount: Int,
+    followingCount: Int,
+    postCount: Int,
+    onEditClick: () -> Unit,
+    onProfileImageClick: () -> Unit,
+    onBioClick: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(16.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = profileImage,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(CircleShape)
+                    .clickable { onProfileImageClick() },
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.clickable { onBioClick(introduction) }) {
+                Text(nickname, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
+                Text(introduction, maxLines = 2, overflow = TextOverflow.Ellipsis, fontSize = 12.sp, color = Color.Gray)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.SpaceEvenly) {
+                StatItem("팔로워", followerCount.toString())
+                StatItem("팔로잉", followingCount.toString())
+                StatItem("게시글", postCount.toString())
+            }
+            OutlinedButton(onClick = onEditClick, modifier = Modifier.height(36.dp), shape = RoundedCornerShape(20.dp)) {
+                Text("프로필 편집", color = Color.Black)
+            }
+        }
+    }
+}
+
+@Composable
+fun SubTabRow(
+    tabs: List<String>,
+    selectedIndex: Int,
+    onTabSelected: (Int) -> Unit,
+    selectedColor: Color = Color.Black,
+    unselectedColor: Color = Color.Gray
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        tabs.forEachIndexed { index, label ->
+            Button(
+                onClick = { onTabSelected(index) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (selectedIndex == index) selectedColor else unselectedColor,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(label)
+            }
+        }
+    }
+}
+
+@Composable
+fun UserTopTabRow(
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
+    textColor: Color = Color.Black
+) {
+    val tabs = listOf("게시글", "채널", "내 활동")
+
+    Column(modifier = Modifier.background(Color.White)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+        ) {
+            tabs.forEachIndexed { index, title ->
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onTabSelected(index) }
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = title,
+                        color = if (selectedTabIndex == index) textColor else third_03,
+                        style = TebahTypography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
+            }
+        }
+
+        Row(modifier = Modifier.fillMaxWidth().height(1.dp)) {
+            tabs.forEachIndexed { index, _ ->
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(1.dp)
+                        .background(if (selectedTabIndex == index) third_01 else third_03)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CreateChannelButton(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEEEEEE))
+    ) {
+        Icon(Icons.Default.Add, contentDescription = "채널 만들기", tint = Color.Black)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text("새 채널 만들기", color = Color.Black)
     }
 }

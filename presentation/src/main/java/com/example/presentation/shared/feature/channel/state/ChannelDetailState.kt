@@ -2,7 +2,7 @@ package com.example.presentation.shared.feature.channel.state
 
 import com.example.domain.model.Channel
 import com.example.domain.model.Post
-import com.example.presentation.shared.feature.user.screen.PostData
+import com.example.presentation.shared.component.PostData
 
 data class ChannelDetailState(
     val channel: Channel? = null,

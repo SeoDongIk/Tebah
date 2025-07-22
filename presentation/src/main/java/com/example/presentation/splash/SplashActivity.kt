@@ -64,7 +64,14 @@ class SplashActivity : AppCompatActivity() {
                         navigateTo(AuthActivity::class.java)
                     },
                     onBrowseServiceClick = {
-                        navigateTo(MemberActivity::class.java)
+                        viewModel.signInAsGuest(
+                            onSuccess = {
+                                navigateTo(MemberActivity::class.java)
+                            },
+                            onFailure = {
+                                Toast.makeText(this@SplashActivity, "비회원 로그인에 실패했어요.", Toast.LENGTH_SHORT).show()
+                            }
+                        )
                     }
                 )
             }

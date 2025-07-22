@@ -13,29 +13,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.presentation.member.state.MainRoute
 import com.example.presentation.common.theme.Paddings
 import com.example.presentation.common.theme.primary
 import com.example.presentation.common.theme.secondary
 import com.example.presentation.common.theme.third_01
 
 @Composable
-fun MainBottomNavigationBar(
-    currentRoute: MainRoute,
-    onItemSelected: (MainRoute) -> Unit
+fun MemberBottomBar(
+    currentRoute: String?,
+    onItemSelected: (MemberTabRoute) -> Unit,
+    onWriteClick: () -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .padding(Paddings.medium)
-    ) {
+    Box(modifier = Modifier.padding(Paddings.medium)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -44,16 +38,22 @@ fun MainBottomNavigationBar(
                     color = third_01.copy(alpha = 0.2f),
                     shape = RoundedCornerShape(Paddings.xlarge)
                 )
-                .clip(shape = RoundedCornerShape(Paddings.xlarge))
+                .clip(RoundedCornerShape(Paddings.xlarge))
                 .background(Color.White)
                 .padding(vertical = Paddings.medium, horizontal = Paddings.xlarge),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            MainRoute.values().forEach { screen ->
-                val selected = currentRoute == screen
+            MemberTabRoute.values().forEach { tab ->
+                val selected = currentRoute == tab.route
                 IconButton(
-                    onClick = { onItemSelected(screen) },
+                    onClick = {
+                        if (tab == MemberTabRoute.WRITE) {
+                            onWriteClick()
+                        } else {
+                            onItemSelected(tab)
+                        }
+                    },
                     modifier = Modifier.size(48.dp)
                 ) {
                     Box(
@@ -65,27 +65,14 @@ fun MainBottomNavigationBar(
                         } else Modifier
                     ) {
                         Icon(
-                            imageVector = screen.icon,
-                            contentDescription = screen.contentDescription,
+                            imageVector = tab.icon,
+                            contentDescription = tab.contentDescription,
                             modifier = Modifier.size(26.dp),
-                            tint = if (selected) primary else third_01.copy(alpha = 1f)
+                            tint = if (selected) primary else third_01
                         )
                     }
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainBottomNavigationBarPreview() {
-    val currentRoute = remember { mutableStateOf(MainRoute.HOME) }
-
-    MainBottomNavigationBar(
-        currentRoute = currentRoute.value,
-        onItemSelected = { selected ->
-            currentRoute.value = selected
-        }
-    )
 }

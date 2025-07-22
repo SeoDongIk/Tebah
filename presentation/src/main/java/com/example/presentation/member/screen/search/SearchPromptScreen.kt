@@ -55,9 +55,8 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NewSearchScreenV2(
-    onBackClick: () -> Unit,
-    onSearch: (Any?) -> Unit
+fun SearchPromptScreen(
+    onKeywordSelected: (String) -> Unit
 ) {
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
@@ -68,13 +67,7 @@ fun NewSearchScreenV2(
             .background(Color.White)
     ) {
         stickyHeader {
-            TebahSearchBar(
-                query = query,
-                onQueryChange = { query = it },
-                focusRequester = focusRequester,
-                onBackClick = onBackClick,
-                onSearch = onSearch
-            )
+
         }
 
         item {

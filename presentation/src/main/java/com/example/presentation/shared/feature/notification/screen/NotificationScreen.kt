@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import com.example.presentation.shared.component.AlarmCard
 import com.example.presentation.common.component.TebahTopBar
 import com.example.presentation.common.theme.Paddings
 import com.example.presentation.common.theme.TebahTypography
@@ -26,21 +26,29 @@ import com.example.presentation.common.theme.third_03
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NotificationScreen(
-    pullProgress: Float
+    listState: LazyListState,
+    onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
+    onChannelClick: (String) -> Unit,
 ) {
+//    val pullProgress by remember {
+//        derivedStateOf {
+//            val offset = listState.firstVisibleItemScrollOffset.coerceAtMost(100)
+//            offset / 100f
+//        }
+//    }
 
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-
         stickyHeader {
             TebahTopBar("알림")
         }
 
         item {
-
             Spacer(modifier = Modifier.size(Paddings.large))
 
             Text(
@@ -50,12 +58,17 @@ fun NotificationScreen(
                 modifier = Modifier.padding(horizontal = Paddings.extra),
                 color = Color.Black
             )
+
             Spacer(modifier = Modifier.size(Paddings.small))
-            AlarmCard("승인 완료", "[IT 선교소모임] 채널에서 [테바프리] 채널에 요청한 공지글 게시가 승인되었습니다.",
-                "1시간 전") {
-            }
-            AlarmCard("승인 완료", "[IT 선교소모임] 채널에서 [테바프리] 채널에 요청한 공지글 게시가 승인되었습니다.",
-                "1시간 전") {
+
+            repeat(2) {
+                AlarmCard(
+                    topLeftText = "승인 완료",
+                    centerText = "[IT 선교소모임] 채널에서 [테바프리] 채널에 요청한 공지글 게시가 승인되었습니다.",
+                    bottomLeftText = "1시간 전"
+                ) {
+
+                }
             }
 
             Spacer(modifier = Modifier.size(Paddings.large))
@@ -68,43 +81,30 @@ fun NotificationScreen(
                 Text(
                     text = "이전 알림",
                     style = TebahTypography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = Paddings.extra),
                     color = Color.Black
                 )
                 Text(
                     text = "알림 전체 삭제",
                     style = TebahTypography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = Paddings.extra),
                     color = third_03
                 )
             }
+
             Spacer(modifier = Modifier.size(Paddings.small))
-            AlarmCard("승인 완료", "[IT 선교소모임] 채널에서 [테바프리] 채널에 요청한 공지글 게시가 승인되었습니다.",
-                "1시간 전") {
-            }
-            AlarmCard("승인 완료", "[IT 선교소모임] 채널에서 [테바프리] 채널에 요청한 공지글 게시가 승인되었습니다.",
-                "1시간 전") {
-            }
-            AlarmCard("승인 완료", "[IT 선교소모임] 채널에서 [테바프리] 채널에 요청한 공지글 게시가 승인되었습니다.",
-                "1시간 전") {
-            }
-            AlarmCard("승인 완료", "[IT 선교소모임] 채널에서 [테바프리] 채널에 요청한 공지글 게시가 승인되었습니다.",
-                "1시간 전") {
+
+            repeat(4) {
+                AlarmCard(
+                    topLeftText = "승인 완료",
+                    centerText = "[IT 선교소모임] 채널에서 [테바프리] 채널에 요청한 공지글 게시가 승인되었습니다.",
+                    bottomLeftText = "1시간 전"
+                ) {
+
+                }
             }
 
             Spacer(modifier = Modifier.size(Paddings.xlarge))
         }
     }
-
-
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun AlarmScreenPreview() {
-//    TebahTheme {
-//        AlarmScreen()
-//    }
-//}

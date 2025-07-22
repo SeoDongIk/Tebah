@@ -1,4 +1,4 @@
-package com.example.presentation.shared.component
+package com.example.presentation.shared.feature.notification.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
