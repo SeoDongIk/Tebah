@@ -1,21 +1,25 @@
-package com.example.presentation.shared.feature.notification.screen
+package com.example.presentation.shared.feature.post.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.LineHeightStyle
 import com.example.presentation.common.theme.TebahTypography
 import com.example.presentation.member.screen.MemberNavigator
 
 @Composable
-fun NotificationScreen(
-    listState: LazyListState,
+fun PhotoDetailScreen(
+    photoUrl: String,
     navigator: MemberNavigator
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        Text("Notification")
+        Text(
+            text = "📷 PhotoDetailScreen\nphotoUrl: $photoUrl",
+            modifier = Modifier.align(Alignment.Center),
+            style = MaterialTheme.typography.headlineMedium
+        )
     }
 }

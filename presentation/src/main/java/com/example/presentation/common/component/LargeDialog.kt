@@ -24,7 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTypography
 import com.example.presentation.common.theme.primary
 
 @Composable
@@ -55,13 +54,13 @@ fun LargeDialog(
                         Spacer(modifier = Modifier.size(Paddings.small))
                         Text(
                             text = title,
-                            style = TebahTypography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                             textAlign = TextAlign.Center,
                             color = Color.Black
                         )
                         Text(
                             text = content,
-                            style = TebahTypography.titleMedium,
+                            style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center,
                             color = Color.Black
                         )
@@ -76,7 +75,7 @@ fun LargeDialog(
                             shape = RoundedCornerShape(percent = 20),
                             colors = ButtonDefaults.buttonColors(containerColor = primary)
                         ) {
-                            Text(firstButtonContent, style = TebahTypography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                            Text(firstButtonContent, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
                         }
                         Button(
                             onClick = {
@@ -88,11 +87,27 @@ fun LargeDialog(
                             shape = RoundedCornerShape(percent = 20),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                         ) {
-                            Text(secondButtonContent,color = Color.DarkGray, style = TebahTypography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                            Text(secondButtonContent,color = Color.DarkGray, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+fun LargeDialogPreview() {
+    MaterialTheme {
+        LargeDialog(
+            showDialog = true,
+            onDismissRequest = {},
+            title = "채널을 삭제하시겠습니까?",
+            content = "삭제한 채널은 복구할 수 없습니다.\n정말 삭제하시겠습니까?",
+            firstButtonContent = "삭제하기",
+            secondButtonContent = "취소",
+            onConfirm = {}
+        )
     }
 }

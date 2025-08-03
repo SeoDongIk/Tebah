@@ -49,9 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.presentation.R
-import com.example.presentation.shared.component.PostPreviewCard2
 import com.example.presentation.member.screen.MemberTabRoute
-import com.example.presentation.write.PostData2
 import com.example.presentation.common.theme.Paddings
 import com.example.presentation.common.theme.primary
 import com.example.presentation.common.theme.secondary
@@ -82,105 +80,6 @@ fun AdminMainScreen() {
 
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("팔로잉", "공지")
-
-    val dummyImage = painterResource(R.drawable.profile_image)
-    val dummyImage2 = painterResource(R.drawable.sample_image_01)
-    val dummyImage3 = painterResource(R.drawable.sample_image_02)
-    val posts = listOf(
-        PostData2(
-            isNotice = true,
-            hasImages = true,
-            profileImage = dummyImage,
-            userId = "채널장1",
-            postTime = "1분 전",
-            previewText = "공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.",
-            imageList = List(2) { dummyImage }
-        ),
-        PostData2(
-            isNotice = false,
-            hasImages = true,
-            profileImage = dummyImage,
-            userId = "채널장1",
-            postTime = "10분 전",
-            previewText = "오늘 날씨가 정말 좋네요~ 사진 몇 장 공유해요!공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.",
-            imageList = List(3) { dummyImage2 }
-        ),
-        PostData2(
-            isNotice = false,
-            hasImages = false,
-            profileImage = dummyImage,
-            userId = "user_02",
-            postTime = "1시간 전",
-            previewText = "이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다."
-        ),
-        PostData2(
-            isNotice = false,
-            hasImages = false,
-            profileImage = dummyImage,
-            userId = "user_02",
-            postTime = "1시간 전",
-            previewText = "이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다."
-        ),
-        PostData2(
-            isNotice = false,
-            hasImages = true,
-            profileImage = dummyImage,
-            userId = "user_01",
-            postTime = "10분 전",
-            previewText = "오늘 날씨가 정말 좋네요~ 사진 몇 장 공유해요!공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.",
-            imageList = listOf(dummyImage, dummyImage2, dummyImage3)
-        ),
-        PostData2(
-            isNotice = false,
-            hasImages = false,
-            profileImage = dummyImage,
-            userId = "user_02",
-            postTime = "1시간 전",
-            previewText = "이미지는 없지만 내용은 충실한 게시이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확글입니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다."
-        ),
-        PostData2(
-            isNotice = false,
-            hasImages = true,
-            profileImage = dummyImage,
-            userId = "user_01",
-            postTime = "10분 전",
-            previewText = "오늘 날씨가 정말 좋네요~ 사진 몇 장이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확 공유해요!공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.",
-            imageList = List(3) { dummyImage }
-        ),
-        PostData2(
-            isNotice = true,
-            hasImages = false,
-            profileImage = dummyImage,
-            userId = "user_02",
-            postTime = "1시간 전",
-            previewText = "이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확인 바랍이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확니다.공지사항입니다. 필수 확인 바랍니다."
-        ),
-        PostData2(
-            isNotice = false,
-            hasImages = false,
-            profileImage = dummyImage,
-            userId = "user_02",
-            postTime = "1시간 전",
-            previewText = "이미지는 없지만 내용은 충실한 게시글입니다.공지사항이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다."
-        ),
-        PostData2(
-            isNotice = true,
-            hasImages = false,
-            profileImage = dummyImage,
-            userId = "user_02",
-            postTime = "1시간 전",
-            previewText = "이미지는 없지만 내용은 충실한 게시글입니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다."
-        ),
-        PostData2(
-            isNotice = false,
-            hasImages = true,
-            profileImage = dummyImage,
-            userId = "user_01",
-            postTime = "10분 전",
-            previewText = "오늘 날씨가 정말 좋네요~ 사진 몇 장 공유해요!공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.공지사항입니다. 필수 확인 바랍니다.",
-            imageList = List(3) { dummyImage }
-        )
-    )
 
     var isRefreshing by remember { mutableStateOf(false) }
     val pullRefreshState = rememberPullToRefreshState()
@@ -280,18 +179,6 @@ fun AdminMainScreen() {
                         }
                     }
                 }
-
-                items(posts) { post ->
-                    PostPreviewCard2(
-                        isNotice = post.isNotice,
-                        hasImages = post.hasImages,
-                        profileImage = post.profileImage,
-                        userId = post.userId,
-                        postTime = post.postTime,
-                        previewText = post.previewText,
-                        imageList = post.imageList
-                    )
-                }
             }
         }
 
@@ -301,12 +188,7 @@ fun AdminMainScreen() {
             exit = slideOutVertically { it },
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
-//            MainBottomNavigationBar(
-//                currentRoute = currentRoute,
-//                onItemSelected = { selectedRoute ->
-//                    currentRoute = selectedRoute
-//                }
-//            )
+
         }
 
         Box(

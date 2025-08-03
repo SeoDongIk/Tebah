@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,7 +16,6 @@ import androidx.compose.ui.text.style.TextAlign
 import com.example.presentation.R
 import com.example.presentation.common.component.LargeButton
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTypography
 
 @Composable
 fun RoleScreen(
@@ -37,12 +37,12 @@ fun RoleScreen(
         ) {
             Text(
                 text = stringResource(R.string.role_title_line1),
-                style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
             Text(
                 text = stringResource(R.string.role_title_line2),
-                style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
         }

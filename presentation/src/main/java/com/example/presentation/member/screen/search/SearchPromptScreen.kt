@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +45,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.presentation.shared.component.MiniProfileItem
 import com.example.presentation.common.theme.Paddings
 import com.example.presentation.common.theme.TebahTypography
 import com.example.presentation.common.theme.primary
@@ -71,14 +71,6 @@ fun SearchPromptScreen(
         }
 
         item {
-            MiniProfileItem()
-            MiniProfileItem()
-            MiniProfileItem()
-            MiniProfileItem()
-            MiniProfileItem()
-            MiniProfileItem()
-            MiniProfileItem()
-            MiniProfileItem()
 
         }
     }
@@ -155,7 +147,7 @@ fun TebahSearchBar(
                         Text(
                             text = placeholder,
                             color = third_03,
-                            style = TebahTypography.titleMedium,
+                            style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Start
                         )
                     }
@@ -164,7 +156,7 @@ fun TebahSearchBar(
                         value = query,
                         onValueChange = onQueryChange,
                         singleLine = true,
-                        textStyle = TebahTypography.titleMedium.copy(color = primary),
+                        textStyle = MaterialTheme.typography.titleMedium.copy(color = primary),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Done
                         ),

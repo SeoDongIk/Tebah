@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,8 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.common.component.MediumButton
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTheme
-import com.example.presentation.common.theme.TebahTypography
 import com.example.presentation.common.theme.primary
 
 @Composable
@@ -77,13 +76,13 @@ fun UnapprovedAdminScreen(
         ) {
             Text(
                 text = "승인 대기중입니다",
-                style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.size(Paddings.xlarge))
             Text(
                 text = "교회 채널 승인은\n2~3일 소요될 수 있습니다.",
-                style = TebahTypography.titleMedium,
+                style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Start
             )
         }

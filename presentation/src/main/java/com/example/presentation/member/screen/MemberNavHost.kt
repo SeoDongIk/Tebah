@@ -6,7 +6,6 @@ import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,13 +20,17 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Typography
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -50,10 +53,10 @@ import com.example.presentation.member.screen.home.HomeScreen
 import com.example.presentation.member.screen.search.DiscoverScreen
 import com.example.presentation.member.screen.search.SearchPromptScreen
 import com.example.presentation.member.screen.search.SearchResultScreen
-import com.example.presentation.shared.component.PhotoDetailScreen
 import com.example.presentation.shared.feature.channel.screen.ChannelCreateScreen
 import com.example.presentation.shared.feature.channel.screen.ChannelDetailScreen
 import com.example.presentation.shared.feature.notification.screen.NotificationScreen
+import com.example.presentation.shared.feature.post.screen.PhotoDetailScreen
 import com.example.presentation.shared.feature.post.screen.PostDetailScreen
 import com.example.presentation.shared.feature.user.screen.FollowListScreen
 import com.example.presentation.shared.feature.user.screen.FollowSuggestionScreen
@@ -105,13 +108,12 @@ fun MemberNavHost(onNavigateToPostWrite: (Context) -> Unit) {
         MemberTabRoute.USER
     )
     val offsets = tabs.map { tab ->
-        animateDpAsState(
-            targetValue = when (tab) {
-                selectedTab -> 0.dp
-                else -> if (tabs.indexOf(tab) < tabs.indexOf(selectedTab)) -screenWidth.dp else screenWidth.dp
-            },
-            animationSpec = tween(durationMillis = 250)
-        )
+        val target = when (tab) {
+            selectedTab -> 0.dp
+            else -> if (tabs.indexOf(tab) < tabs.indexOf(selectedTab)) -screenWidth.dp else screenWidth.dp
+        }
+        val offset by rememberUpdatedState(newValue = target)
+        offset
     }
 
     LaunchedEffect(targetScrollingDown) {
@@ -194,21 +196,19 @@ fun MemberNavHost(onNavigateToPostWrite: (Context) -> Unit) {
         floatingActionButtonPosition = FabPosition.EndOverlay
     ) { innerPadding ->
         Box {
-            Box(modifier = Modifier.offset(x = offsets[0].value)) {
+            Box(modifier = Modifier.offset(x = offsets[0])) {
                 TabNavHost(
                     navController = homeNavController,
                     startRoute = MemberTabRoute.HOME.route
                 ) {
                     HomeScreen(
                         listState = homeListState,
-                        onPostClick = navigator::onPostClick,
-                        onUserClick = navigator::onUserClick,
-                        onChannelClick = navigator::onChannelClick
+                        navigator = navigator
                     )
                 }
             }
 
-            Box(modifier = Modifier.offset(x = offsets[1].value)) {
+            Box(modifier = Modifier.offset(x = offsets[1])) {
                 SearchNavHost(
                     navController = searchNavController,
                     listState = searchListState,
@@ -216,32 +216,26 @@ fun MemberNavHost(onNavigateToPostWrite: (Context) -> Unit) {
                 )
             }
 
-            Box(modifier = Modifier.offset(x = offsets[2].value)) {
+            Box(modifier = Modifier.offset(x = offsets[2])) {
                 TabNavHost(
                     navController = notifNavController,
                     startRoute = MemberTabRoute.NOTIFICATION.route
                 ) {
                     NotificationScreen(
                         listState = notifListState,
-                        onPostClick = navigator::onPostClick,
-                        onUserClick = navigator::onUserClick,
-                        onChannelClick = navigator::onChannelClick
+                        navigator = navigator
                     )
                 }
             }
 
-            Box(modifier = Modifier.offset(x = offsets[3].value)) {
+            Box(modifier = Modifier.offset(x = offsets[3])) {
                 TabNavHost(
                     navController = userNavController,
                     startRoute = MemberTabRoute.USER.route
                 ) {
                     UserScreen(
                         listState = userListState,
-                        onPostClick = navigator::onPostClick,
-                        onUserClick = navigator::onUserClick,
-                        onChannelClick = navigator::onChannelClick,
-                        onPhotoClick = navigator::onNavigateToPhotoDetail,
-                        onEditProfile = navigator::onNavigateToProfileEdit
+                        navigator = navigator
                     )
                 }
             }
@@ -252,61 +246,55 @@ fun MemberNavHost(onNavigateToPostWrite: (Context) -> Unit) {
             startDestination = "empty",
             modifier = Modifier
         ) {
-            composable("empty") {  }
+            composable("empty") { }
             composable(MemberRoute.PostDetail.route) {
                 val postId = it.arguments?.getString("postId") ?: ""
                 PostDetailScreen(
                     postId = postId,
-                    onPostClick = navigator::onPostClick,
-                    onUserClick = navigator::onUserClick,
-                    onChannelClick = navigator::onChannelClick
+                    navigator = navigator
                 )
             }
             composable(MemberRoute.ChannelDetail.route) {
                 val channelId = it.arguments?.getString("channelId") ?: ""
                 ChannelDetailScreen(
                     channelId = channelId,
-                    onPostClick = navigator::onPostClick,
-                    onUserClick = navigator::onUserClick,
-                    onChannelClick = navigator::onChannelClick,
-                    onNavigateToManage = { },
-                    onNavigateToWrite = { },
-                    onBack = { }
+                    navigator = navigator,
+                    onNavigateToWrite = onNavigateToPostWrite,
                 )
             }
             composable(MemberRoute.PhotoDetail.route) {
                 val photoUrl = it.arguments?.getString("photoUrl") ?: ""
-                PhotoDetailScreen(photoUrl)
+                PhotoDetailScreen(
+                    photoUrl = photoUrl,
+                    navigator = navigator
+                )
             }
             composable(MemberRoute.OtherUser.route) {
                 val userId = it.arguments?.getString("userId") ?: ""
                 OtherUserScreen(
                     userId = userId,
-                    onPostClick = navigator::onPostClick,
-                    onUserClick = navigator::onUserClick,
-                    onChannelClick = navigator::onChannelClick
+                    navigator = navigator
                 )
             }
             composable(MemberRoute.ProfileEdit.route) {
                 ProfileEditScreen(
-                    onBack = navigator::onBack
+                    navigator = navigator
                 )
             }
             composable(MemberRoute.FollowList.route) {
                 FollowListScreen(
-                    onUserClick = navigator::onUserClick,
-                    onBack = navigator::onBack
+                    navigator = navigator
                 )
             }
             composable(MemberRoute.ChannelCreate.route) {
-                ChannelCreateScreen(onBack = navigator::onBack)
+                ChannelCreateScreen(
+                    navigator = navigator
+                )
             }
             composable(MemberRoute.FollowSuggestion.route) {
-                FollowSuggestionScreen(onUserClick = navigator::onUserClick)
-            }
-            composable(MemberRoute.PhotoDetail.route) {
-                val photoUrl = it.arguments?.getString("photoUrl") ?: ""
-                PhotoDetailScreen(photoUrl)
+                FollowSuggestionScreen(
+                    navigator = navigator
+                )
             }
         }
     }
@@ -333,9 +321,7 @@ fun SearchNavHost(
         composable("searchMain") {
             DiscoverScreen(
                 listState = listState,
-                onPostClick = navigator::onPostClick,
-                onUserClick = navigator::onUserClick,
-                onChannelClick = navigator::onChannelClick,
+                navigator = navigator,
                 onNavigateToSearchDetail = {
                     navController.navigate("searchPrompt")
                 }
@@ -352,9 +338,7 @@ fun SearchNavHost(
             val keyword = backStackEntry.arguments?.getString("keyword") ?: ""
             SearchResultScreen(
                 keyword = keyword,
-                onPostClick = navigator::onPostClick,
-                onUserClick = navigator::onUserClick,
-                onChannelClick = navigator::onChannelClick
+                navigator = navigator
             )
         }
     }

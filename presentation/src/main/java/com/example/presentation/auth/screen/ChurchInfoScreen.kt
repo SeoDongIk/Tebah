@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -42,7 +43,6 @@ import com.example.presentation.R
 import com.example.presentation.common.component.LargeButton
 import com.example.presentation.auth.viewmodel.AdminSignUpViewModel
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTypography
 import com.example.presentation.common.theme.primary
 import com.example.presentation.common.theme.secondary
 
@@ -74,12 +74,12 @@ fun ChurchInfoScreen(
         ) {
             Text(
                 text = stringResource(id = R.string.church_info_title_1),
-                style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
             Text(
                 text = stringResource(id = R.string.church_info_title_2),
-                style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
         }
@@ -187,7 +187,7 @@ fun RegionSelectorModal(
             ) {
                 Text(
                     stringResource(id = R.string.region_selector_title),
-                    style = TebahTypography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
                 IconButton(onClick = onDismissRequest) {
                     Icon(
@@ -212,7 +212,7 @@ fun RegionSelectorModal(
                         .padding(vertical = Paddings.xlarge),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(region.displayName, style = TebahTypography.titleMedium, color = Color.Black)
+                    Text(region.displayName, style = MaterialTheme.typography.titleMedium, color = Color.Black)
                     Spacer(modifier = Modifier.weight(1f))
                     if (region == selectedRegion) {
                         Icon(

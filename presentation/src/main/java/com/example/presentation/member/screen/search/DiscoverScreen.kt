@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,15 +36,14 @@ import com.example.presentation.common.theme.TebahTypography
 import com.example.presentation.common.theme.primary
 import com.example.presentation.common.theme.third_01
 import com.example.presentation.common.theme.third_03
+import com.example.presentation.member.screen.MemberNavigator
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DiscoverScreen(
     listState: LazyListState,
-    onPostClick: (String) -> Unit,
-    onUserClick: (String) -> Unit,
-    onChannelClick: (String) -> Unit,
+    navigator: MemberNavigator,
     onNavigateToSearchDetail: () -> Unit
 ) {
 
@@ -125,7 +125,7 @@ fun TebahSearchBarMock(
                 Text(
                     text = placeholder,
                     color = third_03,
-                    style = TebahTypography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Start
                 )

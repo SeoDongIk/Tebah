@@ -1,5 +1,6 @@
 package com.example.presentation.common.component
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTypography
 import com.example.presentation.common.theme.primary
 
 @Composable
@@ -53,13 +54,13 @@ fun MediumDialog(
                         Spacer(modifier = Modifier.size(Paddings.small))
                         Text(
                             text = title,
-                            style = TebahTypography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                             textAlign = TextAlign.Center,
                             color = Color.Black
                         )
                         Text(
                             text = content,
-                            style = TebahTypography.titleMedium,
+                            style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center,
                             color = Color.Black
                         )
@@ -74,10 +75,30 @@ fun MediumDialog(
                             shape = RoundedCornerShape(percent = 20),
                             colors = ButtonDefaults.buttonColors(containerColor = primary)
                         ) {
-                            Text(buttonContent, style = TebahTypography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                            Text(buttonContent, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@Composable
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+fun MediumDialogContainerPreview() {
+    MaterialTheme {
+        Surface {
+            BoxWithConstraints {
+                MediumDialog(
+                    showDialog = true,
+                    onDismissRequest = {},
+                    title = "채널 구독 요청",
+                    content = "이 채널은 승인 후 구독할 수 있습니다.\n요청하시겠습니까?",
+                    buttonContent = "요청하기",
+                    onConfirm = {}
+                )
             }
         }
     }

@@ -1,21 +1,25 @@
 package com.example.presentation.shared.feature.post.screen
 
-import android.annotation.SuppressLint
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import java.lang.reflect.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import com.example.presentation.common.theme.TebahTypography
+import com.example.presentation.member.screen.MemberNavigator
 
-
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostDetailScreen(
     postId: String,
-    onPostClick: (String) -> Unit,
-    onUserClick: (String) -> Unit,
-    onChannelClick: (String) -> Unit,
+    navigator: MemberNavigator
 ) {
-
+    Box(modifier = Modifier.fillMaxSize()) {
+        Text(
+            text = "📝 PostDetailScreen\npostId: $postId",
+            modifier = Modifier.align(Alignment.Center),
+            style = MaterialTheme.typography.headlineMedium
+        )
+    }
 }

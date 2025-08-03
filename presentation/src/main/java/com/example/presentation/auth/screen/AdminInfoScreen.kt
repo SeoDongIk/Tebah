@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -38,7 +39,6 @@ import com.example.presentation.common.component.LargeButton
 import com.example.presentation.auth.viewmodel.AdminSignUpViewModel
 import com.example.presentation.auth.state.SignUpSideEffect
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTypography
 import com.example.presentation.common.theme.primary
 
 @Composable
@@ -87,12 +87,12 @@ fun AdminInfoScreen(
         ) {
             Text(
                 text = stringResource(id = R.string.admin_info_title_1),
-                style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
             Text(
                 text = stringResource(id = R.string.admin_info_title_2),
-                style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
         }
@@ -106,7 +106,7 @@ fun AdminInfoScreen(
             Spacer(modifier = Modifier.size(Paddings.medium))
             Text(
                 text = stringResource(id = R.string.admin_info_section_title),
-                style = TebahTypography.titleMedium,
+                style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center
             )
             OutlinedTextField(
@@ -150,7 +150,7 @@ fun AdminInfoScreen(
         ) {
             Text(
                 text = stringResource(id = R.string.admin_role_selection_title),
-                style = TebahTypography.titleMedium,
+                style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center
             )
             AdminPosition.values().forEach { position ->

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +41,6 @@ import com.example.presentation.admin.AdminActivity
 import com.example.presentation.member.MemberActivity
 import com.example.presentation.auth.state.SignInSideEffect
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTypography
 
 @Composable
 fun SignInScreen(
@@ -129,7 +129,7 @@ fun SignInScreen(
                 Spacer(modifier = Modifier.width(Paddings.medium))
                 Text(
                     text = stringResource(R.string.label_save_login),
-                    style = TebahTypography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.Center
                 )
             }

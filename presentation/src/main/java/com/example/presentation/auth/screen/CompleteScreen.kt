@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,7 +29,6 @@ import com.example.presentation.auth.state.SignUpSideEffect
 import com.example.presentation.auth.state.SignUpState
 import com.example.presentation.auth.viewmodel.SignUpViewModel
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTypography
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
@@ -79,12 +79,12 @@ fun <S : SignUpState> CompleteScreen(
         ) {
             Text(
                 text = stringResource(R.string.complete_title_line1),
-                style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
             Text(
                 text = stringResource(R.string.complete_title_line2),
-                style = TebahTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
         }

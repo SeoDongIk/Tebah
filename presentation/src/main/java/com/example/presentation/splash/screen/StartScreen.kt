@@ -110,7 +110,7 @@ fun BrowseServiceTextButton(
             )
             .padding(vertical = Paddings.xlarge),
         color = primary,
-        style = TebahTypography.titleMedium.copy(fontWeight = FontWeight.Bold),
+        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
         textAlign = TextAlign.Center
     )
 }
