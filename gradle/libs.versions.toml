@@ -26,6 +26,7 @@ firebase-crashlytics-gradle = "2.9.9"
 navigation-compose = "2.9.1"
 kotlinx-serialization-core = "1.6.3"
 kotlinx-serialization-json = "1.6.3"
+accompanist = "0.34.0"
 
 [ libraries ]
 androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycle-runtime-ktx" }
@@ -81,6 +82,7 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 firebase-crashlytics-ktx = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx-serialization-core" }
+accompanist-swiperefresh = { group = "com.google.accompanist", name = "accompanist-swiperefresh", version.ref = "accompanist" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }

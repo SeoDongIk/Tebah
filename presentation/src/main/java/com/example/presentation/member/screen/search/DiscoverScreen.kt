@@ -53,21 +53,6 @@ fun DiscoverScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
-//        item {
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .background(Color.White),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.vector),
-//                    contentDescription = "로고 이미지",
-//                    tint = primary,
-//                    modifier = Modifier.size(48.dp + (pullProgress * 50).dp)
-//                )
-//            }
-//        }
 
         stickyHeader {
             TebahSearchBarMock(
@@ -75,8 +60,6 @@ fun DiscoverScreen(
             )
         }
 
-//        items() { post ->
-//        }
     }
 }
 

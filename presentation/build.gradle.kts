@@ -92,4 +92,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-flowlayout:0.34.0") // 최신 버전 확인 필요
 
     implementation(libs.timber)
+    implementation(libs.accompanist.swiperefresh)
+
 }
