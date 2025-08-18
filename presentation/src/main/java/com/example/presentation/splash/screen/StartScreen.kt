@@ -1,6 +1,8 @@
 package com.example.presentation.splash.screen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -9,12 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.presentation.R
 import com.example.presentation.common.component.LargeButton
+import com.example.presentation.common.theme.GradientNavy
 import com.example.presentation.common.theme.Paddings
 import com.example.presentation.common.theme.TebahTheme
 
@@ -23,21 +30,42 @@ fun StartScreen(
     onNavigateToLogin: () -> Unit,
     onBrowseServiceClick: () -> Unit,
 ) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(
-                horizontal = Paddings.layout_horizontal,
-                vertical = Paddings.layout_vertical
+            .background(
+                brush =Brush.verticalGradient(
+                    colors = listOf(GradientNavy.copy(0f), GradientNavy.copy(1f)),
+                    startY = 0f,
+                    endY = 1000f
+                )
             )
     ) {
-        WelcomeTexts(modifier = Modifier.weight(1f))
-        SpacerSection(modifier = Modifier.weight(1f))
-        StartButtonSection(
-            onClick = onNavigateToLogin,
-            onBrowseServiceClick = onBrowseServiceClick,
-            modifier = Modifier.weight(1f)
+        SpacerSection(
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center)
         )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    horizontal = Paddings.layout_horizontal,
+                    vertical = Paddings.layout_vertical
+                ),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(64.dp))
+            WelcomeTexts(modifier = Modifier.fillMaxWidth())
+            Spacer(modifier = Modifier.weight(1f))
+            StartButtonSection(
+                onClick = onNavigateToLogin,
+                onBrowseServiceClick = onBrowseServiceClick,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
@@ -67,7 +95,21 @@ private fun SpacerSection(modifier: Modifier) {
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_splash_background),
+            contentDescription = "Background",
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            contentScale = ContentScale.Crop
+        )
 
+        Image(
+            painter = painterResource(id = R.drawable.ic_splash_rocket),
+            contentDescription = "Rocket",
+            modifier = Modifier
+                .size(300.dp)
+        )
     }
 }
 
