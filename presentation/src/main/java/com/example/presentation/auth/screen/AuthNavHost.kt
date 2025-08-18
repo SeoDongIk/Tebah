@@ -1,5 +1,8 @@
 package com.example.presentation.auth.screen
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -11,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,137 +22,163 @@ import androidx.navigation.compose.rememberNavController
 import com.example.presentation.auth.viewmodel.AdminSignUpViewModel
 import com.example.presentation.auth.viewmodel.MemberSignUpViewModel
 
+private const val TRANSITION_DURATION = 300
+
+sealed class AuthRoute(val route: String) {
+    object Login : AuthRoute("login")
+    object Role : AuthRoute("role")
+    object MemberInfo : AuthRoute("memberinfo")
+    object ChurchSelect : AuthRoute("churchselect")
+    object ChurchInfo : AuthRoute("churchinfo")
+    object AdminInfo : AuthRoute("admininfo")
+    object Complete : AuthRoute("complete")
+}
+
+private fun slideIn(offset: Int) = slideInHorizontally(
+    initialOffsetX = { offset },
+    animationSpec = tween(TRANSITION_DURATION)
+)
+private fun slideOut(offset: Int) = slideOutHorizontally(
+    targetOffsetX = { offset },
+    animationSpec = tween(TRANSITION_DURATION)
+)
+private fun slideInVertical(offset: Int) = slideInVertically(
+    initialOffsetY = { offset },
+    animationSpec = tween(TRANSITION_DURATION)
+)
+private fun slideOutVertical(offset: Int) = slideOutVertically(
+    targetOffsetY = { offset },
+    animationSpec = tween(TRANSITION_DURATION)
+)
+private val fadeInAnim = fadeIn(animationSpec = tween(TRANSITION_DURATION))
+private val fadeOutAnim = fadeOut(animationSpec = tween(TRANSITION_DURATION))
+
+private fun androidx.navigation.NavGraphBuilder.animatedComposable(
+    route: String,
+    enter: EnterTransition,
+    exit: ExitTransition,
+    popEnter: EnterTransition,
+    popExit: ExitTransition,
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
+) {
+    composable(
+        route,
+        enterTransition = { enter },
+        exitTransition = { exit },
+        popEnterTransition = { popEnter },
+        popExitTransition = { popExit },
+        content = content
+    )
+}
+
 @Composable
 fun AuthNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
     NavHost(
         navController = navController,
-        startDestination = "login",
+        startDestination = AuthRoute.Login.route,
     ) {
-        val slideInFromRight = slideInHorizontally(
-            initialOffsetX = { 1000 },
-            animationSpec = tween(300)
-        )
-        val slideOutToLeft = slideOutHorizontally(
-            targetOffsetX = { -1000 },
-            animationSpec = tween(300)
-        )
-        val slideInFromLeft = slideInHorizontally(
-            initialOffsetX = { -1000 },
-            animationSpec = tween(300)
-        )
-        val slideOutToRight = slideOutHorizontally(
-            targetOffsetX = { 1000 },
-            animationSpec = tween(300)
-        )
-
-        val slideInFromBottom = slideInVertically(
-            initialOffsetY = { 1000 },
-            animationSpec = tween(300)
-        )
-        val slideOutToTop = slideOutVertically(
-            targetOffsetY = { -1000 },
-            animationSpec = tween(300)
-        )
-        val slideInFromTop = slideInVertically(
-            initialOffsetY = { -1000 },
-            animationSpec = tween(300)
-        )
-        val slideOutToBottom = slideOutVertically(
-            targetOffsetY = { 1000 },
-            animationSpec = tween(300)
-        )
-
-        val fadeInAnim = fadeIn(animationSpec = tween(300))
-        val fadeOutAnim = fadeOut(animationSpec = tween(300))
-
-        // 로그인 <-> RoleScreen : 수직 슬라이드
-        composable("login",
-            enterTransition = { slideInFromBottom + fadeInAnim },
-            exitTransition = { slideOutToBottom + fadeOutAnim },
-            popEnterTransition = { slideInFromBottom + fadeInAnim },
-            popExitTransition = { slideOutToBottom + fadeOutAnim }
+        // 로그인
+        animatedComposable(
+            route = AuthRoute.Login.route,
+            enter = slideInVertical(1000) + fadeInAnim,
+            exit = slideOutVertical(1000) + fadeOutAnim,
+            popEnter = slideInVertical(1000) + fadeInAnim,
+            popExit = slideOutVertical(1000) + fadeOutAnim
         ) {
-            SignInScreen(onNavigateToRole = { navController.navigate("role") })
+            SignInScreen(onNavigateToRole = { navController.navigate(AuthRoute.Role.route) })
         }
 
-        composable("role",
-            enterTransition = { slideInFromTop + fadeInAnim },
-            exitTransition = { slideOutToLeft + fadeOutAnim },
-            popEnterTransition = { slideInFromLeft + fadeInAnim },
-            popExitTransition = { slideOutToTop + fadeOutAnim }
+        // 역할 선택
+        animatedComposable(
+            route = AuthRoute.Role.route,
+            enter = slideInVertical(-1000) + fadeInAnim,
+            exit = slideOut(-1000) + fadeOutAnim,
+            popEnter = slideIn(-1000) + fadeInAnim,
+            popExit = slideOutVertical(-1000) + fadeOutAnim
         ) {
             RoleScreen(
-                onNavigateToMemberInfo = { navController.navigate("memberinfo") },
-                onNavigateToChurchInfo = { navController.navigate("churchinfo") }
+                onNavigateToMemberInfo = { navController.navigate(AuthRoute.MemberInfo.route) },
+                onNavigateToChurchInfo = { navController.navigate(AuthRoute.ChurchInfo.route) }
             )
         }
 
-        // RoleScreen <-> 다음 화면들 : 수평 슬라이드
-        composable("memberinfo",
-            enterTransition = { slideInFromRight + fadeInAnim },
-            exitTransition = { slideOutToLeft + fadeOutAnim },
-            popEnterTransition = { slideInFromLeft + fadeInAnim },
-            popExitTransition = { slideOutToRight + fadeOutAnim }
+        // 멤버 정보 입력
+        animatedComposable(
+            route = AuthRoute.MemberInfo.route,
+            enter = slideIn(1000) + fadeInAnim,
+            exit = slideOut(-1000) + fadeOutAnim,
+            popEnter = slideIn(-1000) + fadeInAnim,
+            popExit = slideOut(1000) + fadeOutAnim
         ) { backStackEntry ->
             val viewModel: MemberSignUpViewModel = hiltViewModel(backStackEntry)
             MemberInfoScreen(
                 viewModel = viewModel,
-                onNavigateToChurchSelect = { navController.navigate("churchselect") }
+                onNavigateToChurchSelect = { navController.navigate(AuthRoute.ChurchSelect.route) }
             )
         }
 
-        composable("churchselect",
-            enterTransition = { slideInFromRight + fadeInAnim },
-            exitTransition = { slideOutToLeft + fadeOutAnim },
-            popEnterTransition = { slideInFromLeft + fadeInAnim },
-            popExitTransition = { slideOutToRight + fadeOutAnim }
+        // 교회 선택
+        animatedComposable(
+            route = AuthRoute.ChurchSelect.route,
+            enter = slideIn(1000) + fadeInAnim,
+            exit = slideOut(-1000) + fadeOutAnim,
+            popEnter = slideIn(-1000) + fadeInAnim,
+            popExit = slideOut(1000) + fadeOutAnim
         ) { backStackEntry ->
             val viewModel: MemberSignUpViewModel = hiltViewModel(backStackEntry)
             ChurchSelectScreen(
                 viewModel = viewModel,
-                onNavigateToComplete = { navController.navigate("complete") }
+                onNavigateToComplete = { navController.navigate(AuthRoute.Complete.route) }
             )
         }
 
-        composable("churchinfo",
-            enterTransition = { slideInFromRight + fadeInAnim },
-            exitTransition = { slideOutToLeft + fadeOutAnim },
-            popEnterTransition = { slideInFromLeft + fadeInAnim },
-            popExitTransition = { slideOutToRight + fadeOutAnim }
+        // 교회 정보 입력 (관리자)
+        animatedComposable(
+            route = AuthRoute.ChurchInfo.route,
+            enter = slideIn(1000) + fadeInAnim,
+            exit = slideOut(-1000) + fadeOutAnim,
+            popEnter = slideIn(-1000) + fadeInAnim,
+            popExit = slideOut(1000) + fadeOutAnim
         ) { backStackEntry ->
             val viewModel: AdminSignUpViewModel = hiltViewModel(backStackEntry)
             ChurchInfoScreen(
                 viewModel = viewModel,
-                onNavigateToAdminInfo = { navController.navigate("admininfo") }
+                onNavigateToAdminInfo = { navController.navigate(AuthRoute.AdminInfo.route) }
             )
         }
 
-        composable("admininfo",
-            enterTransition = { slideInFromRight + fadeInAnim },
-            exitTransition = { slideOutToLeft + fadeOutAnim },
-            popEnterTransition = { slideInFromLeft + fadeInAnim },
-            popExitTransition = { slideOutToRight + fadeOutAnim }
+        // 관리자 정보 입력
+        animatedComposable(
+            route = AuthRoute.AdminInfo.route,
+            enter = slideIn(1000) + fadeInAnim,
+            exit = slideOut(-1000) + fadeOutAnim,
+            popEnter = slideIn(-1000) + fadeInAnim,
+            popExit = slideOut(1000) + fadeOutAnim
         ) { backStackEntry ->
             val viewModel: AdminSignUpViewModel = hiltViewModel(backStackEntry)
             AdminInfoScreen(
                 viewModel = viewModel,
-                onNavigateToComplete = { navController.navigate("complete") }
+                onNavigateToComplete = { navController.navigate(AuthRoute.Complete.route) }
             )
         }
 
-        composable("complete",
-            enterTransition = { fadeInAnim + slideInFromBottom },
-            exitTransition = { fadeOutAnim },
-            popEnterTransition = { fadeInAnim + slideInFromBottom },
-            popExitTransition = { fadeOutAnim }
-        ) { backStackEntry ->
+        // 완료 화면
+        animatedComposable(
+            route = AuthRoute.Complete.route,
+            enter = fadeInAnim + slideInVertical(1000),
+            exit = fadeOutAnim,
+            popEnter = fadeInAnim + slideInVertical(1000),
+            popExit = fadeOutAnim
+        ) {
             val previousEntry = navController.previousBackStackEntry
             val viewModel: ViewModel? = previousEntry?.let {
                 when (it.destination.route) {
-                    "memberinfo" -> hiltViewModel<MemberSignUpViewModel>(it)
-                    "churchinfo" -> hiltViewModel<AdminSignUpViewModel>(it)
+                    AuthRoute.MemberInfo.route,
+                    AuthRoute.ChurchSelect.route -> hiltViewModel<MemberSignUpViewModel>(it)
+                    AuthRoute.ChurchInfo.route,
+                    AuthRoute.AdminInfo.route -> hiltViewModel<AdminSignUpViewModel>(it)
                     else -> null
                 }
             }

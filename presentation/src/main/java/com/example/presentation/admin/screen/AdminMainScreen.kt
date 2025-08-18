@@ -28,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.pullToRefresh
@@ -51,10 +52,6 @@ import androidx.compose.ui.unit.sp
 import com.example.presentation.R
 import com.example.presentation.member.screen.MemberTabRoute
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.primary
-import com.example.presentation.common.theme.secondary
-import com.example.presentation.common.theme.third_02
-import com.example.presentation.common.theme.third_03
 import com.example.presentation.member.launchWriteActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -124,7 +121,7 @@ fun AdminMainScreen() {
                         Icon(
                             painter = painterResource(id = R.drawable.vector),
                             contentDescription = "로고 이미지",
-                            tint = primary,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(48.dp + (pullProgress*50).dp)
                         )
                     }
@@ -147,7 +144,7 @@ fun AdminMainScreen() {
                                 ) {
                                     Text(
                                         text = title,
-                                        color = if (selectedTab == index) primary else third_03,
+                                        color = if (selectedTab == index)  MaterialTheme.colorScheme.primary else  MaterialTheme.colorScheme.primary,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -171,7 +168,7 @@ fun AdminMainScreen() {
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(1.dp)
-                                            .background(if (selectedTab == index) third_02 else third_03)
+                                            .background(if (selectedTab == index)  MaterialTheme.colorScheme.primary else  MaterialTheme.colorScheme.primary)
                                             .align(Alignment.BottomCenter)
                                     )
                                 }
@@ -198,12 +195,12 @@ fun AdminMainScreen() {
                 .align(Alignment.BottomEnd)
                 .padding(Paddings.extra)
                 .background(
-                    color = primary,
+                    color =  MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(Paddings.xlarge)
                 )
                 .border(
                     width = Paddings.small,
-                    color = secondary,
+                    color =  MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(Paddings.xlarge)
                 )
                 .clip(RoundedCornerShape(Paddings.xlarge))

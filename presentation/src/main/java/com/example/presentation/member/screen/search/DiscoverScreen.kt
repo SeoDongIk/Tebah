@@ -32,10 +32,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.presentation.R
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTypography
-import com.example.presentation.common.theme.primary
-import com.example.presentation.common.theme.third_01
-import com.example.presentation.common.theme.third_03
 import com.example.presentation.member.screen.MemberNavigator
 
 
@@ -92,22 +88,22 @@ fun TebahSearchBarMock(
                     .fillMaxSize()
                     .padding(horizontal = Paddings.medium)
                     .clip(RoundedCornerShape(Paddings.xlarge))
-                    .border(1.dp, third_01, RoundedCornerShape(Paddings.xlarge))
-                    .background(third_03.copy(0.1f))
+                    .border(1.dp,  MaterialTheme.colorScheme.primary, RoundedCornerShape(Paddings.xlarge))
+                    .background( MaterialTheme.colorScheme.primary.copy(0.1f))
                     .clickable { onNavigateToSearchDetail() }
                     .padding(horizontal = Paddings.xlarge)
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search",
-                    tint = primary
+                    tint =  MaterialTheme.colorScheme.primary
                 )
 
                 Spacer(modifier = Modifier.width(Paddings.medium))
 
                 Text(
                     text = placeholder,
-                    color = third_03,
+                    color =  MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Start

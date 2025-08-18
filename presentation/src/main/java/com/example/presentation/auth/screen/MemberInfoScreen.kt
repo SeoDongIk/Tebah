@@ -26,7 +26,6 @@ import com.example.presentation.common.component.MediumDialog
 import com.example.presentation.auth.viewmodel.MemberSignUpViewModel
 import com.example.presentation.auth.state.SignUpSideEffect
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.primary
 
 @Composable
 fun MemberInfoScreen(
@@ -44,7 +43,7 @@ fun MemberInfoScreen(
     }
 
     val isNextEnabled = viewModel.isNextEnabled
-    val nextButtonColor = if (isNextEnabled) primary else Color.LightGray
+    val nextButtonColor = if (isNextEnabled)  MaterialTheme.colorScheme.primary else Color.LightGray
 
     Column(
         modifier = Modifier
@@ -116,8 +115,7 @@ fun MemberInfoScreen(
         ) {
             LargeButton(
                 onClick = { viewModel.onNextClicked() },
-                text = stringResource(id = R.string.button_next),
-                backgroundColor = nextButtonColor
+                text = stringResource(id = R.string.button_next)
             )
         }
     }

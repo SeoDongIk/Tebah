@@ -34,7 +34,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -55,7 +54,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.presentation.common.theme.third_01
 import com.example.presentation.member.screen.home.HomeScreen
 import com.example.presentation.member.screen.search.DiscoverScreen
 import com.example.presentation.member.screen.search.SearchPromptScreen
@@ -70,8 +68,6 @@ import com.example.presentation.shared.feature.user.screen.FollowSuggestionScree
 import com.example.presentation.shared.feature.user.screen.OtherUserScreen
 import com.example.presentation.shared.feature.user.screen.ProfileEditScreen
 import com.example.presentation.shared.feature.user.screen.UserScreen
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.max
@@ -282,7 +278,7 @@ fun MemberNavHost(onNavigateToPostWrite: (Context) -> Unit) {
                 FloatingActionButton(
                     onClick = { onNavigateToPostWrite(context) },
                     modifier = Modifier.zIndex(1f),
-                    containerColor = third_01
+                    containerColor =  MaterialTheme.colorScheme.primary
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null, tint = Color.White)
                 }

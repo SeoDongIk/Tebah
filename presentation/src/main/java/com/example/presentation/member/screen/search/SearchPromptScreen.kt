@@ -46,10 +46,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTypography
-import com.example.presentation.common.theme.primary
-import com.example.presentation.common.theme.third_01
-import com.example.presentation.common.theme.third_03
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -117,7 +113,7 @@ fun TebahSearchBar(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = primary
+                    tint =  MaterialTheme.colorScheme.primary
                 )
             }
 
@@ -130,14 +126,14 @@ fun TebahSearchBar(
                     .weight(1f)
                     .fillMaxHeight()
                     .clip(RoundedCornerShape(Paddings.xlarge))
-                    .border(1.dp, third_01, RoundedCornerShape(Paddings.xlarge))
-                    .background(third_03.copy(0.1f))
+                    .border(1.dp,  MaterialTheme.colorScheme.primary, RoundedCornerShape(Paddings.xlarge))
+                    .background( MaterialTheme.colorScheme.primary.copy(0.1f))
                     .padding(horizontal = Paddings.xlarge)
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search",
-                    tint = primary
+                    tint =  MaterialTheme.colorScheme.primary
                 )
 
                 Spacer(modifier = Modifier.width(Paddings.medium))
@@ -146,7 +142,7 @@ fun TebahSearchBar(
                     if (query.isEmpty()) {
                         Text(
                             text = placeholder,
-                            color = third_03,
+                            color =  MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Start
                         )
@@ -156,7 +152,7 @@ fun TebahSearchBar(
                         value = query,
                         onValueChange = onQueryChange,
                         singleLine = true,
-                        textStyle = MaterialTheme.typography.titleMedium.copy(color = primary),
+                        textStyle = MaterialTheme.typography.titleMedium.copy(color =  MaterialTheme.colorScheme.primary),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Done
                         ),
@@ -168,7 +164,7 @@ fun TebahSearchBar(
                         modifier = Modifier
                             .fillMaxWidth()
                             .focusRequester(focusRequester),
-                        cursorBrush = SolidColor(third_03)
+                        cursorBrush = SolidColor( MaterialTheme.colorScheme.primary)
                     )
                 }
 
@@ -183,7 +179,7 @@ fun TebahSearchBar(
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Clear",
-                            tint = third_03,
+                            tint =  MaterialTheme.colorScheme.primary,
                         )
                     }
                 }

@@ -13,37 +13,52 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val LightColorScheme = lightColorScheme(
-    primary = primary,
-    onPrimary = Color.White,
-    primaryContainer = secondary,
-    onPrimaryContainer = Color.White,
-    surface = Color.Black,
-    onSurface = Color.White,
-    background = background,
-    onBackground = Color.White
+val LightColorScheme = lightColorScheme(
+    primary = Navy,
+    onPrimary = White,
+    primaryContainer = LightNavy,
+    onPrimaryContainer = White,
+    background = White,
+    onBackground = Black,
+    surface = White,
+    onSurface = Black,
+    surfaceVariant = White,
+    onSurfaceVariant = Gray,
+    outline = Gray,
+    outlineVariant = Navy,
+    error = Orange,
+    onError = White,
+    errorContainer = Orange,
+    onErrorContainer = White
 )
 
-private val DarkColorScheme = darkColorScheme(
-    primary = primary,
-    onPrimary = Color.Black,
-    primaryContainer = secondary,
-    onPrimaryContainer = Color.Black,
-    surface = Color.White,
-    onSurface = Color.Black,
-    background = background,
-    onBackground = Color.Black
+val DarkColorScheme = darkColorScheme(
+    primary = Navy,
+    onPrimary = White,
+    primaryContainer = LightNavy,
+    onPrimaryContainer = White,
+    background = White,
+    onBackground = Black,
+    surface = White,
+    onSurface = Black,
+    surfaceVariant = White,
+    onSurfaceVariant = Gray,
+    outline = Gray,
+    outlineVariant = Navy,
+    error = Orange,
+    onError = White,
+    errorContainer = Orange,
+    onErrorContainer = White
 )
 
 @Composable
 fun TebahTheme(
     content: @Composable () -> Unit
 ) {
-    val darkTheme: Boolean = isSystemInDarkTheme()
-    val colorScheme = remember(darkTheme) {
-        if(darkTheme) DarkColorScheme else LightColorScheme
-    }
+    val darkTheme = isSystemInDarkTheme()
+    val colorScheme = remember(darkTheme) { if(darkTheme) DarkColorScheme else LightColorScheme }
     val view = LocalView.current
+
     if(!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window

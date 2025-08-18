@@ -43,8 +43,6 @@ import com.example.presentation.R
 import com.example.presentation.common.component.LargeButton
 import com.example.presentation.auth.viewmodel.AdminSignUpViewModel
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.primary
-import com.example.presentation.common.theme.secondary
 
 @Composable
 fun ChurchInfoScreen(
@@ -54,7 +52,7 @@ fun ChurchInfoScreen(
     val state by viewModel.container.stateFlow.collectAsState()
     var showBottomSheet by remember { mutableStateOf(false) }
     val isNextEnabled = state.isChurchInfoValid
-    val nextButtonColor = if (isNextEnabled) primary else Color.LightGray
+    val nextButtonColor = if (isNextEnabled)  MaterialTheme.colorScheme.primary else Color.LightGray
 
     Column(
         modifier = Modifier
@@ -138,8 +136,7 @@ fun ChurchInfoScreen(
         ) {
             LargeButton(
                 onClick = { if (isNextEnabled) onNavigateToAdminInfo() },
-                text = stringResource(id = R.string.next_button_text),
-                backgroundColor = nextButtonColor
+                text = stringResource(id = R.string.next_button_text)
             )
         }
     }
@@ -218,7 +215,7 @@ fun RegionSelectorModal(
                         Icon(
                             imageVector = Icons.Filled.Check,
                             contentDescription = stringResource(id = R.string.selected_text),
-                            tint = secondary
+                            tint =  MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -229,7 +226,6 @@ fun RegionSelectorModal(
             LargeButton(
                 onClick = onDismissRequest,
                 text = stringResource(id = R.string.confirm_button_text),
-                backgroundColor = primary
             )
         }
     }

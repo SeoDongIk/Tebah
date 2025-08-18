@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun HomeScreen(
     listState: LazyListState,
-    pullOffsetPx: Float,   // 부모에서 계산된 오버스크롤 원시값(px)
-    isPulling: Boolean,    // 드래그 진행 중 여부
-    refreshing: Boolean,   // 새로고침 중 여부
-    armed: Boolean,        // 임계치 초과 & 드래그 중(놓으면 새로고침)
+    pullOffsetPx: Float,
+    isPulling: Boolean,
+    refreshing: Boolean,
+    armed: Boolean,
     headerBaseHeight: Dp,
     headerMaxExtra: Dp,
     fixedBoxHeight: Dp
@@ -52,7 +52,7 @@ fun HomeScreen(
             else -> {
                 // 자연 복귀
                 extraPxAnim.animateTo(0f, animationSpec = spring())
-            }
+            } 
         }
     }
 

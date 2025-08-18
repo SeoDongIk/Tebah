@@ -151,7 +151,6 @@ fun SignInScreen(
             LargeButton(
                 text = stringResource(R.string.button_login),
                 onClick = { viewModel.onSignInClick() },
-                backgroundColor = loginButtonColor,
                 enabled = isLoginEnabled
             )
         }

@@ -18,13 +18,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.primary
+import com.example.presentation.common.theme.TebahTheme
 
 @Composable
 fun LargeDialog(
@@ -36,15 +36,13 @@ fun LargeDialog(
     secondButtonContent: String,
     onConfirm: () -> Unit
 ) {
-    if(showDialog) {
+    if (showDialog) {
         Dialog(onDismissRequest = onDismissRequest) {
             BoxWithConstraints {
-                val maxWidth = this.maxWidth
                 Surface(
                     shape = RoundedCornerShape(percent = 8),
-                    color = Color.White,
-                    modifier = Modifier
-                        .width(maxWidth)
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.width(maxWidth)
                 ) {
                     Column(
                         modifier = Modifier.padding(Paddings.xlarge),
@@ -52,42 +50,61 @@ fun LargeDialog(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(modifier = Modifier.size(Paddings.small))
+
                         Text(
                             text = title,
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.headlineSmall.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
                             textAlign = TextAlign.Center,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onSurface
                         )
+
                         Text(
                             text = content,
                             style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onSurface
                         )
+
                         Spacer(modifier = Modifier.size(Paddings.medium))
+
                         Button(
-                            onClick = {
-                                onConfirm
-                            },
+                            onClick = onConfirm,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp),
                             shape = RoundedCornerShape(percent = 20),
-                            colors = ButtonDefaults.buttonColors(containerColor = primary)
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
                         ) {
-                            Text(firstButtonContent, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                            Text(
+                                firstButtonContent,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
                         }
+
                         Button(
-                            onClick = {
-                                onConfirm
-                            },
+                            onClick = onDismissRequest,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp),
                             shape = RoundedCornerShape(percent = 20),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            )
                         ) {
-                            Text(secondButtonContent,color = Color.DarkGray, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                            Text(
+                                secondButtonContent,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
                         }
                     }
                 }
@@ -96,18 +113,18 @@ fun LargeDialog(
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
 fun LargeDialogPreview() {
-    MaterialTheme {
+    TebahTheme {
         LargeDialog(
             showDialog = true,
-            onDismissRequest = {},
-            title = "채널을 삭제하시겠습니까?",
-            content = "삭제한 채널은 복구할 수 없습니다.\n정말 삭제하시겠습니까?",
-            firstButtonContent = "삭제하기",
+            onDismissRequest = { /* Dismiss logic */ },
+            title = "알림",
+            content = "정말로 이 작업을 진행하시겠습니까?",
+            firstButtonContent = "확인",
             secondButtonContent = "취소",
-            onConfirm = {}
+            onConfirm = { /* Confirm logic */ }
         )
     }
 }

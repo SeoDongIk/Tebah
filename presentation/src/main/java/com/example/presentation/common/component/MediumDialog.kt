@@ -1,6 +1,5 @@
 package com.example.presentation.common.component
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -22,10 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.primary
+import com.example.presentation.common.theme.TebahTheme
 
 @Composable
 fun MediumDialog(
@@ -73,7 +73,7 @@ fun MediumDialog(
                                 .fillMaxWidth()
                                 .height(56.dp),
                             shape = RoundedCornerShape(percent = 20),
-                            colors = ButtonDefaults.buttonColors(containerColor = primary)
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                         ) {
                             Text(buttonContent, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
                         }
@@ -84,22 +84,17 @@ fun MediumDialog(
     }
 }
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
+@Preview(showBackground = true)
 @Composable
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
-fun MediumDialogContainerPreview() {
-    MaterialTheme {
-        Surface {
-            BoxWithConstraints {
-                MediumDialog(
-                    showDialog = true,
-                    onDismissRequest = {},
-                    title = "채널 구독 요청",
-                    content = "이 채널은 승인 후 구독할 수 있습니다.\n요청하시겠습니까?",
-                    buttonContent = "요청하기",
-                    onConfirm = {}
-                )
-            }
-        }
+fun MediumDialogPreview() {
+    TebahTheme {
+        MediumDialog(
+            showDialog = true,
+            onDismissRequest = { /* Dismiss logic */ },
+            title = "안내",
+            content = "정말로 로그아웃 하시겠습니까?",
+            buttonContent = "확인",
+            onConfirm = { /* Confirm logic */ }
+        )
     }
 }

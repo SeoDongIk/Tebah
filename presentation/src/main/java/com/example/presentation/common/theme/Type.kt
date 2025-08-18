@@ -7,21 +7,22 @@ import com.example.presentation.R
 
 private val pretendardFontFamily = FontFamily(Font(R.font.pretendard))
 private val defaultTypography = Typography()
-
-val TebahTypography = Typography(
-    titleLarge = defaultTypography.titleLarge.copy(fontFamily = pretendardFontFamily),
-    titleMedium = defaultTypography.titleMedium.copy(fontFamily = pretendardFontFamily),
-    titleSmall = defaultTypography.titleSmall.copy(fontFamily = pretendardFontFamily),
-    labelLarge = defaultTypography.labelLarge.copy(fontFamily = pretendardFontFamily),
-    labelMedium = defaultTypography.labelMedium.copy(fontFamily = pretendardFontFamily),
-    labelSmall = defaultTypography.labelSmall.copy(fontFamily = pretendardFontFamily),
-    bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = pretendardFontFamily),
-    bodyMedium = defaultTypography.bodyMedium.copy(fontFamily = pretendardFontFamily),
-    bodySmall = defaultTypography.bodySmall.copy(fontFamily = pretendardFontFamily),
-    displayLarge = defaultTypography.displayLarge.copy(fontFamily = pretendardFontFamily),
-    displayMedium = defaultTypography.displayMedium.copy(fontFamily = pretendardFontFamily),
-    displaySmall = defaultTypography.displaySmall.copy(fontFamily = pretendardFontFamily),
-    headlineLarge = defaultTypography.headlineLarge.copy(fontFamily = pretendardFontFamily),
-    headlineMedium = defaultTypography.headlineMedium.copy(fontFamily = pretendardFontFamily),
-    headlineSmall = defaultTypography.headlineSmall.copy(fontFamily = pretendardFontFamily)
+private fun Typography.withFontFamily(fontFamily: FontFamily): Typography = Typography(
+    displayLarge  = displayLarge.copy(fontFamily = fontFamily),
+    displayMedium = displayMedium.copy(fontFamily = fontFamily),
+    displaySmall  = displaySmall.copy(fontFamily = fontFamily),
+    headlineLarge = headlineLarge.copy(fontFamily = fontFamily),
+    headlineMedium= headlineMedium.copy(fontFamily = fontFamily),
+    headlineSmall = headlineSmall.copy(fontFamily = fontFamily),
+    titleLarge    = titleLarge.copy(fontFamily = fontFamily),
+    titleMedium   = titleMedium.copy(fontFamily = fontFamily),
+    titleSmall    = titleSmall.copy(fontFamily = fontFamily),
+    bodyLarge     = bodyLarge.copy(fontFamily = fontFamily),
+    bodyMedium    = bodyMedium.copy(fontFamily = fontFamily),
+    bodySmall     = bodySmall.copy(fontFamily = fontFamily),
+    labelLarge    = labelLarge.copy(fontFamily = fontFamily),
+    labelMedium   = labelMedium.copy(fontFamily = fontFamily),
+    labelSmall    = labelSmall.copy(fontFamily = fontFamily),
 )
+
+val TebahTypography: Typography = defaultTypography.withFontFamily(pretendardFontFamily)

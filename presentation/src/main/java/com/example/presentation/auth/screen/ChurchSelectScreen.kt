@@ -50,8 +50,6 @@ import com.example.presentation.common.component.LargeButton
 import com.example.presentation.auth.viewmodel.MemberSignUpViewModel
 import com.example.presentation.auth.state.SignUpSideEffect
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.primary
-import com.example.presentation.common.theme.third_01
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
@@ -65,7 +63,7 @@ fun ChurchSelectScreen(
     val churchesByRegion = state.churchesByRegion
     val selectedRegion = state.selectedRegion
     val selectedChurch = state.selectedChurchId
-    val nextButtonColor = if (selectedChurch != null) primary else Color.LightGray
+    val nextButtonColor = if (selectedChurch != null)  MaterialTheme.colorScheme.primary else Color.LightGray
 
     LaunchedEffect(Unit) {
         sideEffectFlow.collect { sideEffect ->
@@ -145,7 +143,7 @@ fun ChurchSelectScreen(
                     Button(
                         onClick = { viewModel.onRegionSelected(region) },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isSelected) primary else Color.LightGray
+                            containerColor = if (isSelected)  MaterialTheme.colorScheme.primary else Color.LightGray
                         ),
                         shape = RoundedCornerShape(Paddings.xlarge),
                         contentPadding = PaddingValues(
@@ -175,7 +173,7 @@ fun ChurchSelectScreen(
                             .padding(vertical = Paddings.small)
                             .clickable { viewModel.onChurchSelected(church) },
                         colors = CardDefaults.cardColors(
-                            containerColor = if (selectedChurch == church) third_01.copy(alpha = 0.4f) else Color.White
+                            containerColor = if (selectedChurch == church)  MaterialTheme.colorScheme.primary.copy(alpha = 0.4f) else Color.White
                         )
                     ) {
                         Text(
@@ -212,8 +210,7 @@ fun ChurchSelectScreen(
                 onClick = {
                     if (selectedChurch != null) { viewModel.onSignUpClick() }
                 },
-                text = stringResource(id = R.string.next_button_text),
-                backgroundColor = nextButtonColor
+                text = stringResource(id = R.string.next_button_text)
             )
         }
     }

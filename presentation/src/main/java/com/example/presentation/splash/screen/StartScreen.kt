@@ -16,8 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.presentation.R
 import com.example.presentation.common.component.LargeButton
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.TebahTypography
-import com.example.presentation.common.theme.primary
+import com.example.presentation.common.theme.TebahTheme
 
 @Composable
 fun StartScreen(
@@ -68,7 +67,7 @@ private fun SpacerSection(modifier: Modifier) {
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        Spacer(modifier = Modifier.size(Paddings.startImageSize))
+
     }
 }
 
@@ -95,7 +94,7 @@ private fun StartButtonSection(
 }
 
 @Composable
-fun BrowseServiceTextButton(
+private fun BrowseServiceTextButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -109,7 +108,7 @@ fun BrowseServiceTextButton(
                 onClick = onClick
             )
             .padding(vertical = Paddings.xlarge),
-        color = primary,
+        color =  MaterialTheme.colorScheme.primary,
         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
         textAlign = TextAlign.Center
     )
@@ -122,7 +121,7 @@ fun BrowseServiceTextButton(
 )
 @Composable
 fun StartScreenLightPreview() {
-    MaterialTheme {
+    TebahTheme {
         StartScreen(
             onNavigateToLogin = {},
             onBrowseServiceClick = {}
@@ -137,7 +136,7 @@ fun StartScreenLightPreview() {
 )
 @Composable
 fun StartScreenDarkPreview() {
-    MaterialTheme {
+    TebahTheme {
         StartScreen(
             onNavigateToLogin = {},
             onBrowseServiceClick = {}

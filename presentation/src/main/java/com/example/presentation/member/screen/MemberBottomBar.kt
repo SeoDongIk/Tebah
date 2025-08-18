@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,9 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.primary
-import com.example.presentation.common.theme.secondary
-import com.example.presentation.common.theme.third_01
 
 @Composable
 fun MemberBottomBar(
@@ -35,7 +33,7 @@ fun MemberBottomBar(
                 .fillMaxWidth()
                 .border(
                     width = Paddings.small,
-                    color = third_01.copy(alpha = 0.2f),
+                    color =  MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                     shape = RoundedCornerShape(Paddings.xlarge)
                 )
                 .clip(RoundedCornerShape(Paddings.xlarge))
@@ -60,7 +58,7 @@ fun MemberBottomBar(
                         modifier = if (selected) {
                             Modifier
                                 .size(36.dp)
-                                .background(secondary.copy(alpha = 0.1f), shape = CircleShape)
+                                .background( MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), shape = CircleShape)
                                 .padding(5.dp)
                         } else Modifier
                     ) {
@@ -68,7 +66,7 @@ fun MemberBottomBar(
                             imageVector = tab.icon,
                             contentDescription = tab.contentDescription,
                             modifier = Modifier.size(26.dp),
-                            tint = if (selected) primary else third_01
+                            tint = if (selected)  MaterialTheme.colorScheme.primary else  MaterialTheme.colorScheme.primary
                         )
                     }
                 }

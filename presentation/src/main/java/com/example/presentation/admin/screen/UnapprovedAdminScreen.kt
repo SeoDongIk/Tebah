@@ -27,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.common.component.MediumButton
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.primary
 
 @Composable
 fun UnapprovedAdminScreen(
@@ -40,7 +39,7 @@ fun UnapprovedAdminScreen(
     var AdminPasswordChecked by remember { mutableStateOf("") }
 
     val isNextEnabled = AdminName.isNotBlank() && AdminId.isNotBlank() && AdminPassword.isNotBlank() && AdminPasswordChecked.isNotBlank()
-    val nextButtonColor = if (isNextEnabled) primary else Color.LightGray
+    val nextButtonColor = if (isNextEnabled)  MaterialTheme.colorScheme.primary else Color.LightGray
 
     var selectedPosition by remember { mutableStateOf<String?>(null) }
     var customPosition by remember { mutableStateOf("") }

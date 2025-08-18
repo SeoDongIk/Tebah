@@ -39,7 +39,6 @@ import com.example.presentation.common.component.LargeButton
 import com.example.presentation.auth.viewmodel.AdminSignUpViewModel
 import com.example.presentation.auth.state.SignUpSideEffect
 import com.example.presentation.common.theme.Paddings
-import com.example.presentation.common.theme.primary
 
 @Composable
 fun AdminInfoScreen(
@@ -50,7 +49,7 @@ fun AdminInfoScreen(
     val sideEffectFlow = viewModel.container.sideEffectFlow
     val focusRequester = remember { FocusRequester() }
     val isNextEnabled = state.isUserInfoValid
-    val nextButtonColor = if (isNextEnabled) primary else Color.LightGray
+    val nextButtonColor = if (isNextEnabled)  MaterialTheme.colorScheme.primary else Color.LightGray
 
     LaunchedEffect(Unit) {
         sideEffectFlow.collect { sideEffect ->
@@ -211,8 +210,7 @@ fun AdminInfoScreen(
                     if (isNextEnabled) {
                         viewModel.onSignUpClick()
                     }
-                },
-                backgroundColor = nextButtonColor
+                }
             )
         }
     }
