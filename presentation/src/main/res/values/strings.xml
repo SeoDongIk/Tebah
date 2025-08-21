@@ -65,6 +65,9 @@
     <string name="complete_title_line1">테바 가입이</string>
     <string name="complete_title_line2">완료되었어요</string>
     <string name="button_go_to_main">메인으로 가기</string>
+    <string name="dialog_signin_failed_title">로그인 실패</string>
+    <string name="dialog_signin_failed_message">아이디 또는 비밀번호가 잘못되었습니다.</string>
+    <string name="dialog_confirm">확인</string>
 
     <!-- AdminMainActivity -->
     <!-- MemberMainActivity -->

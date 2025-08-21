@@ -1,8 +1,8 @@
 package com.example.presentation.common.component
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,12 +26,10 @@ import androidx.compose.ui.unit.dp
 import com.example.presentation.common.theme.TebahTheme
 
 @Composable
-fun LargeButton(
+fun LargeOutlinedButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    isLoading: Boolean = false
+    modifier: Modifier = Modifier
 ) {
     // InteractionSource (눌림 상태 감지)
     val interactionSource = remember { MutableInteractionSource() }
@@ -40,62 +37,36 @@ fun LargeButton(
 
     // 눌림 상태 → scale 애니메이션
     val scale by animateFloatAsState(
-        targetValue = if (isPressed && enabled) 0.95f else 1f,
+        targetValue = if (isPressed) 0.95f else 1f,
         animationSpec = spring(dampingRatio = 0.4f, stiffness = 400f),
-        label = ""
-    )
-
-    // 색상 애니메이션 (enabled ↔ disabled)
-    val containerColor by animateColorAsState(
-        targetValue = if (enabled) MaterialTheme.colorScheme.primary
-        else MaterialTheme.colorScheme.primaryContainer,
-        label = ""
-    )
-    val contentColor by animateColorAsState(
-        targetValue = if (enabled) MaterialTheme.colorScheme.onPrimary
-        else MaterialTheme.colorScheme.onPrimaryContainer,
         label = ""
     )
 
     Button(
         onClick = onClick,
-        enabled = enabled && !isLoading, // 로딩 중일 땐 클릭 막기
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
             .scale(scale),
         shape = RoundedCornerShape(percent = 20),
         interactionSource = interactionSource,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
         colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = contentColor,
-            disabledContainerColor = containerColor,
-            disabledContentColor = contentColor
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.primary
         ),
-        elevation = if (enabled) ButtonDefaults.buttonElevation()
-        else ButtonDefaults.buttonElevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp
-        )
+        elevation = null 
     ) {
-        if (isLoading) {
-            androidx.compose.material3.CircularProgressIndicator(
-                color = contentColor,
-                strokeWidth = 2.dp,
-                modifier = Modifier.size(20.dp)
-            )
-        } else {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-            )
-        }
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun LargeButtonPreview() {
+fun LargeOutlinedButtonPreview() {
     TebahTheme {
         Column(
             modifier = Modifier
@@ -103,19 +74,13 @@ fun LargeButtonPreview() {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            LargeButton(
-                text = "Enabled Button",
+            LargeOutlinedButton(
+                text = "개인계정 만들기",
                 onClick = { }
             )
-            LargeButton(
-                text = "Disabled Button",
-                onClick = { },
-                enabled = false
-            )
-            LargeButton(
-                text = "Loading Button",
-                onClick = { },
-                isLoading = true
+            LargeOutlinedButton(
+                text = "교회 채널 만들기",
+                onClick = { }
             )
         }
     }

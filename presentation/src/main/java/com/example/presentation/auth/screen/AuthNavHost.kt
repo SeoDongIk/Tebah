@@ -100,7 +100,8 @@ fun AuthNavHost(
         ) {
             RoleScreen(
                 onNavigateToMemberInfo = { navController.navigate(AuthRoute.MemberInfo.route) },
-                onNavigateToChurchInfo = { navController.navigate(AuthRoute.ChurchInfo.route) }
+                onNavigateToChurchInfo = { navController.navigate(AuthRoute.ChurchInfo.route) },
+                onBackClick = { navController.popBackStack() }
             )
         }
 

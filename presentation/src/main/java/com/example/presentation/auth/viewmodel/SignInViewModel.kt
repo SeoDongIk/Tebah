@@ -5,6 +5,7 @@ import com.example.domain.usecase.auth.SignInUseCase
 import com.example.presentation.R
 import com.example.presentation.auth.state.SignInState
 import com.example.presentation.auth.state.SignInSideEffect
+import com.example.presentation.common.state.MediumDialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.Container
@@ -78,8 +79,20 @@ class SignInViewModel @Inject constructor(
                 postSideEffect(SignInSideEffect.NavigateToMainActivity(result.role))
             }
             .onFailure {
-                postSideEffect(SignInSideEffect.Toast(R.string.error_login_failed))
+                reduce {
+                    state.copy(
+                        dialog = MediumDialogState(
+                            titleRes = R.string.dialog_signin_failed_title,
+                            messageRes = R.string.dialog_signin_failed_message,
+                            confirmTextRes = R.string.dialog_confirm
+                        )
+                    )
+                }
             }
         reduce { state.copy(isLoading = false) }
+    }
+
+    fun onDismissDialog() = intent {
+        reduce { state.copy(dialog = null) }
     }
 }

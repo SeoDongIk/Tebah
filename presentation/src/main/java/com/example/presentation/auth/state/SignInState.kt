@@ -1,6 +1,7 @@
 package com.example.presentation.auth.state
 
 import com.example.domain.model.UserRole
+import com.example.presentation.common.state.MediumDialogState
 
 data class SignInState(
     val id: String = "",
@@ -10,5 +11,6 @@ data class SignInState(
     val isLoginEnabled: Boolean = false,
     val isLoading: Boolean = false,
     val idError: Int? = null, // stringResId, null이면 정상
-    val passwordError: Int? = null // stringResId, null이면 정상
+    val passwordError: Int? = null, // stringResId, null이면 정상
+    val dialog: MediumDialogState? = null
 )

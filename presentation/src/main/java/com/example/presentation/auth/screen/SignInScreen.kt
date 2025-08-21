@@ -3,7 +3,6 @@ package com.example.presentation.auth.screen
 import android.content.Intent
 import android.content.res.Configuration
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,26 +26,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.domain.model.UserRole
 import com.example.presentation.R
 import com.example.presentation.auth.viewmodel.SignInViewModel
 import com.example.presentation.common.component.LargeButton
-import com.example.presentation.common.component.MediumButton
 import com.example.presentation.admin.AdminActivity
 import com.example.presentation.member.MemberActivity
 import com.example.presentation.auth.state.SignInSideEffect
 import com.example.presentation.auth.state.SignInState
+import com.example.presentation.common.component.MediumDialog
+import com.example.presentation.common.component.TebahLogo
 import com.example.presentation.common.component.TebahTextField
 import com.example.presentation.common.theme.Paddings
 import com.example.presentation.common.theme.TebahTheme
@@ -92,6 +87,7 @@ fun SignInScreen(
         onPasswordChange = viewModel::onPasswordChange,
         onAutoLoginChange = viewModel::onAutoLoginChange,
         onSignInClick = viewModel::onSignInClick,
+        onDismissDialog = viewModel::onDismissDialog,
         onNavigateToRole = onNavigateToRole
     )
 }
@@ -103,6 +99,7 @@ private fun SignInContent(
     onPasswordChange: (String) -> Unit,
     onAutoLoginChange: (Boolean) -> Unit,
     onSignInClick: () -> Unit,
+    onDismissDialog: () -> Unit,
     onNavigateToRole: () -> Unit
 ) {
     Column(
@@ -166,7 +163,7 @@ private fun SignInContent(
             }
         }
 
-        // 로그인 버튼, 회원가입 버튼
+        // 로그인 버튼 + 회원가입 버튼 (텍스트)
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -174,47 +171,35 @@ private fun SignInContent(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LoginButtonSection(
+            AuthButtonSection(
                 onClick = onSignInClick,
                 onBrowseServiceClick = onNavigateToRole,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = state.isLoginEnabled
+                enabled = state.isLoginEnabled,
+                isLoading = state.isLoading
             )
         }
+    }
+
+    state.dialog?.let { dialog ->
+        MediumDialog(
+            showDialog = true,
+            title = stringResource(dialog.titleRes),
+            content = stringResource(dialog.messageRes),
+            buttonContent = stringResource(dialog.confirmTextRes),
+            onConfirm = onDismissDialog,
+            onDismissRequest = { }
+        )
     }
 }
 
 @Composable
-fun TebahLogo(
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(Paddings.medium), // 글자 간격 넓힘
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        listOf(
-            R.drawable.ic_t,
-            R.drawable.ic_e,
-            R.drawable.ic_b,
-            R.drawable.ic_a,
-            R.drawable.ic_h
-        ).forEach { resId ->
-            Image(
-                painter = painterResource(id = resId),
-                contentDescription = null,
-                modifier = Modifier.size(32.dp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun LoginButtonSection(
+private fun AuthButtonSection(
     onClick: () -> Unit,
     onBrowseServiceClick: () -> Unit,
     modifier: Modifier,
-    enabled: Boolean
+    enabled: Boolean,
+    isLoading: Boolean
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -224,7 +209,8 @@ private fun LoginButtonSection(
         LargeButton(
             text = stringResource(R.string.button_login),
             onClick = onClick,
-            enabled = enabled
+            enabled = enabled,
+            isLoading = isLoading
         )
         BrowseServiceTextButton(
             modifier = Modifier,
@@ -273,6 +259,7 @@ fun SignInScreenDefaultPreview() {
             onPasswordChange = {},
             onAutoLoginChange = {},
             onSignInClick = {},
+            onDismissDialog = {},
             onNavigateToRole = {}
         )
     }
@@ -299,6 +286,7 @@ fun SignInScreenErrorPreview() {
             onPasswordChange = {},
             onAutoLoginChange = {},
             onSignInClick = {},
+            onDismissDialog = {},
             onNavigateToRole = {}
         )
     }
@@ -324,6 +312,7 @@ fun SignInScreenLoadingPreview() {
             onPasswordChange = {},
             onAutoLoginChange = {},
             onSignInClick = {},
+            onDismissDialog = {},
             onNavigateToRole = {}
         )
     }
