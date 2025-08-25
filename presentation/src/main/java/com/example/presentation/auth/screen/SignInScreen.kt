@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.domain.model.UserRole
 import com.example.presentation.R
 import com.example.presentation.auth.viewmodel.SignInViewModel
@@ -54,20 +55,20 @@ fun SignInScreen(
     onNavigateToRole: () -> Unit,
 ) {
     val context = LocalContext.current
-    val state by viewModel.container.stateFlow.collectAsState()
+    val state by viewModel.container.stateFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel) {
-        viewModel.container.sideEffectFlow.collectLatest { effect ->
-            when (effect) {
+        viewModel.container.sideEffectFlow.collectLatest { sideEffect ->
+            when (sideEffect) {
                 is SignInSideEffect.Toast -> {
                     Toast.makeText(
                         context,
-                        context.getString(effect.messageRes),
+                        context.getString(sideEffect.messageRes),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
                 is SignInSideEffect.NavigateToMainActivity -> {
-                    val targetActivity = if (effect.role == UserRole.ADMIN) {
+                    val targetActivity = if (sideEffect.role == UserRole.ADMIN) {
                         AdminActivity::class.java
                     } else {
                         MemberActivity::class.java
@@ -128,7 +129,7 @@ private fun SignInContent(
                 onValueChange = onIdChange,
                 label = stringResource(R.string.label_id),
                 modifier = Modifier.fillMaxWidth(),
-                isError = state.idError != null,
+                isError = state.idError != null, // null 여부로 isError 여부 판단
                 errorMessage = state.idError?.let { stringResource(it) }
             )
 
@@ -137,7 +138,7 @@ private fun SignInContent(
                 onValueChange = onPasswordChange,
                 label = stringResource(R.string.label_password),
                 modifier = Modifier.fillMaxWidth(),
-                isError = state.passwordError != null,
+                isError = state.passwordError != null, // null 여부로 isError 여부 판단
                 errorMessage = state.passwordError?.let { stringResource(it) },
                 visualTransformation = PasswordVisualTransformation()
             )
@@ -188,7 +189,7 @@ private fun SignInContent(
             content = stringResource(dialog.messageRes),
             buttonContent = stringResource(dialog.confirmTextRes),
             onConfirm = onDismissDialog,
-            onDismissRequest = { }
+            onDismissRequest = { } // 일부러 생략, 의도된 동작
         )
     }
 }
@@ -241,19 +242,19 @@ private fun BrowseServiceTextButton(
 }
 
 @Preview(
-    name = "SignInScreen - Default",
+    name = "SignIn - Default (Light)",
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-fun SignInScreenDefaultPreview() {
+private fun Preview_SignIn_Default_Light() {
     TebahTheme {
         SignInContent(
             state = SignInState(
                 id = "",
                 password = "",
                 autoLogin = false,
-                isLoginEnabled = false
+                isLoading = false
             ),
             onIdChange = {},
             onPasswordChange = {},
@@ -266,12 +267,12 @@ fun SignInScreenDefaultPreview() {
 }
 
 @Preview(
-    name = "SignInScreen - Error State",
+    name = "SignIn - Error State",
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-fun SignInScreenErrorPreview() {
+private fun Preview_SignIn_Error() {
     TebahTheme {
         SignInContent(
             state = SignInState(
@@ -280,7 +281,7 @@ fun SignInScreenErrorPreview() {
                 idError = R.string.error_invalid_email,
                 passwordError = R.string.error_password_too_short,
                 autoLogin = false,
-                isLoginEnabled = false
+                isLoading = false
             ),
             onIdChange = {},
             onPasswordChange = {},
@@ -293,21 +294,70 @@ fun SignInScreenErrorPreview() {
 }
 
 @Preview(
-    name = "SignInScreen - Loading",
+    name = "SignIn - Loading (Enabled)",
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-fun SignInScreenLoadingPreview() {
+private fun Preview_SignIn_Loading() {
     TebahTheme {
         SignInContent(
             state = SignInState(
                 id = "dongik@example.com",
                 password = "123456",
                 autoLogin = true,
-                isLoginEnabled = true,
                 isLoading = true
             ),
+            onIdChange = {},
+            onPasswordChange = {},
+            onAutoLoginChange = {},
+            onSignInClick = {},
+            onDismissDialog = {},
+            onNavigateToRole = {}
+        )
+    }
+}
+
+@Preview(
+    name = "SignIn - Dialog",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Composable
+private fun Preview_SignIn_Dialog() {
+    TebahTheme {
+        SignInContent(
+            state = SignInState(
+                id = "dongik@example.com",
+                password = "123456",
+                autoLogin = false,
+                isLoading = false,
+                dialog = com.example.presentation.common.state.MediumDialogState(
+                    titleRes = R.string.dialog_signin_failed_title,
+                    messageRes = R.string.dialog_signin_failed_message,
+                    confirmTextRes = R.string.dialog_confirm
+                )
+            ),
+            onIdChange = {},
+            onPasswordChange = {},
+            onAutoLoginChange = {},
+            onSignInClick = {},
+            onDismissDialog = {},
+            onNavigateToRole = {}
+        )
+    }
+}
+
+@Preview(
+    name = "SignIn - Default (Dark)",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun Preview_SignIn_Default_Dark() {
+    TebahTheme {
+        SignInContent(
+            state = SignInState(),
             onIdChange = {},
             onPasswordChange = {},
             onAutoLoginChange = {},

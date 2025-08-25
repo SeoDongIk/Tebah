@@ -12,6 +12,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
@@ -146,7 +147,8 @@ fun AuthNavHost(
             val viewModel: AdminSignUpViewModel = hiltViewModel(backStackEntry)
             ChurchInfoScreen(
                 viewModel = viewModel,
-                onNavigateToAdminInfo = { navController.navigate(AuthRoute.AdminInfo.route) }
+                onNavigateToAdminInfo = { navController.navigate(AuthRoute.AdminInfo.route) },
+                onBackClick = { navController.popBackStack() }
             )
         }
 
@@ -158,10 +160,14 @@ fun AuthNavHost(
             popEnter = slideIn(-1000) + fadeInAnim,
             popExit = slideOut(1000) + fadeOutAnim
         ) { backStackEntry ->
-            val viewModel: AdminSignUpViewModel = hiltViewModel(backStackEntry)
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(AuthRoute.ChurchInfo.route)
+            }
+            val viewModel: AdminSignUpViewModel = hiltViewModel(parentEntry)
             AdminInfoScreen(
                 viewModel = viewModel,
-                onNavigateToComplete = { navController.navigate(AuthRoute.Complete.route) }
+                onNavigateToComplete = { navController.navigate(AuthRoute.Complete.route) },
+                onBackClick = { navController.popBackStack() }
             )
         }
 
@@ -179,7 +185,10 @@ fun AuthNavHost(
                     AuthRoute.MemberInfo.route,
                     AuthRoute.ChurchSelect.route -> hiltViewModel<MemberSignUpViewModel>(it)
                     AuthRoute.ChurchInfo.route,
-                    AuthRoute.AdminInfo.route -> hiltViewModel<AdminSignUpViewModel>(it)
+                    AuthRoute.AdminInfo.route -> {
+                        val adminEntry = navController.getBackStackEntry(AuthRoute.ChurchInfo.route)
+                        hiltViewModel<AdminSignUpViewModel>(adminEntry)
+                    }
                     else -> null
                 }
             }

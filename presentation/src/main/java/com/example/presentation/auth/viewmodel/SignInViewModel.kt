@@ -1,5 +1,6 @@
 package com.example.presentation.auth.viewmodel
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import com.example.domain.usecase.auth.SignInUseCase
 import com.example.presentation.R
@@ -32,40 +33,34 @@ class SignInViewModel @Inject constructor(
         }
     )
 
+    private fun validateEmail(id: String): Int? = when {
+        id.isBlank() -> R.string.error_id_required
+        !Patterns.EMAIL_ADDRESS.matcher(id).matches() -> R.string.error_invalid_email
+        else -> null
+    }
+
+    private fun validatePassword(password: String): Int? = when {
+        password.isBlank() -> R.string.error_password_required
+        password.length < 6 -> R.string.error_password_too_short
+        else -> null
+    }
+
     fun onIdChange(id: String) = intent {
-        val errorRes = when {
-            id.isBlank() -> R.string.error_id_required
-            !android.util.Patterns.EMAIL_ADDRESS.matcher(id).matches() -> R.string.error_invalid_email
-            else -> null
-        }
         reduce {
             state.copy(
                 id = id,
-                idError = errorRes,
-                isLoginEnabled = validate(id, state.password)
+                idError = validateEmail(id) // 유효하면 null
             )
         }
     }
 
     fun onPasswordChange(password: String) = intent {
-        val errorRes = when {
-            password.isBlank() -> R.string.error_password_required
-            password.length < 6 -> R.string.error_password_too_short
-            else -> null
-        }
         reduce {
             state.copy(
                 password = password,
-                passwordError = errorRes,
-                isLoginEnabled = validate(state.id, password)
+                passwordError = validatePassword(password) // 유효하면 null
             )
         }
-    }
-
-    private fun validate(id: String, password: String): Boolean {
-        return id.isNotBlank()
-                && password.length >= 6
-                && android.util.Patterns.EMAIL_ADDRESS.matcher(id).matches()
     }
 
     fun onAutoLoginChange(autoLogin: Boolean) = intent {
@@ -73,23 +68,37 @@ class SignInViewModel @Inject constructor(
     }
 
     fun onSignInClick() = intent {
+        // 1) 에러 먼저 최신화 (사용자가 변경 안 했더라도 버튼 누르면 에러 표출)
+        val emailErr = validateEmail(state.id)
+        val pwErr = validatePassword(state.password)
+        reduce { state.copy(idError = emailErr, passwordError = pwErr) }
+
+        // 2) 비활성/에러면 종료
+        if (emailErr != null || pwErr != null || state.id.isBlank() || state.password.isBlank() || state.isLoading) {
+            return@intent
+        }
+
+        // 3) 요청 + 모든 경로에서 로딩 해제 보장
         reduce { state.copy(isLoading = true) }
-        signInUseCase(state.id, state.password, state.autoLogin)
-            .onSuccess { result ->
-                postSideEffect(SignInSideEffect.NavigateToMainActivity(result.role))
-            }
-            .onFailure {
-                reduce {
-                    state.copy(
-                        dialog = MediumDialogState(
-                            titleRes = R.string.dialog_signin_failed_title,
-                            messageRes = R.string.dialog_signin_failed_message,
-                            confirmTextRes = R.string.dialog_confirm
-                        )
-                    )
+        try {
+            signInUseCase(state.id, state.password, state.autoLogin)
+                .onSuccess { result ->
+                    postSideEffect(SignInSideEffect.NavigateToMainActivity(result.role))
                 }
-            }
-        reduce { state.copy(isLoading = false) }
+                .onFailure {
+                    reduce {
+                        state.copy(
+                            dialog = MediumDialogState(
+                                titleRes = R.string.dialog_signin_failed_title,
+                                messageRes = R.string.dialog_signin_failed_message,
+                                confirmTextRes = R.string.dialog_confirm
+                            )
+                        )
+                    }
+                }
+        } finally {
+            reduce { state.copy(isLoading = false) }
+        }
     }
 
     fun onDismissDialog() = intent {

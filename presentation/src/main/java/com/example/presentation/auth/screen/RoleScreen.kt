@@ -26,7 +26,7 @@ import com.example.presentation.common.theme.TebahTheme
 fun RoleScreen(
     onNavigateToMemberInfo: () -> Unit,
     onNavigateToChurchInfo: () -> Unit,
-    onBackClick: (() -> Unit)? = null
+    onBackClick: () -> Unit
 ) {
     Scaffold(
         topBar = { TebahTopBar(onBackClick) }
@@ -98,7 +98,8 @@ fun RoleScreenPreviewLight() {
     TebahTheme {
         RoleScreen(
             onNavigateToMemberInfo = {},
-            onNavigateToChurchInfo = {}
+            onNavigateToChurchInfo = {},
+            onBackClick = {}
         )
     }
 }
@@ -113,7 +114,8 @@ fun RoleScreenPreviewDark() {
     TebahTheme {
         RoleScreen(
             onNavigateToMemberInfo = {},
-            onNavigateToChurchInfo = {}
+            onNavigateToChurchInfo = {},
+            onBackClick = {}
         )
     }
 }

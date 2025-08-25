@@ -2,6 +2,7 @@ package com.example.presentation.auth.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.example.domain.model.MemberSignUpRequest
+import com.example.domain.model.UserRole
 import com.example.domain.usecase.auth.SignInUseCase
 import com.example.domain.usecase.auth.SignUpMemberUseCase
 import com.example.presentation.auth.state.UserSignUpState
@@ -23,10 +24,22 @@ class MemberSignUpViewModel @Inject constructor(
 ) : ViewModel(), SignUpViewModel<UserSignUpState> {
 
     override val container: Container<UserSignUpState, SignUpSideEffect> = container(
-        initialState = UserSignUpState(),
+        initialState = UserSignUpState(
+            id = TODO(),
+            password = TODO(),
+            repeatPassword = TODO(),
+            name = TODO(),
+            selectedRegion = TODO(),
+            churchesByRegion = TODO(),
+            selectedChurchId = TODO(),
+            isPasswordMismatchDialogShown = TODO(),
+            isIdDuplicateDialogShown = TODO(),
+            isSigningUp = TODO(),
+            isSigningIn = TODO()
+        ),
         buildSettings = {
             this.exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-                intent { postSideEffect(SignUpSideEffect.Toast(throwable.message.orEmpty())) }
+//                intent { postSideEffect(SignUpSideEffect.Toast(throwable.message.orEmpty())) }
             }
         }
     )
@@ -106,13 +119,13 @@ class MemberSignUpViewModel @Inject constructor(
             try {
                 val result = signInUseCase(state.id, state.password, true)
                 result.onSuccess {
-                    postSideEffect(SignUpSideEffect.NavigateToMainActivity(false)) // 멤버니까 false
-                    postSideEffect(SignUpSideEffect.Toast("로그인 성공"))
+                    postSideEffect(SignUpSideEffect.NavigateToMain(UserRole.MEMBER)) // 멤버니까 false
+//                    postSideEffect(SignUpSideEffect.Toast("로그인 성공"))
                 }.onFailure { e ->
-                    postSideEffect(SignUpSideEffect.Toast(e.message ?: "로그인 실패"))
+//                    postSideEffect(SignUpSideEffect.Toast(e.message ?: "로그인 실패"))
                 }
             } catch (e: Exception) {
-                postSideEffect(SignUpSideEffect.Toast(e.message ?: "로그인 실패"))
+//                postSideEffect(SignUpSideEffect.Toast(e.message ?: "로그인 실패"))
             }
         }
     }
@@ -120,7 +133,7 @@ class MemberSignUpViewModel @Inject constructor(
     override fun onSignUpClick() {
         intent {
             if (state.name.isBlank() || state.id.isBlank() || state.password.isBlank() || state.repeatPassword.isBlank() || state.selectedChurchId.isNullOrBlank()) {
-                postSideEffect(SignUpSideEffect.Toast("모든 정보를 정확히 입력해주세요."))
+//                postSideEffect(SignUpSideEffect.Toast("모든 정보를 정확히 입력해주세요."))
                 return@intent
             }
             if (state.password != state.repeatPassword) {
@@ -138,13 +151,13 @@ class MemberSignUpViewModel @Inject constructor(
             try {
                 val result = userSignUpUseCase(request)
                 result.onSuccess {
-                    postSideEffect(SignUpSideEffect.Toast("회원가입 성공"))
+//                    postSideEffect(SignUpSideEffect.Toast("회원가입 성공"))
                     postSideEffect(SignUpSideEffect.NavigateToCompleteScreen)
                 }.onFailure { e ->
-                    postSideEffect(SignUpSideEffect.Toast(e.message ?: "회원가입 실패"))
+//                    postSideEffect(SignUpSideEffect.Toast(e.message ?: "회원가입 실패"))
                 }
             } catch (e: Exception) {
-                postSideEffect(SignUpSideEffect.Toast(e.message ?: "회원가입 실패"))
+//                postSideEffect(SignUpSideEffect.Toast(e.message ?: "회원가입 실패"))
             }
         }
     }

@@ -36,10 +36,7 @@ fun MemberInfoScreen(
     val sideEffect = viewModel.container.sideEffectFlow.collectAsState(initial = null).value
 
     LaunchedEffect(sideEffect) {
-        when (sideEffect) {
-            is SignUpSideEffect.NavigateToChurchSelect -> onNavigateToChurchSelect()
-            else -> {}
-        }
+
     }
 
     val isNextEnabled = viewModel.isNextEnabled

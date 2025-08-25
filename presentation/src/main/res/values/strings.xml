@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- SplashActivity -->
+    <!-- 공통 에러/성공 메시지 -->
     <string name="error_unknown">알 수 없는 오류가 발생했습니다.</string>
     <string name="error_network">네트워크 연결을 확인해주세요.</string>
     <string name="error_retry">다시 시도</string>
@@ -8,6 +8,17 @@
     <string name="guest_login_success">비회원 로그인 성공</string>
     <string name="login_failed">로그인에 실패했습니다.</string>
     <string name="login_success">로그인 성공</string>
+    <string name="error_title">에러</string>
+    <string name="success_title">성공</string>
+    <string name="info_title">안내</string>
+    <string name="error_generic">알 수 없는 오류가 발생했습니다.</string>
+    <string name="signup_success">회원가입에 성공했습니다.</string>
+    <string name="signup_failed">회원가입에 실패했습니다.</string>
+    <string name="invalid_user_info">입력 정보를 확인해주세요.</string>
+    <string name="invalid_church_info">교회 정보를 확인해주세요.</string>
+    <string name="unexpected_error">예기치 못한 오류가 발생했습니다.</string>
+
+    <!-- SplashActivity -->
     <string name="start_title">교회의 모든 소통</string>
     <string name="start_subtitle">테바에서 시작해요!</string>
     <string name="start_button">시작하기</string>
@@ -19,6 +30,8 @@
     <string name="error_password_required">비밀번호를 입력해주세요.</string>
     <string name="error_password_too_short">비밀번호는 최소 6자 이상이어야 합니다.</string>
     <string name="error_login_failed">로그인에 실패했습니다.</string>
+
+    <!-- Admin Info -->
     <string name="admin_info_title_1">관리자 정보를</string>
     <string name="admin_info_title_2">입력해주세요</string>
     <string name="admin_info_section_title">관리자 정보</string>
@@ -28,17 +41,46 @@
     <string name="admin_password_confirm_label">비밀번호 확인</string>
     <string name="admin_role_selection_title">직책 선택</string>
     <string name="admin_custom_role_label">직접 입력</string>
-    <string name="next_button_text">다음</string>
+
+    <!-- Church Info -->
     <string name="church_info_title_1">교회 정보를</string>
     <string name="church_info_title_2">입력해주세요</string>
     <string name="church_name_label">교회 이름</string>
-    <string name="region_select_hint">지역 선택</string>
+    <string name="church_region_label">교회 지역</string>
     <string name="church_phone_label">교회 전화번호</string>
     <string name="church_intro_label">교회 소개</string>
+    <string name="region_select_hint">지역 선택</string>
     <string name="region_selector_title">지역 선택</string>
     <string name="close_button_desc">닫기</string>
     <string name="selected_text">선택됨</string>
+
+    <!-- Dialog -->
+    <string name="dialog_password_mismatch_title">비밀번호 일치 오류</string>
+    <string name="dialog_password_mismatch_content">비밀번호를 다시 확인해주세요</string>
+    <string name="dialog_id_duplicate_title">아이디 중복</string>
+    <string name="dialog_id_duplicate_content">이미 사용중인 아이디입니다\n다른 아이디를 입력해주세요</string>
+    <string name="dialog_signin_failed_title">로그인 실패</string>
+    <string name="dialog_signin_failed_message">아이디 또는 비밀번호가 잘못되었습니다.</string>
+    <string name="dialog_confirm">확인</string>
+
+    <!-- Region -->
+    <string name="region_seoul">서울</string>
+    <string name="region_incheon_gyeonggi">인천/경기</string>
+    <string name="region_daejeon_chungnam">대전/충남</string>
+    <string name="region_gwangju_jeonnam">광주/전남</string>
+    <string name="region_daegu_gyeongbuk">대구/경북</string>
+    <string name="region_busan_gyeongnam">부산/경남</string>
+
+    <!-- Buttons -->
+    <string name="next_button_text">다음</string>
+    <string name="button_next">다음</string>
+    <string name="button_confirm">확인</string>
     <string name="confirm_button_text">확인</string>
+    <string name="button_signup">회원가입 하기</string>
+    <string name="button_login">로그인</string>
+    <string name="button_go_to_main">메인으로 가기</string>
+
+    <!-- 기타 화면 -->
     <string name="church_select_title_1">교회를</string>
     <string name="church_select_title_2">선택해주세요</string>
     <string name="selected_church_region_default">지역 정보 없음</string>
@@ -48,27 +90,39 @@
     <string name="label_id">아이디</string>
     <string name="label_password">비밀번호</string>
     <string name="label_password_confirm">비밀번호 확인</string>
-    <string name="button_next">다음</string>
-    <string name="button_confirm">확인</string>
-    <string name="dialog_password_mismatch_title">비밀번호 일치 오류</string>
-    <string name="dialog_password_mismatch_content">비밀번호를 다시 확인해주세요</string>
-    <string name="dialog_id_duplicate_title">아이디 중복</string>
-    <string name="dialog_id_duplicate_content">이미 사용중인 아이디입니다\n다른 아이디를 입력해주세요</string>
+    <string name="label_save_login">간편로그인 저장</string>
     <string name="role_title_line1">역할을</string>
     <string name="role_title_line2">골라주세요</string>
     <string name="role_button_church_channel">교회 채널 만들기</string>
     <string name="role_button_personal_signup">개인 가입</string>
     <string name="cd_logo">로고 이미지</string>
-    <string name="label_save_login">간편로그인 저장</string>
-    <string name="button_signup">회원가입 하기</string>
-    <string name="button_login">로그인</string>
+
+    <!-- Complete -->
     <string name="complete_title_line1">테바 가입이</string>
     <string name="complete_title_line2">완료되었어요</string>
-    <string name="button_go_to_main">메인으로 가기</string>
-    <string name="dialog_signin_failed_title">로그인 실패</string>
-    <string name="dialog_signin_failed_message">아이디 또는 비밀번호가 잘못되었습니다.</string>
-    <string name="dialog_confirm">확인</string>
 
-    <!-- AdminMainActivity -->
-    <!-- MemberMainActivity -->
+    <!-- ===== 추가된 필드별 에러 메시지 ===== -->
+    <string name="error_empty_admin_name">관리자 이름을 입력해주세요.</string>
+    <string name="error_empty_id">아이디를 입력해주세요.</string>
+    <string name="error_empty_password">비밀번호를 입력해주세요.</string>
+    <string name="error_password_mismatch">비밀번호가 일치하지 않습니다.</string>
+    <string name="error_empty_custom_role">직접 입력한 직책을 입력해주세요.</string>
+
+    <string name="error_empty_church_name">교회 이름을 입력해주세요.</string>
+    <string name="error_empty_phone">전화번호를 입력해주세요.</string>
+    <string name="error_invalid_phone">전화번호 형식이 올바르지 않습니다.</string>
+    <string name="error_empty_church_intro">교회 소개를 입력해주세요.</string>
+    <string name="error_empty_region">지역을 선택해주세요.</string>
+
+    <string name="admin_position_pastor">목사</string>
+    <string name="admin_position_admin">관리자</string>
+    <string name="admin_position_custom">직접입력</string>
+    <string name="error_empty_password_confirm">비밀번호 확인을 입력해 주세요.</string>
+
+    <!-- Admin Info Error Messages -->
+    <string name="admin_name_error_empty">이름을 입력해 주세요.</string>
+    <string name="admin_id_error_invalid">이메일 형식이 올바르지 않습니다.</string>
+    <string name="admin_password_error_short">비밀번호는 6자 이상이어야 합니다.</string>
+    <string name="admin_password_error_mismatch">비밀번호가 일치하지 않습니다.</string>
+    <string name="admin_custom_role_error_empty">직책을 입력해 주세요.</string>
 </resources>

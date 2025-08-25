@@ -1,8 +1,11 @@
 package com.example.presentation.auth.state
 
+import androidx.annotation.StringRes
+import com.example.domain.model.UserRole
+
 sealed interface SignUpSideEffect {
-    data class Toast(val message: String): SignUpSideEffect
-    class NavigateToMainActivity(val isAdmin: Boolean) : SignUpSideEffect
+    data class Toast(@StringRes val messageRes: Int) : SignUpSideEffect
+    data class NavigateToMain(val role: UserRole) : SignUpSideEffect
     object NavigateToChurchSelect : SignUpSideEffect
     object NavigateToCompleteScreen : SignUpSideEffect
 }

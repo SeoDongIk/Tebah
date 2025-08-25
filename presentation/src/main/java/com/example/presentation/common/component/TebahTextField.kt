@@ -1,6 +1,8 @@
 package com.example.presentation.common.component
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +13,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -30,18 +33,19 @@ fun TebahTextField(
     errorMessage: String? = null,
     singleLine: Boolean = true,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    readOnly: Boolean = false,
+    onClick: (() -> Unit)? = null
 ) {
-    // 상태에 따라 Label 색 결정
     val labelColor = when {
         isError -> MaterialTheme.colorScheme.error
-        value.isNotBlank() -> MaterialTheme.colorScheme.primary // 값 있으면 무조건 Navy
-        else -> MaterialTheme.colorScheme.outline // 비어있으면 Gray
+        value.isNotBlank() -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.outline
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
         OutlinedTextField(
             value = value,
-            onValueChange = onValueChange,
+            onValueChange = { if (!readOnly) onValueChange(it) },
             label = {
                 Text(
                     text = label,
@@ -54,9 +58,20 @@ fun TebahTextField(
             visualTransformation = visualTransformation,
             textStyle = TextStyle(
                 color = if (isError) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.onSurface // 기본 Black
+                else MaterialTheme.colorScheme.onSurface
             ),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .let { base ->
+                    if (onClick != null) {
+                        base.clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) { onClick() }
+                    } else base
+                },
+            readOnly = readOnly,
+            enabled = onClick == null, // 클릭 전용일 때는 false
             colors = TextFieldDefaults.colors(
                 // 텍스트
                 focusedTextColor = MaterialTheme.colorScheme.onSurface,
@@ -69,10 +84,13 @@ fun TebahTextField(
                 // 커서
                 cursorColor = MaterialTheme.colorScheme.primary,
                 // 테두리
-                focusedIndicatorColor = MaterialTheme.colorScheme.primary, // Navy
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.outline, // Gray
-                errorIndicatorColor = MaterialTheme.colorScheme.error // Orange
-                // Label 관련 색상은 무시 (직접 강제했으므로)
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
+                errorIndicatorColor = MaterialTheme.colorScheme.error,
+                // disabled 상태일 때도 일반 색 강제
+                disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                disabledContainerColor = MaterialTheme.colorScheme.surface,
+                disabledIndicatorColor = MaterialTheme.colorScheme.outline
             )
         )
 
@@ -101,21 +119,23 @@ fun TebahTextFieldLightPreview() {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 빈 상태
+            // 일반 입력 필드
             TebahTextField(
                 value = "",
                 onValueChange = {},
                 label = "이름"
             )
 
-            // 입력 중 (정상)
+            // 선택 전용 필드 (Region 같은 경우)
             TebahTextField(
-                value = "ALOdoi10298",
+                value = "서울",
                 onValueChange = {},
-                label = "아이디"
+                label = "지역",
+                readOnly = true,
+                onClick = { /* show region modal */ }
             )
 
-            // 입력 중 (비밀번호)
+            // 비밀번호
             TebahTextField(
                 value = "********",
                 onValueChange = {},
@@ -134,14 +154,4 @@ fun TebahTextFieldLightPreview() {
             )
         }
     }
-}
-
-@Preview(
-    name = "TextField States Dark",
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-fun TebahTextFieldDarkPreview() {
-    TebahTextFieldLightPreview()
 }

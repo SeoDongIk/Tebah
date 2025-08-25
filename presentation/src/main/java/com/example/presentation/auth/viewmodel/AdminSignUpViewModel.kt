@@ -1,5 +1,6 @@
 package com.example.presentation.auth.viewmodel
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import com.example.domain.model.AdminPosition
 import com.example.domain.model.AdminSignUpRequest
@@ -7,12 +8,14 @@ import com.example.domain.model.ChurchInfo
 import com.example.domain.model.Region
 import com.example.domain.usecase.auth.SignInUseCase
 import com.example.domain.usecase.auth.SignUpAdminUseCase
+import com.example.presentation.R
 import com.example.presentation.auth.state.AdminSignUpState
 import com.example.presentation.auth.state.SignUpSideEffect
+import com.example.presentation.common.state.MediumDialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.sync.Mutex
 import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -30,102 +33,269 @@ class AdminSignUpViewModel @Inject constructor(
         initialState = AdminSignUpState(),
         buildSettings = {
             this.exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-                intent { postSideEffect(SignUpSideEffect.Toast(throwable.message.orEmpty())) }
+                intent {
+                    postSideEffect(SignUpSideEffect.Toast(R.string.error_unknown))
+                }
             }
         }
     )
 
-    fun onChurchNameChange(name: String) = blockingIntent {
-        reduce { state.copy(churchName = name) }
+    /* ---------------- Validation helpers ---------------- */
+
+    private companion object {
+        private const val MIN_PASSWORD = 6
+        private val PHONE_REGEX = Regex("^\\d{10,11}$")
     }
-    fun onRegionChange(region: Region) = blockingIntent {
-        reduce { state.copy(region = region) }
+
+    private fun validateAdminName(name: String) = if (name.isBlank())
+        R.string.error_empty_admin_name else null
+
+    private fun validateEmail(id: String) = when {
+        id.isBlank() -> R.string.error_empty_id
+        !Patterns.EMAIL_ADDRESS.matcher(id).matches() -> R.string.error_invalid_email
+        else -> null
     }
-    fun onPhoneNumberChange(phone: String) = blockingIntent {
-        reduce { state.copy(phoneNumber = phone) }
+
+    private fun validatePassword(pw: String) = when {
+        pw.isBlank() -> R.string.error_empty_password
+        pw.length < MIN_PASSWORD -> R.string.error_password_too_short
+        else -> null
     }
-    fun onChurchIntroChange(intro: String) = blockingIntent {
-        reduce { state.copy(churchIntro = intro) }
+
+    private fun validateRepeatPassword(pw: String, repeat: String) = when {
+        repeat.isBlank() -> R.string.error_empty_password_confirm
+        pw != repeat -> R.string.error_password_mismatch
+        else -> null
     }
-    fun onAdminNameChange(name: String) = blockingIntent {
-        reduce { state.copy(adminName = name) }
+
+    private fun validateCustomRole(isCustom: Boolean, value: String) =
+        if (isCustom && value.isBlank()) R.string.error_empty_custom_role else null
+
+    private fun validateChurchName(name: String) =
+        if (name.isBlank()) R.string.error_empty_church_name else null
+
+    private fun validatePhone(phone: String) = when {
+        phone.isBlank() -> R.string.error_empty_phone
+        !PHONE_REGEX.matches(phone) -> R.string.error_invalid_phone
+        else -> null
     }
-    fun onIdChange(id: String) = blockingIntent {
-        reduce { state.copy(id = id) }
+
+    private fun validateChurchIntro(intro: String) =
+        if (intro.isBlank()) R.string.error_empty_church_intro else null
+
+    private fun validateRegion(region: Region?) =
+        if (region == null) R.string.error_empty_region else null
+
+    /* ---------------- onChange: 즉시 검증 ---------------- */
+
+    fun onChurchNameChange(name: String) = intent {
+        reduce { state.copy(churchName = name, churchNameError = validateChurchName(name)) }
     }
-    fun onPasswordChange(password: String) = blockingIntent {
-        reduce { state.copy(password = password) }
+
+    fun onRegionChange(region: Region) = intent {
+        reduce { state.copy(region = region, regionError = null) }
     }
-    fun onRepeatPasswordChange(password: String) = blockingIntent {
-        reduce { state.copy(repeatPassword = password) }
+
+    fun onPhoneNumberChange(phone: String) = intent {
+        reduce { state.copy(phoneNumber = phone, phoneNumberError = validatePhone(phone)) }
     }
-    fun onAdminRoleChange(role: AdminPosition) = blockingIntent {
+
+    fun onChurchIntroChange(intro: String) = intent {
+        reduce { state.copy(churchIntro = intro, churchIntroError = validateChurchIntro(intro)) }
+    }
+
+    fun onAdminNameChange(name: String) = intent {
+        reduce { state.copy(name = name, nameError = validateAdminName(name)) }
+    }
+
+    fun onIdChange(id: String) = intent {
+        reduce { state.copy(id = id, idError = validateEmail(id)) }
+    }
+
+    fun onPasswordChange(password: String) = intent {
+        reduce {
+            state.copy(
+                password = password,
+                passwordError = validatePassword(password),
+                repeatPasswordError = validateRepeatPassword(password, state.repeatPassword)
+            )
+        }
+    }
+
+    fun onRepeatPasswordChange(password: String) = intent {
+        reduce {
+            state.copy(
+                repeatPassword = password,
+                repeatPasswordError = validateRepeatPassword(state.password, password)
+            )
+        }
+    }
+
+    fun onAdminRoleChange(role: AdminPosition) = intent {
         reduce {
             if (role != AdminPosition.CUSTOM) {
-                state.copy(adminRole = role, customRole = "")
+                state.copy(adminRole = role, customRole = "", customRoleError = null)
             } else {
-                state.copy(adminRole = role)
+                state.copy(
+                    adminRole = role,
+                    customRoleError = validateCustomRole(true, state.customRole)
+                )
             }
         }
     }
-    fun onCustomRoleChange(customRole: String) = blockingIntent {
-        reduce { state.copy(customRole = customRole) }
+
+    fun onCustomRoleChange(customRole: String) = intent {
+        reduce {
+            state.copy(
+                customRole = customRole,
+                customRoleError = validateCustomRole(state.isCustomInput, customRole)
+            )
+        }
     }
 
+    /* ---------------- Dialog & Selector ---------------- */
+
+    fun showRegionSelector() = intent {
+        reduce { state.copy(regionSelectorVisible = true) }
+    }
+
+    fun dismissRegionSelector() = intent {
+        reduce { state.copy(regionSelectorVisible = false) }
+    }
+
+    private fun showErrorDialog(@androidx.annotation.StringRes msg: Int) = intent {
+        reduce {
+            state.copy(
+                dialog = MediumDialogState(
+                    titleRes = R.string.error_title,
+                    messageRes = msg,
+                    confirmTextRes = R.string.confirm_button_text
+                )
+            )
+        }
+    }
+
+    fun dismissDialog() = intent {
+        reduce { state.copy(dialog = null) }
+    }
+
+    /* ---------------- 제출 로직 ---------------- */
+
+    private val signUpMutex = Mutex()
+    private val signInMutex = Mutex()
+
+    // 로그인
     override fun onSignInClick() {
         intent {
+            if (state.isSigningIn) return@intent
+            if (!signInMutex.tryLock()) return@intent
             try {
-                val result = signInUseCase(state.id, state.password, true)
-                result.onSuccess {
-                    postSideEffect(SignUpSideEffect.NavigateToMainActivity(true)) // 관리자니까 true
-                    postSideEffect(SignUpSideEffect.Toast("로그인 성공"))
-                }.onFailure { e ->
-                    postSideEffect(SignUpSideEffect.Toast(e.message ?: "로그인 실패"))
+                val s = state
+
+                // 검증 반영
+                val idErr = validateEmail(s.id)
+                val pwErr = validatePassword(s.password)
+                reduce { state.copy(idError = idErr, passwordError = pwErr) }
+                if (idErr != null || pwErr != null) {
+                    showErrorDialog(R.string.invalid_user_info)
+                    return@intent
                 }
-            } catch (e: Exception) {
-                postSideEffect(SignUpSideEffect.Toast(e.message ?: "로그인 실패"))
+
+                // 로딩 시작
+                reduce { state.copy(isSigningIn = true) }
+
+                // 3) 호출 (Result 직접 처리)
+                try {
+                    val result = signInUseCase(s.id, s.password, true)
+                    result
+                        .onSuccess {
+                            // 성공 UI/네비 처리: 필요 시 sideEffect로 변경 가능
+                            showErrorDialog(R.string.login_success)
+                        }
+                        .onFailure { showErrorDialog(R.string.login_failed) }
+                } catch (_: Throwable) {
+                    showErrorDialog(R.string.login_failed)
+                } finally {
+                    reduce { state.copy(isSigningIn = false) }
+                }
+            } finally {
+                signInMutex.unlock()
             }
         }
     }
 
+    // 회원가입
     override fun onSignUpClick() {
         intent {
-            if (!state.isUserInfoValid) {
-                postSideEffect(SignUpSideEffect.Toast("입력 정보를 확인해주세요."))
-                return@intent
-            }
-
-            val adminPosition = state.adminRole
-            val customPosition = if (adminPosition == AdminPosition.CUSTOM) state.customRole else null
-
-            val request = AdminSignUpRequest(
-                church = ChurchInfo(
-                    name = state.churchName,
-                    region = state.region ?: Region.SEOUL,
-                    phone = state.phoneNumber,
-                    description = state.churchIntro
-                ),
-                adminName = state.adminName,
-                adminEmail = state.id,
-                adminPassword = state.password,
-                adminPosition = adminPosition,
-                customPosition = customPosition
-            )
-
+            if (state.isSigningUp) return@intent
+            if (!signUpMutex.tryLock()) return@intent
             try {
-                Timber.d("🚀 [AdminSignUp] 회원가입 요청 시작: $request")
-                val result = signUpAdminUseCase(request)
-                result.onSuccess {
-                    Timber.i("✅ [AdminSignUp] 회원가입 성공: $it")
-                    postSideEffect(SignUpSideEffect.Toast("관리자 회원가입 성공"))
-                    postSideEffect(SignUpSideEffect.NavigateToCompleteScreen)  // 네비게이션 이벤트로 변경
-                }.onFailure { e ->
-                    Timber.e(e, "❌ [AdminSignUp] 회원가입 실패: ${e.message}")
-                    postSideEffect(SignUpSideEffect.Toast(e.message ?: "회원가입 실패"))
+                val s = state // 스냅샷
+
+                // 에러 일괄 계산
+                val userErr = s.copy(
+                    nameError = validateAdminName(s.name),
+                    idError = validateEmail(s.id),
+                    passwordError = validatePassword(s.password),
+                    repeatPasswordError = validateRepeatPassword(s.password, s.repeatPassword),
+                    customRoleError = validateCustomRole(s.isCustomInput, s.customRole)
+                )
+                val allErr = userErr.copy(
+                    churchNameError = validateChurchName(userErr.churchName),
+                    phoneNumberError = validatePhone(userErr.phoneNumber),
+                    churchIntroError = validateChurchIntro(userErr.churchIntro),
+                    regionError = validateRegion(userErr.region)
+                )
+                reduce { allErr }
+
+                // 가드
+                val invalidUser = listOf(
+                    allErr.nameError, allErr.idError, allErr.passwordError,
+                    allErr.repeatPasswordError, allErr.customRoleError
+                ).any { it != null }
+                val invalidChurch = listOf(
+                    allErr.churchNameError, allErr.phoneNumberError,
+                    allErr.churchIntroError, allErr.regionError
+                ).any { it != null }
+
+                if (invalidUser) { showErrorDialog(R.string.invalid_user_info); return@intent }
+                if (invalidChurch) { showErrorDialog(R.string.invalid_church_info); return@intent }
+
+                // 로딩 시작
+                reduce { state.copy(isSigningUp = true) }
+
+                // 요청 빌드 (스냅샷 기준, region!! 안전)
+                val request = AdminSignUpRequest(
+                    church = ChurchInfo(
+                        name = s.churchName,
+                        region = s.region!!,
+                        phone = s.phoneNumber,
+                        description = s.churchIntro
+                    ),
+                    adminName = s.name,
+                    adminEmail = s.id,
+                    adminPassword = s.password,
+                    adminPosition = s.adminRole,
+                    customPosition = if (s.adminRole == AdminPosition.CUSTOM) s.customRole else null
+                )
+
+                Timber.d("🚀 [AdminSignUp] request: $request")
+
+                // 호출 (Result 직접 처리)
+                try {
+                    val result = signUpAdminUseCase(request)
+                    result
+                        .onSuccess {
+                            postSideEffect(SignUpSideEffect.NavigateToCompleteScreen)
+                        }
+                        .onFailure { showErrorDialog(R.string.signup_failed) }
+                } catch (_: Throwable) {
+                    showErrorDialog(R.string.signup_failed)
+                } finally {
+                    reduce { state.copy(isSigningUp = false) }
                 }
-            } catch (e: Exception) {
-                Timber.e(e, "🔥 [AdminSignUp] 예외 발생: ${e.message}")
-                postSideEffect(SignUpSideEffect.Toast(e.message ?: "회원가입 실패"))
+            } finally {
+                signUpMutex.unlock()
             }
         }
     }

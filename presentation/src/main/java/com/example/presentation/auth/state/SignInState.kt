@@ -1,16 +1,23 @@
 package com.example.presentation.auth.state
 
-import com.example.domain.model.UserRole
+import androidx.annotation.StringRes
+import androidx.compose.runtime.Stable
 import com.example.presentation.common.state.MediumDialogState
 
+@Stable
 data class SignInState(
     val id: String = "",
     val password: String = "",
-    val role: UserRole? = null,
+    @StringRes val idError: Int? = null, // null 여부로 isError 여부 판단
+    @StringRes val passwordError: Int? = null, // null 여부로 isError 여부 판단
     val autoLogin: Boolean = false,
-    val isLoginEnabled: Boolean = false,
     val isLoading: Boolean = false,
-    val idError: Int? = null, // stringResId, null이면 정상
-    val passwordError: Int? = null, // stringResId, null이면 정상
-    val dialog: MediumDialogState? = null
-)
+    val dialog: MediumDialogState? = null,
+) {
+    val isLoginEnabled: Boolean
+        get() = !isLoading &&
+                id.isNotBlank() &&
+                password.isNotBlank() &&
+                idError == null &&
+                passwordError == null
+}

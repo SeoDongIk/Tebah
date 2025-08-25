@@ -42,26 +42,26 @@ fun <S : SignUpState> CompleteScreen(
 
     // 사이드이펙트 처리
     viewModel.collectSideEffect { sideEffect ->
-        when (sideEffect) {
-            is SignUpSideEffect.Toast -> {
-                Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
-            }
-
-            is SignUpSideEffect.NavigateToMainActivity -> {
-                val intent = Intent(
-                    context,
-                    if (sideEffect.isAdmin) AdminActivity::class.java
-                    else MemberActivity::class.java
-                ).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                context.startActivity(intent)
-            }
-
-            else -> {
-                // 이 스크린에서는 무시되거나 예외처리 필요
-            }
-        }
+//        when (sideEffect) {
+//            is SignUpSideEffect.Toast -> {
+//                Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+//            }
+//
+//            is SignUpSideEffect.NavigateToMainActivity -> {
+//                val intent = Intent(
+//                    context,
+//                    if (sideEffect.isAdmin) AdminActivity::class.java
+//                    else MemberActivity::class.java
+//                ).apply {
+//                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+//                }
+//                context.startActivity(intent)
+//            }
+//
+//            else -> {
+//                // 이 스크린에서는 무시되거나 예외처리 필요
+//            }
+//        }
     }
 
     Column(
