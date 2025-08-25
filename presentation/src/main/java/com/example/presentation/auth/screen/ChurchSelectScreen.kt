@@ -3,10 +3,10 @@ package com.example.presentation.auth.screen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,11 +32,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,227 +46,285 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.presentation.R
-import com.example.presentation.common.component.LargeButton
-import com.example.presentation.auth.viewmodel.MemberSignUpViewModel
 import com.example.presentation.auth.state.SignUpSideEffect
+import com.example.presentation.auth.viewmodel.MemberSignUpViewModel
+import com.example.presentation.common.component.LargeButton
+import com.example.presentation.common.component.MediumDialog
+import com.example.presentation.common.component.TebahTopBar
 import com.example.presentation.common.theme.Paddings
 import com.google.accompanist.flowlayout.FlowRow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ChurchSelectScreen(
     viewModel: MemberSignUpViewModel,
-    onNavigateToComplete: () -> Unit
+    onNavigateToComplete: () -> Unit,
+    onBackClick: () -> Unit
 ) {
-    val state by viewModel.container.stateFlow.collectAsState()
-    val sideEffectFlow = viewModel.container.sideEffectFlow
+    val state by viewModel.container.stateFlow.collectAsStateWithLifecycle()
 
-    val churchesByRegion = state.churchesByRegion
-    val selectedRegion = state.selectedRegion
-    val selectedChurch = state.selectedChurchId
-    val nextButtonColor = if (selectedChurch != null)  MaterialTheme.colorScheme.primary else Color.LightGray
-
-    LaunchedEffect(Unit) {
-        sideEffectFlow.collect { sideEffect ->
+    LaunchedEffect(viewModel) {
+        viewModel.container.sideEffectFlow.collectLatest { sideEffect ->
             when (sideEffect) {
-                is SignUpSideEffect.Toast -> {
-                    // Toast 처리 (예: Android Toast or Compose Snackbar)
-                }
-                SignUpSideEffect.NavigateToCompleteScreen -> {
-                    onNavigateToComplete()
-                }
-                else -> { /* 다른 이벤트 처리 */ }
+                is SignUpSideEffect.Toast -> { /* 필요시 Toast/Snackbar */ }
+                SignUpSideEffect.NavigateToCompleteScreen -> onNavigateToComplete()
+                else -> Unit
             }
         }
     }
 
-    Column(
+    // 파생값 & 안정 람다(리컴포지션 노이즈 감소)
+    val regions = remember(state.churchesByRegion) { state.churchesByRegion.keys.toList() }
+    val churchList = remember(state.selectedRegion, state.churchesByRegion) {
+        state.churchesByRegion[state.selectedRegion].orEmpty()
+    }
+
+    Scaffold(
+        topBar = { TebahTopBar(onBackClick = onBackClick) },
         modifier = Modifier.fillMaxSize()
-    ) {
-        // 타이틀 영역
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .weight(1f)
-                .padding(
-                    top = Paddings.layout_vertical,
-                    start = Paddings.layout_horizontal,
-                    end = Paddings.layout_horizontal
-                )
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Center
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
-            Text(
-                text = stringResource(id = R.string.church_select_title_1),
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-            )
-            Text(
-                text = stringResource(id = R.string.church_select_title_2),
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
-            )
-        }
-
-        // 선택된 교회 배너 표시
-        selectedChurch?.let {
-            Spacer(modifier = Modifier.height(Paddings.medium))
-            SelectedChurchBanner(
-                churchName = it,
-                churchRegion = stringResource(id = R.string.selected_church_region_default) // 기본값
-            )
-            Spacer(modifier = Modifier.height(Paddings.large))
-        }
-
-        Spacer(
-            modifier = Modifier
-                .height(Paddings.medium)
-                .fillMaxWidth()
-                .background(Color(0xFFF5F5F5))
-        )
-
-        // 지역 선택 버튼 및 교회 리스트
-        Column(
-            modifier = Modifier
-                .padding(
-                    top = Paddings.layout_vertical,
-                    start = Paddings.layout_horizontal,
-                    end = Paddings.layout_horizontal
-                )
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Paddings.xlarge),
-            horizontalAlignment = Alignment.Start
-        ) {
-            FlowRow(
-                mainAxisSpacing = Paddings.medium,
-                crossAxisSpacing = Paddings.medium
-            ) {
-                churchesByRegion.keys.forEach { region ->
-                    val isSelected = region == selectedRegion
-                    Button(
-                        onClick = { viewModel.onRegionSelected(region) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isSelected)  MaterialTheme.colorScheme.primary else Color.LightGray
-                        ),
-                        shape = RoundedCornerShape(Paddings.xlarge),
-                        contentPadding = PaddingValues(
-                            horizontal = Paddings.xlarge,
-                            vertical = Paddings.medium
-                        )
-                    ) {
-                        Text(
-                            text = region,
-                            fontSize = 14.sp,
-                            color = if (isSelected) Color.White else Color.Black
-                        )
-                    }
-                }
-            }
-
-            val churchList = churchesByRegion[selectedRegion] ?: emptyList()
-            LazyColumn(
+            // 타이틀
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 300.dp)
-            ) {
-                items(churchList) { church ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = Paddings.small)
-                            .clickable { viewModel.onChurchSelected(church) },
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (selectedChurch == church)  MaterialTheme.colorScheme.primary.copy(alpha = 0.4f) else Color.White
-                        )
-                    ) {
-                        Text(
-                            text = church,
-                            modifier = Modifier.padding(Paddings.xlarge),
-                            fontWeight = if (selectedChurch == church) FontWeight.Bold else FontWeight.Medium,
-                            color = if (selectedChurch == church) Color.White else Color.Black
-                        )
-                    }
-                    Spacer(
-                        modifier = Modifier
-                            .height(Paddings.xsmall)
-                            .fillMaxWidth()
-                            .background(Color(0xFFF5F5F5))
+                    .weight(1f)
+                    .padding(
+                        top = Paddings.layout_vertical,
+                        start = Paddings.layout_horizontal,
+                        end = Paddings.layout_horizontal
                     )
-                }
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(id = R.string.church_select_title_1),
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                )
+                Text(
+                    text = stringResource(id = R.string.church_select_title_2),
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+                )
+            }
+
+            // 선택 배너 (부드러운 등장/퇴장)
+            SelectedChurchBanner(
+                churchName = state.selectedChurchId,
+                churchRegion = stringResource(id = R.string.selected_church_region_default)
+            )
+
+            // 섹션 구분 라인
+            Spacer(
+                modifier = Modifier
+                    .height(Paddings.medium)
+                    .fillMaxWidth()
+                    .background(Color(0xFFF5F5F5))
+            )
+
+            // 지역 칩 + 교회 리스트
+            Column(
+                modifier = Modifier
+                    .padding(
+                        top = Paddings.layout_vertical,
+                        start = Paddings.layout_horizontal,
+                        end = Paddings.layout_horizontal
+                    )
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(Paddings.xlarge),
+                horizontalAlignment = Alignment.Start
+            ) {
+                RegionChips(
+                    regions = regions,
+                    selectedRegion = state.selectedRegion,
+                    onRegionSelected = viewModel::onRegionSelected
+                )
+
+                ChurchesList(
+                    churches = churchList,
+                    selectedChurch = state.selectedChurchId,
+                    onChurchSelected = viewModel::onChurchSelected
+                )
+            }
+
+            // 다음 버튼
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(
+                        bottom = Paddings.layout_vertical,
+                        start = Paddings.layout_horizontal,
+                        end = Paddings.layout_horizontal
+                    )
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                LargeButton(
+                    onClick = { viewModel.onSignUpClick() },
+                    text = stringResource(id = R.string.next_button_text),
+                    enabled = state.isChurchSelectValid,
+                    isLoading = state.isSigningUp
+                )
             }
         }
+    }
 
-        // 다음 버튼 영역
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(
-                    bottom = Paddings.layout_vertical,
-                    start = Paddings.layout_horizontal,
-                    end = Paddings.layout_horizontal
+    // 다이얼로그
+    state.dialog?.let { d ->
+        MediumDialog(
+            showDialog = true,
+            title = stringResource(d.titleRes),
+            content = stringResource(d.messageRes),
+            buttonContent = stringResource(d.confirmTextRes),
+            onConfirm = { viewModel.dismissDialog() },
+            onDismissRequest = { viewModel.dismissDialog() }
+        )
+    }
+}
+
+/* ---------------- Sub-Composables ---------------- */
+
+@Composable
+private fun RegionChips(
+    regions: List<String>,
+    selectedRegion: String,
+    onRegionSelected: (String) -> Unit
+) {
+    FlowRow(
+        mainAxisSpacing = Paddings.medium,
+        crossAxisSpacing = Paddings.medium
+    ) {
+        regions.forEach { region ->
+            val isSelected = region == selectedRegion
+            Button(
+                onClick = { onRegionSelected(region) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
+                ),
+                shape = RoundedCornerShape(Paddings.xlarge),
+                contentPadding = PaddingValues(
+                    horizontal = Paddings.xlarge,
+                    vertical = Paddings.medium
                 )
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            LargeButton(
-                onClick = {
-                    if (selectedChurch != null) { viewModel.onSignUpClick() }
-                },
-                text = stringResource(id = R.string.next_button_text)
-            )
+            ) {
+                Text(
+                    text = region,
+                    fontSize = 14.sp,
+                    color = if (isSelected) Color.White else Color.Black
+                )
+            }
         }
     }
 }
 
 @Composable
-fun SelectedChurchBanner(
-    churchName: String,
-    churchRegion: String = stringResource(id = R.string.selected_church_region_default)
+private fun ChurchesList(
+    churches: List<String>,
+    selectedChurch: String?,
+    onChurchSelected: (String) -> Unit
 ) {
-    AnimatedVisibility(
-        visible = churchName.isNotBlank(),
-        enter = fadeIn(animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)) +
-                slideInVertically(
-                    initialOffsetY = { fullHeight -> -fullHeight / 2 },
-                    animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
-                ),
-        exit = fadeOut(animationSpec = tween(300)) +
-                slideOutVertically(
-                    targetOffsetY = { fullHeight -> -fullHeight / 2 },
-                    animationSpec = tween(300)
-                )
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(max = 300.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-                .padding(horizontal = Paddings.layout_horizontal)
-                .border(
-                    width = 1.dp,
-                    color = Color.LightGray,
-                    shape = RoundedCornerShape(Paddings.large)
-                )
-                .padding(Paddings.large),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
+        items(
+            items = churches,
+            key = { it } // 교회명 기준 안정 키
+        ) { church ->
+            Card(
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFFF5F5F5))
-            )
-
-            Spacer(modifier = Modifier.width(Paddings.xlarge))
-
-            Column {
-                Text(
-                    text = churchName,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                    .fillMaxWidth()
+                    .padding(vertical = Paddings.small)
+                    .clickable { onChurchSelected(church) },
+                colors = CardDefaults.cardColors(
+                    containerColor = if (selectedChurch == church)
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                    else Color.White
                 )
+            ) {
                 Text(
-                    text = churchRegion,
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray)
+                    text = church,
+                    modifier = Modifier.padding(Paddings.xlarge),
+                    fontWeight = if (selectedChurch == church) FontWeight.Bold else FontWeight.Medium,
+                    color = if (selectedChurch == church) Color.White else Color.Black
                 )
             }
+            Spacer(
+                modifier = Modifier
+                    .height(Paddings.xsmall)
+                    .fillMaxWidth()
+                    .background(Color(0xFFF5F5F5))
+            )
+        }
+    }
+}
+
+/* --------- Selected Banner: smoother in/out ---------- */
+
+@Composable
+private fun SelectedChurchBanner(
+    churchName: String?,
+    churchRegion: String
+) {
+    // 레이아웃 점프를 줄이기 위해 배너 자체에 expand/shrink + fade 조합
+    AnimatedVisibility(
+        visible = !churchName.isNullOrBlank(),
+        enter = fadeIn(
+            animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing)
+        ) + expandVertically(
+            animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
+            expandFrom = Alignment.Top
+        ),
+        exit = shrinkVertically(
+            animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
+            shrinkTowards = Alignment.Top
+        ) + fadeOut(
+            animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing)
+        )
+    ) {
+        Column {
+            Spacer(modifier = Modifier.height(Paddings.medium))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .padding(horizontal = Paddings.layout_horizontal)
+                    .border(
+                        width = 1.dp,
+                        color = Color.LightGray,
+                        shape = RoundedCornerShape(Paddings.large)
+                    )
+                    .padding(Paddings.large),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFF5F5F5))
+                )
+
+                Spacer(modifier = Modifier.width(Paddings.xlarge))
+
+                Column {
+                    Text(
+                        text = churchName ?: "",
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Text(
+                        text = churchRegion,
+                        style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(Paddings.large))
         }
     }
 }

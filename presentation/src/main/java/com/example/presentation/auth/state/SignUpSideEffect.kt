@@ -6,6 +6,5 @@ import com.example.domain.model.UserRole
 sealed interface SignUpSideEffect {
     data class Toast(@StringRes val messageRes: Int) : SignUpSideEffect
     data class NavigateToMain(val role: UserRole) : SignUpSideEffect
-    object NavigateToChurchSelect : SignUpSideEffect
     object NavigateToCompleteScreen : SignUpSideEffect
 }

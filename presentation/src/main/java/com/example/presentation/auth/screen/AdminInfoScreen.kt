@@ -60,7 +60,6 @@ fun AdminInfoScreen(
                     Toast.makeText(context, context.getString(effect.messageRes), Toast.LENGTH_SHORT).show()
                 }
                 SignUpSideEffect.NavigateToCompleteScreen -> onNavigateToComplete()
-                SignUpSideEffect.NavigateToChurchSelect -> Unit
                 is SignUpSideEffect.NavigateToMain -> Unit
             }
         }

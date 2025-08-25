@@ -117,7 +117,8 @@ fun AuthNavHost(
             val viewModel: MemberSignUpViewModel = hiltViewModel(backStackEntry)
             MemberInfoScreen(
                 viewModel = viewModel,
-                onNavigateToChurchSelect = { navController.navigate(AuthRoute.ChurchSelect.route) }
+                onNavigateToChurchSelect = { navController.navigate(AuthRoute.ChurchSelect.route) },
+                onBackClick = { navController.popBackStack() }
             )
         }
 
@@ -129,10 +130,14 @@ fun AuthNavHost(
             popEnter = slideIn(-1000) + fadeInAnim,
             popExit = slideOut(1000) + fadeOutAnim
         ) { backStackEntry ->
-            val viewModel: MemberSignUpViewModel = hiltViewModel(backStackEntry)
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(AuthRoute.MemberInfo.route)
+            }
+            val viewModel: MemberSignUpViewModel = hiltViewModel(parentEntry)
             ChurchSelectScreen(
                 viewModel = viewModel,
-                onNavigateToComplete = { navController.navigate(AuthRoute.Complete.route) }
+                onNavigateToComplete = { navController.navigate(AuthRoute.Complete.route) },
+                onBackClick = { navController.popBackStack() }
             )
         }
 
@@ -183,7 +188,10 @@ fun AuthNavHost(
             val viewModel: ViewModel? = previousEntry?.let {
                 when (it.destination.route) {
                     AuthRoute.MemberInfo.route,
-                    AuthRoute.ChurchSelect.route -> hiltViewModel<MemberSignUpViewModel>(it)
+                    AuthRoute.ChurchSelect.route ->  {
+                        val memberEntry = navController.getBackStackEntry(AuthRoute.MemberInfo.route)
+                        hiltViewModel<MemberSignUpViewModel>(memberEntry)
+                    }
                     AuthRoute.ChurchInfo.route,
                     AuthRoute.AdminInfo.route -> {
                         val adminEntry = navController.getBackStackEntry(AuthRoute.ChurchInfo.route)
