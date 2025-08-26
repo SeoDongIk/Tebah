@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import com.example.data.ApprovalProto
 import com.example.data.UserRoleProto
 import com.example.data.mapper.toDomain
 import com.example.data.mapper.toProto
@@ -60,10 +61,17 @@ class AuthRepositoryImpl @Inject constructor(
             if (result.isSuccess) {
                 val userDto = result.getOrNull()
                 userDto?.let {
+                    val approvalProto = when (it.isApproved) {
+                        true -> ApprovalProto.APPROVED
+                        false -> ApprovalProto.PENDING
+                        null -> ApprovalProto.APPROVAL_PROTO_UNSPECIFIED
+                    }
                     userPreferences.updateUserInfo(
                         id = it.id,
                         isAutoLogin = autoLogin,
-                        role = UserRole.fromString(it.role).toProto()
+                        role = UserRole.fromString(it.role).toProto(),
+                        approval = approvalProto,
+                        lastSyncedAt = System.currentTimeMillis()
                     )
                     return Result.success(SignInResult(UserRole.fromString(it.role)))
                 }
