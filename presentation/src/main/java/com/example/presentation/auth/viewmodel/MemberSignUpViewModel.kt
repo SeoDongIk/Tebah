@@ -2,7 +2,6 @@ package com.example.presentation.auth.viewmodel
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
-import com.example.domain.model.MemberSignUpRequest
 import com.example.domain.model.UserRole
 import com.example.domain.usecase.auth.SignInUseCase
 import com.example.domain.usecase.auth.SignUpMemberUseCase
@@ -193,7 +192,7 @@ class MemberSignUpViewModel @Inject constructor(
 
                 reduce { state.copy(isSigningUp = true) }
 
-                val request = MemberSignUpRequest(
+                val request = SignUpMemberUseCase.MemberSignUpRequest(
                     email = checked.id,
                     password = checked.password,
                     name = checked.name,

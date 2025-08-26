@@ -5,7 +5,7 @@ import com.example.data.model.dto.UserDto
 import com.example.data.source.remote.AuthRemoteDataSource
 import com.example.domain.model.AdminPosition
 import com.example.domain.model.AdminSignUpRequest
-import com.example.domain.model.MemberSignUpRequest
+import com.example.domain.usecase.params.MemberSignUpRequest
 import com.example.domain.model.UserRole
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth

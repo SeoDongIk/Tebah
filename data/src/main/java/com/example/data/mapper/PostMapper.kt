@@ -5,9 +5,6 @@ import com.example.data.model.entity.PostEntity
 import com.example.domain.model.Post
 import com.example.domain.model.PostCreateRequest
 import com.example.domain.model.PostType
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 fun PostDto.toDomain(): Post = Post(
     id, authorId, authorName, authorProfileUrl,

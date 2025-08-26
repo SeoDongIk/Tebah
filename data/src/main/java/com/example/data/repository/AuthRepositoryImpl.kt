@@ -7,11 +7,10 @@ import com.example.data.mapper.toProto
 import com.example.data.source.local.datastore.DefaultAppPreferencesDataStore
 import com.example.domain.model.AdminSignUpRequest
 import com.example.data.source.remote.AuthRemoteDataSource
-import com.example.domain.model.MemberSignUpRequest
-import com.example.domain.model.SignInResult
 import com.example.domain.model.User
 import com.example.domain.model.UserRole
 import com.example.domain.repository.AuthRepository
+import com.example.domain.usecase.auth.SignUpMemberUseCase
 import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber
 import javax.inject.Inject
@@ -49,49 +48,41 @@ class AuthRepositoryImpl @Inject constructor(
             .map { it.toDomain() }
     }
 
-    override suspend fun signUpMember(request: MemberSignUpRequest): Result<User> {
+    override suspend fun signUpMember(request: SignUpMemberUseCase.MemberSignUpRequest): Result<User> {
         return authRemoteDataSource
             .signUpMember(request)
             .map { it.toDomain() }
     }
 
-    override suspend fun signIn(email: String, password: String, autoLogin: Boolean): Result<SignInResult> {
+    override suspend fun signIn(email: String, password: String, autoLogin: Boolean): Result<UserRole> {
         return try {
             val result = authRemoteDataSource.signIn(email, password)
-
-            if (result.isFailure) {
-                result.exceptionOrNull()?.let { Timber.e(it) }
-                return result.map { SignInResult(UserRole.fromString(it.role)) }
-            }
-
-            val userDto = result.getOrNull()
-            userDto?.let {
-                val approvalProto = when (it.isApproved) {
-                    true -> ApprovalProto.APPROVED
-                    false -> ApprovalProto.PENDING
-                    null -> ApprovalProto.APPROVAL_PROTO_UNSPECIFIED
+            if (result.isSuccess) {
+                val userDto = result.getOrNull()
+                userDto?.let {
+                    val approvalProto = when (it.isApproved) {
+                        true -> ApprovalProto.APPROVED
+                        false -> ApprovalProto.PENDING
+                        null -> ApprovalProto.APPROVAL_PROTO_UNSPECIFIED
+                    }
+                    userPreferences.updateUserInfo(
+                        id = it.id,
+                        isAutoLogin = autoLogin,
+                        role = UserRole.fromString(it.role).toProto(),
+                        approval = approvalProto,
+                        lastSyncedAt = System.currentTimeMillis()
+                    )
+                    return Result.success(UserRole.fromString(it.role))
                 }
-                userPreferences.updateUserInfo(
-                    id = it.id,
-                    isAutoLogin = autoLogin,
-                    role = UserRole.fromString(it.role).toProto(),
-                    approval = approvalProto,
-                    lastSyncedAt = System.currentTimeMillis()
-                )
-                return Result.success(SignInResult(UserRole.fromString(it.role)))
             }
-
             Result.failure(Exception("UserDto is null"))
         } catch (e: Exception) {
-            Timber.e(e)
             Result.failure(e)
         }
     }
 
     override suspend fun signOut(): Result<Unit> {
-        return authRemoteDataSource.signOut().onSuccess {
-            userPreferences.clear()
-        }
+        TODO("Not yet implemented")
     }
 
     override suspend fun signInAnonymously(): Result<Unit> {

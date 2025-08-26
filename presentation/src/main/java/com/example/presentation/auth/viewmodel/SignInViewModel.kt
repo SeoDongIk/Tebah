@@ -83,7 +83,7 @@ class SignInViewModel @Inject constructor(
         try {
             signInUseCase(state.id, state.password, state.autoLogin)
                 .onSuccess { result ->
-                    postSideEffect(SignInSideEffect.NavigateToMainActivity(result.role))
+                    postSideEffect(SignInSideEffect.NavigateToMainActivity(result))
                 }
                 .onFailure {
                     reduce {

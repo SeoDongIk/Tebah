@@ -3,7 +3,7 @@ package com.example.data.source.remote
 import com.example.data.model.dto.ChurchDto
 import com.example.data.model.dto.UserDto
 import com.example.domain.model.AdminSignUpRequest
-import com.example.domain.model.MemberSignUpRequest
+import com.example.domain.usecase.params.MemberSignUpRequest
 import com.example.domain.model.UserRole
 
 interface AuthRemoteDataSource {
