@@ -2,29 +2,32 @@ package com.example.presentation.splash.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.model.UserRole
-import com.example.domain.usecase.auth.GetAuthStatusUseCase
+import com.example.domain.usecase.auth.DecideSplashDestinationUseCase
 import com.example.domain.usecase.auth.SignInAnonymouslyUseCase
-import com.example.domain.usecase.network.CheckNetworkUseCase
 import com.example.presentation.R
 import com.example.presentation.splash.state.SplashUiState
+import com.example.presentation.splash.state.SplashNavEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val checkNetworkUseCase: CheckNetworkUseCase,
-    private val getAuthStatusUseCase: GetAuthStatusUseCase,
+    private val decideSplashDestinationUseCase: DecideSplashDestinationUseCase,
     private val signInAnonymouslyUseCase: SignInAnonymouslyUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SplashUiState>(SplashUiState.Loading)
     val uiState: StateFlow<SplashUiState> = _uiState
+
+    private val _events = MutableSharedFlow<SplashNavEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<SplashNavEvent> = _events
 
     init {
         loadAuthStatus()
@@ -35,29 +38,23 @@ class SplashViewModel @Inject constructor(
             _uiState.value = SplashUiState.Loading
             val startTime = System.currentTimeMillis()
 
-            // 네트워크 연결 체크 먼저
-            if (!checkNetworkUseCase()) {
-                ensureMinDelay(startTime)
-                _uiState.value = SplashUiState.Error(R.string.error_network)
-                Timber.w("Network unavailable")
-                return@launch
-            }
-
-            runCatching { getAuthStatusUseCase() }
-                .onSuccess { status ->
+            runCatching { decideSplashDestinationUseCase() }
+                .onSuccess { dest ->
                     ensureMinDelay(startTime)
-                    _uiState.value = when {
-                        status.isLoggedIn && status.role == UserRole.ADMIN -> SplashUiState.GoToAdmin
-                        status.isLoggedIn && status.role == UserRole.MEMBER -> SplashUiState.GoToMember
-                        !status.isLoggedIn -> SplashUiState.GoToLogin
-                        else -> SplashUiState.GoToStart
+                    when (dest) {
+                        com.example.domain.model.SplashDestination.AdminMain -> _events.tryEmit(SplashNavEvent.GoToAdmin)
+                        com.example.domain.model.SplashDestination.MemberMain -> _events.tryEmit(SplashNavEvent.GoToMember)
+                        com.example.domain.model.SplashDestination.PendingApproval -> _events.tryEmit(SplashNavEvent.GoToPending)
+                        com.example.domain.model.SplashDestination.Login -> _events.tryEmit(SplashNavEvent.GoToLogin)
+                        com.example.domain.model.SplashDestination.Start -> _uiState.value = SplashUiState.Start
+                        is com.example.domain.model.SplashDestination.Error -> _uiState.value = SplashUiState.Error(R.string.error_unknown)
                     }
-                    Timber.i("Auth status loaded: $status")
+                    Timber.i("Destination decided: $dest")
                 }
                 .onFailure { e ->
                     ensureMinDelay(startTime)
                     _uiState.value = SplashUiState.Error(R.string.error_unknown)
-                    Timber.e(e, "Failed to load auth status")
+                    Timber.e(e, "Failed to decide destination")
                 }
         }
     }
@@ -68,7 +65,7 @@ class SplashViewModel @Inject constructor(
     }
 
     fun retry() {
-        loadAuthStatus() // Loading 상태 세팅은 loadAuthStatus 내부에서 이미 처리
+        loadAuthStatus()
     }
 
     fun signInAsGuest(onSuccess: () -> Unit, onFailure: () -> Unit) {

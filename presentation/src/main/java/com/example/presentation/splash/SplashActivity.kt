@@ -14,6 +14,7 @@ import com.example.presentation.auth.AuthActivity
 import com.example.presentation.admin.AdminActivity
 import com.example.presentation.member.MemberActivity
 import com.example.presentation.splash.state.SplashUiState
+import com.example.presentation.splash.state.SplashNavEvent
 import com.example.presentation.common.theme.TebahTheme
 import com.example.presentation.splash.screen.ErrorScreen
 import com.example.presentation.splash.screen.LoadingScreen
@@ -34,12 +35,20 @@ class SplashActivity : AppCompatActivity() {
             TebahTheme {
                 val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
+                LaunchedEffect(Unit) {
+                    viewModel.events.collect { event ->
+                        when (event) {
+                            SplashNavEvent.GoToAdmin -> navigateTo(AdminActivity::class.java)
+                            SplashNavEvent.GoToMember -> navigateTo(MemberActivity::class.java)
+                            SplashNavEvent.GoToPending -> navigateTo(MemberActivity::class.java) // placeholder
+                            SplashNavEvent.GoToLogin -> navigateTo(AuthActivity::class.java)
+                        }
+                    }
+                }
+
                 when (uiState) {
                     SplashUiState.Loading -> LoadingScreen()
-                    SplashUiState.GoToAdmin -> { LaunchedEffect(Unit) { navigateTo(AdminActivity::class.java) } }
-                    SplashUiState.GoToMember -> { LaunchedEffect(Unit) { navigateTo(MemberActivity::class.java) } }
-                    SplashUiState.GoToLogin -> { LaunchedEffect(Unit) { navigateTo(AuthActivity::class.java) } }
-                    SplashUiState.GoToStart -> {
+                    SplashUiState.Start -> {
                         StartScreen(
                             onNavigateToLogin = { navigateTo(AuthActivity::class.java) },
                             onBrowseServiceClick = {

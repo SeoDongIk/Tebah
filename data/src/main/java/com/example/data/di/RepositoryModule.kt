@@ -1,6 +1,7 @@
 package com.example.data.di
 
 import com.example.data.repository.AuthRepositoryImpl
+import com.example.data.repository.AuthSessionRepositoryImpl
 import com.example.data.repository.ChannelRepositoryImpl
 import com.example.data.repository.CommentRepositoryImpl
 import com.example.data.repository.NetworkRepositoryImpl
@@ -8,6 +9,7 @@ import com.example.data.repository.NotificationRepositoryImpl
 import com.example.data.repository.PostRepositoryImpl
 import com.example.data.repository.UserRepositoryImpl
 import com.example.domain.repository.AuthRepository
+import com.example.domain.repository.AuthSessionRepository
 import com.example.domain.repository.ChannelRepository
 import com.example.domain.repository.CommentRepository
 import com.example.domain.repository.NetworkRepository
@@ -29,6 +31,12 @@ abstract class RepositoryModule {
     abstract fun bindAuthRepository(
         impl: AuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthSessionRepository(
+        impl: AuthSessionRepositoryImpl
+    ): AuthSessionRepository
 
     @Binds
     @Singleton
