@@ -58,32 +58,40 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signIn(email: String, password: String, autoLogin: Boolean): Result<SignInResult> {
         return try {
             val result = authRemoteDataSource.signIn(email, password)
-            if (result.isSuccess) {
-                val userDto = result.getOrNull()
-                userDto?.let {
-                    val approvalProto = when (it.isApproved) {
-                        true -> ApprovalProto.APPROVED
-                        false -> ApprovalProto.PENDING
-                        null -> ApprovalProto.APPROVAL_PROTO_UNSPECIFIED
-                    }
-                    userPreferences.updateUserInfo(
-                        id = it.id,
-                        isAutoLogin = autoLogin,
-                        role = UserRole.fromString(it.role).toProto(),
-                        approval = approvalProto,
-                        lastSyncedAt = System.currentTimeMillis()
-                    )
-                    return Result.success(SignInResult(UserRole.fromString(it.role)))
-                }
+
+            if (result.isFailure) {
+                result.exceptionOrNull()?.let { Timber.e(it) }
+                return result.map { SignInResult(UserRole.fromString(it.role)) }
             }
+
+            val userDto = result.getOrNull()
+            userDto?.let {
+                val approvalProto = when (it.isApproved) {
+                    true -> ApprovalProto.APPROVED
+                    false -> ApprovalProto.PENDING
+                    null -> ApprovalProto.APPROVAL_PROTO_UNSPECIFIED
+                }
+                userPreferences.updateUserInfo(
+                    id = it.id,
+                    isAutoLogin = autoLogin,
+                    role = UserRole.fromString(it.role).toProto(),
+                    approval = approvalProto,
+                    lastSyncedAt = System.currentTimeMillis()
+                )
+                return Result.success(SignInResult(UserRole.fromString(it.role)))
+            }
+
             Result.failure(Exception("UserDto is null"))
         } catch (e: Exception) {
+            Timber.e(e)
             Result.failure(e)
         }
     }
 
     override suspend fun signOut(): Result<Unit> {
-        TODO("Not yet implemented")
+        return authRemoteDataSource.signOut().onSuccess {
+            userPreferences.clear()
+        }
     }
 
     override suspend fun signInAnonymously(): Result<Unit> {
