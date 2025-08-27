@@ -35,12 +35,12 @@ class SplashActivity : AppCompatActivity() {
             TebahTheme {
                 val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
-                LaunchedEffect(Unit) {
+                LaunchedEffect(viewModel) {
                     viewModel.events.collect { event ->
                         when (event) {
                             SplashNavEvent.GoToAdmin -> navigateTo(AdminActivity::class.java)
                             SplashNavEvent.GoToMember -> navigateTo(MemberActivity::class.java)
-                            SplashNavEvent.GoToPending -> navigateTo(MemberActivity::class.java) // placeholder
+                            SplashNavEvent.GoToPending -> navigateTo(MemberActivity::class.java)
                             SplashNavEvent.GoToLogin -> navigateTo(AuthActivity::class.java)
                         }
                     }

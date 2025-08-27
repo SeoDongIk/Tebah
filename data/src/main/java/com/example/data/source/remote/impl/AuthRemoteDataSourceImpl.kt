@@ -5,8 +5,8 @@ import com.example.data.model.dto.UserDto
 import com.example.data.source.remote.AuthRemoteDataSource
 import com.example.domain.model.AdminPosition
 import com.example.domain.model.AdminSignUpRequest
-import com.example.domain.usecase.params.MemberSignUpRequest
 import com.example.domain.model.UserRole
+import com.example.domain.usecase.auth.SignUpMemberUseCase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -73,7 +73,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun signUpMember(request: MemberSignUpRequest): Result<UserDto> {
+    override suspend fun signUpMember(request: SignUpMemberUseCase.MemberSignUpRequest): Result<UserDto> {
         return try {
             val result = firebaseAuth
                 .createUserWithEmailAndPassword(request.email, request.password)

@@ -1,7 +1,6 @@
 package com.example.domain.usecase.auth
 
 import com.example.domain.model.ApprovalStatus
-import com.example.domain.model.AuthSnapshot
 import com.example.domain.model.RoleStatus
 import com.example.domain.model.SessionStatus
 import com.example.domain.model.SplashDestination
