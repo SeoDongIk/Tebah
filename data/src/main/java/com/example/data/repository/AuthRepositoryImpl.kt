@@ -5,11 +5,11 @@ import com.example.data.UserRoleProto
 import com.example.data.mapper.toDomain
 import com.example.data.mapper.toProto
 import com.example.data.source.local.datastore.DefaultAppPreferencesDataStore
-import com.example.domain.model.AdminSignUpRequest
 import com.example.data.source.remote.AuthRemoteDataSource
 import com.example.domain.model.User
 import com.example.domain.model.UserRole
 import com.example.domain.repository.AuthRepository
+import com.example.domain.usecase.auth.SignUpAdminUseCase
 import com.example.domain.usecase.auth.SignUpMemberUseCase
 import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber
@@ -42,7 +42,7 @@ class AuthRepositoryImpl @Inject constructor(
         return authRemoteDataSource.checkEmailExists(email)
     }
 
-    override suspend fun signUpAdmin(request: AdminSignUpRequest): Result<User> {
+    override suspend fun signUpAdmin(request: SignUpAdminUseCase.AdminSignUpRequest): Result<User> {
         return authRemoteDataSource
             .signUpAdmin(request)
             .map { it.toDomain() }

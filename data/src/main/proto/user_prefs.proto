@@ -4,10 +4,12 @@ option java_package = "com.example.data";
 option java_multiple_files = true;
 
 enum UserRoleProto {
-  GUEST = 0;
-  MEMBER = 1;
-  ADMIN = 2;
+  USER_ROLE_UNSPECIFIED = 0;
+  GUEST = 1;
+  MEMBER = 2;
+  ADMIN = 3;
 }
+
 
 enum ApprovalProto {
   APPROVAL_PROTO_UNSPECIFIED = 0;

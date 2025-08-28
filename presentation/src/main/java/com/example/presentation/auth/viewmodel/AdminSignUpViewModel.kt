@@ -3,7 +3,6 @@ package com.example.presentation.auth.viewmodel
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import com.example.domain.model.AdminPosition
-import com.example.domain.model.AdminSignUpRequest
 import com.example.domain.model.ChurchInfo
 import com.example.domain.model.Region
 import com.example.domain.usecase.auth.SignInUseCase
@@ -265,7 +264,7 @@ class AdminSignUpViewModel @Inject constructor(
                 reduce { state.copy(isSigningUp = true) }
 
                 // 요청 빌드 (스냅샷 기준, region!! 안전)
-                val request = AdminSignUpRequest(
+                val request = SignUpAdminUseCase.AdminSignUpRequest(
                     church = ChurchInfo(
                         name = s.churchName,
                         region = s.region!!,

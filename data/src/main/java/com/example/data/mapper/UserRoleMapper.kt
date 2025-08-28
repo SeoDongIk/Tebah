@@ -3,15 +3,17 @@ package com.example.data.mapper
 import com.example.data.UserRoleProto
 import com.example.domain.model.UserRole
 
-fun UserRoleProto.toDomain(): UserRole = when(this) {
+fun UserRoleProto.toDomain(): UserRole = when (this) {
     UserRoleProto.GUEST -> UserRole.GUEST
     UserRoleProto.MEMBER -> UserRole.MEMBER
     UserRoleProto.ADMIN -> UserRole.ADMIN
-    UserRoleProto.UNRECOGNIZED -> UserRole.GUEST
+    UserRoleProto.USER_ROLE_UNSPECIFIED -> UserRole.UNKNOWN
+    UserRoleProto.UNRECOGNIZED -> UserRole.UNKNOWN
 }
 
-fun UserRole.toProto(): UserRoleProto = when(this) {
+fun UserRole.toProto(): UserRoleProto = when (this) {
     UserRole.GUEST -> UserRoleProto.GUEST
     UserRole.MEMBER -> UserRoleProto.MEMBER
     UserRole.ADMIN -> UserRoleProto.ADMIN
+    UserRole.UNKNOWN -> UserRoleProto.USER_ROLE_UNSPECIFIED
 }

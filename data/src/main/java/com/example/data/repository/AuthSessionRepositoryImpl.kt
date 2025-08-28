@@ -21,11 +21,12 @@ class AuthSessionRepositoryImpl @Inject constructor(
 
     override suspend fun getSnapshot(): Result<AuthSnapshot> = runCatching {
         val auto = prefs.isAutoLogin.firstOrNull() ?: false
-        val roleProto = prefs.userRole.firstOrNull() ?: UserRoleProto.GUEST
+        val roleProto = prefs.userRole.firstOrNull() ?: UserRoleProto.USER_ROLE_UNSPECIFIED
         val role = when (roleProto) {
             UserRoleProto.ADMIN -> RoleStatus.ADMIN
             UserRoleProto.MEMBER -> RoleStatus.MEMBER
             UserRoleProto.GUEST -> RoleStatus.GUEST
+            UserRoleProto.USER_ROLE_UNSPECIFIED -> RoleStatus.UNKNOWN
             else -> RoleStatus.UNKNOWN
         }
         val approvalProto = prefs.approval.firstOrNull() ?: ApprovalProto.APPROVAL_PROTO_UNSPECIFIED
@@ -63,6 +64,7 @@ class AuthSessionRepositoryImpl @Inject constructor(
                 UserRole.ADMIN -> RoleStatus.ADMIN
                 UserRole.MEMBER -> RoleStatus.MEMBER
                 UserRole.GUEST -> RoleStatus.GUEST
+                UserRole.UNKNOWN -> RoleStatus.UNKNOWN
             }
             val approval = when (dto.isApproved) {
                 true -> ApprovalStatus.APPROVED

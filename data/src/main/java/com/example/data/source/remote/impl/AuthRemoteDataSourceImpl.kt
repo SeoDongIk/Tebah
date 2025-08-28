@@ -4,8 +4,8 @@ import com.example.data.model.dto.ChurchDto
 import com.example.data.model.dto.UserDto
 import com.example.data.source.remote.AuthRemoteDataSource
 import com.example.domain.model.AdminPosition
-import com.example.domain.model.AdminSignUpRequest
 import com.example.domain.model.UserRole
+import com.example.domain.usecase.auth.SignUpAdminUseCase
 import com.example.domain.usecase.auth.SignUpMemberUseCase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -21,7 +21,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : AuthRemoteDataSource {
 
-    override suspend fun signUpAdmin(request: AdminSignUpRequest): Result<UserDto> {
+    override suspend fun signUpAdmin(request: SignUpAdminUseCase.AdminSignUpRequest): Result<UserDto> {
         return try {
             val result = firebaseAuth
                 .createUserWithEmailAndPassword(request.adminEmail, request.adminPassword)
