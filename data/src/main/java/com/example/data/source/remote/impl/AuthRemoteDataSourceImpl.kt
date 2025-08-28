@@ -137,19 +137,52 @@ class AuthRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getUserById(userId: String): UserDto? {
-        TODO("Not yet implemented")
+        return try {
+            val snapshot = firestore.collection("users")
+                .document(userId)
+                .get()
+                .await()
+            snapshot.toObject(UserDto::class.java)
+        } catch (e: Exception) {
+            Timber.tag("AuthRemoteDataSourceImpl").e(e, "getUserById failed")
+            throw e
+        }
     }
 
     override suspend fun saveUser(userDto: UserDto) {
-        TODO("Not yet implemented")
+        try {
+            firestore.collection("users")
+                .document(userDto.id)
+                .set(userDto)
+                .await()
+        } catch (e: Exception) {
+            Timber.tag("AuthRemoteDataSourceImpl").e(e, "saveUser failed")
+            throw e
+        }
     }
 
     override suspend fun saveChurch(churchDto: ChurchDto) {
-        TODO("Not yet implemented")
+        try {
+            firestore.collection("churches")
+                .document(churchDto.id)
+                .set(churchDto)
+                .await()
+        } catch (e: Exception) {
+            Timber.tag("AuthRemoteDataSourceImpl").e(e, "saveChurch failed")
+            throw e
+        }
     }
 
     override suspend fun createUser(email: String, password: String): String {
-        TODO("Not yet implemented")
+        return try {
+            val result = firebaseAuth
+                .createUserWithEmailAndPassword(email, password)
+                .await()
+            result.user?.uid ?: throw Exception("User creation failed")
+        } catch (e: Exception) {
+            Timber.tag("AuthRemoteDataSourceImpl").e(e, "createUser failed")
+            throw e
+        }
     }
 
     override suspend fun isLoggedIn(): Boolean {
