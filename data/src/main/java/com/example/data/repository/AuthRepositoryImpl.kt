@@ -32,7 +32,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCurrentUserRole(): UserRole {
-        val roleProto = userPreferences.userRole.firstOrNull() ?: UserRoleProto.GUEST
+        val roleProto = userPreferences.userRole.firstOrNull() ?: UserRoleProto.USER_ROLE_UNSPECIFIED
         val role = roleProto.toDomain()
         Timber.tag("AuthRepositoryImpl").d("getCurrentUserRole: $role")
         return role
