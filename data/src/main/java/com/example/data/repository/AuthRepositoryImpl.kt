@@ -74,7 +74,10 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signOut(): Result<Unit> {
-        TODO("Not yet implemented")
+        return authRemoteDataSource.signOut()
+            .onSuccess {
+                userPreferences.clear()
+            }
     }
 
     override suspend fun signInAnonymously(): Result<Unit> {
