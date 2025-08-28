@@ -55,29 +55,21 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signIn(email: String, password: String, autoLogin: Boolean): Result<UserRole> {
-        return try {
-            val result = authRemoteDataSource.signIn(email, password)
-            if (result.isSuccess) {
-                val userDto = result.getOrNull()
-                userDto?.let {
-                    val approvalProto = when (it.isApproved) {
-                        true -> ApprovalProto.APPROVED
-                        false -> ApprovalProto.PENDING
-                        null -> ApprovalProto.APPROVAL_PROTO_UNSPECIFIED
-                    }
-                    userPreferences.updateUserInfo(
-                        id = it.id,
-                        isAutoLogin = autoLogin,
-                        role = UserRole.fromString(it.role).toProto(),
-                        approval = approvalProto,
-                        lastSyncedAt = System.currentTimeMillis()
-                    )
-                    return Result.success(UserRole.fromString(it.role))
-                }
+        val result = authRemoteDataSource.signIn(email, password)
+        return result.map { userDto ->
+            val approvalProto = when (userDto.isApproved) {
+                true -> ApprovalProto.APPROVED
+                false -> ApprovalProto.PENDING
+                null -> ApprovalProto.APPROVAL_PROTO_UNSPECIFIED
             }
-            Result.failure(Exception("UserDto is null"))
-        } catch (e: Exception) {
-            Result.failure(e)
+            userPreferences.updateUserInfo(
+                id = userDto.id,
+                isAutoLogin = autoLogin,
+                role = UserRole.fromString(userDto.role).toProto(),
+                approval = approvalProto,
+                lastSyncedAt = System.currentTimeMillis()
+            )
+            UserRole.fromString(userDto.role)
         }
     }
 
