@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -71,6 +72,9 @@ import com.example.presentation.shared.feature.user.screen.UserScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.max
+import android.widget.Toast
+import timber.log.Timber
+import com.example.presentation.member.screen.home.HomeViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -107,6 +111,7 @@ fun MemberNavHost(onNavigateToPostWrite: (Context) -> Unit) {
     val refreshHoldMillis = 1200L
     var refreshing by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val homeViewModel: HomeViewModel = hiltViewModel()
 
     var isScrollingDown by remember { mutableStateOf(false) }
     var targetScrollingDown by remember { mutableStateOf(false) }
@@ -170,7 +175,11 @@ fun MemberNavHost(onNavigateToPostWrite: (Context) -> Unit) {
                     refreshing = true
                     pullOffsetPx = 0f
                     scope.launch {
-                        // TODO: 실제 새로고침 로직 호출
+                        homeViewModel.refresh()
+                            .onFailure { e ->
+                                Timber.e(e, "Home refresh failed")
+                                Toast.makeText(context, "새로고침 실패", Toast.LENGTH_SHORT).show()
+                            }
                         delay(refreshHoldMillis)
                         refreshing = false
                     }
