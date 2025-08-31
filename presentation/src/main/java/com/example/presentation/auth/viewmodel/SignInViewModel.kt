@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -45,7 +46,7 @@ class SignInViewModel @Inject constructor(
         else -> null
     }
 
-    fun onIdChange(id: String) = intent {
+    fun onIdChange(id: String) = blockingIntent {
         reduce {
             state.copy(
                 id = id,
@@ -54,7 +55,7 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun onPasswordChange(password: String) = intent {
+    fun onPasswordChange(password: String) = blockingIntent {
         reduce {
             state.copy(
                 password = password,

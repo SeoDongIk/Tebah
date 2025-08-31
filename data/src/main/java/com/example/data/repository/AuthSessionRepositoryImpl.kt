@@ -37,8 +37,20 @@ class AuthSessionRepositoryImpl @Inject constructor(
             else -> ApprovalStatus.UNKNOWN
         }
         val uid = prefs.userId.firstOrNull()
-        val session = if (remote.isLoggedIn() && uid != null) {
-            SessionStatus.LoggedIn(uid)
+        
+        // 디버깅 로그 추가
+        println("🔍 AuthSession Debug - Firebase isLoggedIn: ${remote.isLoggedIn()}")
+        println("🔍 AuthSession Debug - Local UID: $uid")
+        println("🔍 AuthSession Debug - AutoLogin: $auto")
+        println("🔍 AuthSession Debug - Role: $role")
+        println("🔍 AuthSession Debug - Approval: $approval")
+        
+        // 로컬 데이터가 없으면 Firebase Auth 상태와 관계없이 NoSession으로 처리
+        val hasLocalData = uid != null && auto && role != RoleStatus.UNKNOWN && approval != ApprovalStatus.UNKNOWN
+        println("🔍 AuthSession Debug - HasLocalData: $hasLocalData")
+        
+        val session = if (remote.isLoggedIn() && hasLocalData) {
+            SessionStatus.LoggedIn(uid!!)
         } else {
             SessionStatus.Failure.NoSession
         }

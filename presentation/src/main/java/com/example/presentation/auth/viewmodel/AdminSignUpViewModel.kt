@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.sync.Mutex
 import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -87,7 +88,7 @@ class AdminSignUpViewModel @Inject constructor(
 
     /* ---------------- onChange: 즉시 검증 ---------------- */
 
-    fun onChurchNameChange(name: String) = intent {
+    fun onChurchNameChange(name: String) = blockingIntent {
         reduce { state.copy(churchName = name, churchNameError = validateChurchName(name)) }
     }
 
@@ -95,19 +96,19 @@ class AdminSignUpViewModel @Inject constructor(
         reduce { state.copy(region = region, regionError = null) }
     }
 
-    fun onPhoneNumberChange(phone: String) = intent {
+    fun onPhoneNumberChange(phone: String) = blockingIntent {
         reduce { state.copy(phoneNumber = phone, phoneNumberError = validatePhone(phone)) }
     }
 
-    fun onChurchIntroChange(intro: String) = intent {
+    fun onChurchIntroChange(intro: String) = blockingIntent {
         reduce { state.copy(churchIntro = intro, churchIntroError = validateChurchIntro(intro)) }
     }
 
-    fun onAdminNameChange(name: String) = intent {
+    fun onAdminNameChange(name: String) = blockingIntent {
         reduce { state.copy(name = name, nameError = validateAdminName(name)) }
     }
 
-    fun onIdChange(id: String) = intent {
+    fun onIdChange(id: String) = blockingIntent {
         reduce { state.copy(id = id, idError = validateEmail(id)) }
     }
 

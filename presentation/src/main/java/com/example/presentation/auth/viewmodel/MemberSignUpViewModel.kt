@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.sync.Mutex
 import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -81,15 +82,15 @@ class MemberSignUpViewModel @Inject constructor(
     }
 
     /* -------------------- onChange ---------------------- */
-    fun onNameChange(name: String) = intent {
+    fun onNameChange(name: String) = blockingIntent {
         reduce { state.copy(name = name, nameError = validateName(name)) }
     }
 
-    fun onIdChange(id: String) = intent {
+    fun onIdChange(id: String) = blockingIntent {
         reduce { state.copy(id = id, idError = validateEmail(id)) }
     }
 
-    fun onPasswordChange(password: String) = intent {
+    fun onPasswordChange(password: String) = blockingIntent {
         reduce {
             state.copy(
                 password = password,
@@ -99,7 +100,7 @@ class MemberSignUpViewModel @Inject constructor(
         }
     }
 
-    fun onRepeatPasswordChange(password: String) = intent {
+    fun onRepeatPasswordChange(password: String) = blockingIntent {
         reduce {
             state.copy(
                 repeatPassword = password,

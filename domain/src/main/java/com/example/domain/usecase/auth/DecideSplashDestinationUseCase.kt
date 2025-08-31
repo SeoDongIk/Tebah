@@ -15,6 +15,22 @@ class DecideSplashDestinationUseCase @Inject constructor(
             return SplashDestination.Error("snapshot-fail")
         }
 
+        // 디버깅 로그 추가
+        println("🔍 Splash Debug - Local snapshot: $local")
+        println("🔍 Splash Debug - Session: ${local.session}")
+        println("🔍 Splash Debug - AutoLogin: ${local.autoLogin}")
+        println("🔍 Splash Debug - Role: ${local.role}")
+        println("🔍 Splash Debug - Approval: ${local.approval}")
+
+        // 첫 설치인지 확인 (모든 데이터가 기본값인 경우)
+        val isFirstInstall = isFirstInstallation(local)
+        println("🔍 Splash Debug - IsFirstInstall: $isFirstInstall")
+        
+        if (isFirstInstall) {
+            println("🔍 Splash Debug - Returning Login (first install)")
+            return SplashDestination.Login
+        }
+
         val snap = if (local.session is SessionStatus.LoggedIn || local.autoLogin) {
             repository.refreshFromServer().getOrElse { local }
         } else {
@@ -36,5 +52,21 @@ class DecideSplashDestinationUseCase @Inject constructor(
             is SessionStatus.Failure.Network -> SplashDestination.Start
             is SessionStatus.Failure.Unknown, SessionStatus.Anonymous -> SplashDestination.Start
         }
+    }
+    
+    private fun isFirstInstallation(snapshot: com.example.domain.model.AuthSnapshot): Boolean {
+        // 더 엄격한 첫 설치 체크
+        val hasNoLocalData = !snapshot.autoLogin &&
+                           snapshot.role == RoleStatus.UNKNOWN &&
+                           snapshot.approval == ApprovalStatus.UNKNOWN &&
+                           snapshot.lastSyncedAt == null
+        
+        // Firebase Auth가 자동 로그인되어 있어도 로컬 데이터가 없으면 첫 설치로 간주
+        val isFirstInstall = hasNoLocalData
+        
+        println("🔍 Splash Debug - HasNoLocalData: $hasNoLocalData")
+        println("🔍 Splash Debug - IsFirstInstall: $isFirstInstall")
+        
+        return isFirstInstall
     }
 }

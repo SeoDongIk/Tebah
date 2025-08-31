@@ -10,7 +10,7 @@ import com.example.data.model.dto.UserDto
 import com.example.data.source.local.datastore.AppPreferencesSerializer
 import com.example.data.source.local.datastore.DefaultAppPreferencesDataStore
 import com.example.data.source.remote.AuthRemoteDataSource
-import com.example.domain.model.AdminSignUpRequest
+import com.example.domain.usecase.auth.SignUpAdminUseCase
 import com.example.domain.usecase.auth.SignUpMemberUseCase
 import com.example.domain.model.UserRole
 import kotlinx.coroutines.flow.first
@@ -26,7 +26,7 @@ private class FakeAuthRemoteDataSource : AuthRemoteDataSource {
     override suspend fun signIn(email: String, password: String): Result<UserDto> = signInResult
     override suspend fun signOut(): Result<Unit> = signOutResult
 
-    override suspend fun signUpAdmin(request: AdminSignUpRequest): Result<UserDto> = throw NotImplementedError()
+    override suspend fun signUpAdmin(request: SignUpAdminUseCase.AdminSignUpRequest): Result<UserDto> = throw NotImplementedError()
     override suspend fun signUpMember(request: SignUpMemberUseCase.MemberSignUpRequest): Result<UserDto> = throw NotImplementedError()
     override suspend fun checkEmailExists(email: String): Boolean = false
     override suspend fun getUserById(userId: String): UserDto? = null
